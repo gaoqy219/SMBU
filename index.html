@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMBU 成绩查询入口</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+        }
+        .jump-btn {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border: none;
+            margin-top: 2rem;
+            transition: background 0.3s;
+        }
+        .jump-btn:hover {
+            background: #1d4ed8;
+        }
+        .auto-jump {
+            margin-top: 1rem;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container">
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">SMBU 成绩查询系统</h1>
+        <p class="text-gray-600 text-lg">点击下方按钮进入成绩查询页面</p>
+        <!-- 跳转按钮：指向scorecheck文件夹下的查询页 -->
+        <button class="jump-btn" onclick="window.location.href='./ScoreCheck/score_query.html'">
+            进入成绩查询 →
+        </button>
+        <!-- 自动跳转提示（可选） -->
+        <p class="auto-jump">若未自动跳转，将在5秒后自动进入...</p>
+    </div>
+
+    <!-- 5秒自动跳转脚本 -->
+    <script>
+        setTimeout(() => {
+            window.location.href = './ScoreCheck/score_query.html';
+        }, 5000);
+    </script>
+</body>
+</html>
