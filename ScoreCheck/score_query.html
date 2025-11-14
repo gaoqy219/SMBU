@@ -99,6 +99,21 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* 图表容器响应式样式 */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            height: 0;
+            padding-bottom: 50%; /* 宽高比 2:1，可根据需要调整 */
+        }
+        .chart-container canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+        }
     </style>
 </head>
 <body class="max-w-6xl mx-auto px-4 py-8 bg-gray-50">
@@ -193,14 +208,17 @@
                 </table>
             </div>
 
-            <!-- 成绩分布（支持多维度切换，动态区间） -->
+            <!-- 成绩分布（响应式图表容器） -->
             <div>
                 <h3 class="text-lg font-semibold mb-3 text-gray-800">成绩分布</h3>
                 <!-- 动态生成切换按钮（题目+总分） -->
                 <div id="scoreTabs" class="mb-4 flex flex-wrap gap-2">
                     <!-- 动态生成按钮 -->
                 </div>
-                <canvas id="scoreChart" height="300"></canvas>
+                <!-- 响应式图表容器 -->
+                <div class="chart-container">
+                    <canvas id="scoreChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -261,6 +279,12 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadEncryptedFiles();
             bindEvents();
+            // 监听窗口大小变化，刷新图表
+            window.addEventListener('resize', () => {
+                if (window.scoreChartInstance) {
+                    window.scoreChartInstance.resize();
+                }
+            });
         });
 
         /**
@@ -517,9 +541,9 @@
             const gradeScores = validScores.map(row => parseFloat(row[totalIndex])).sort((a, b) => b - a);
             const gradeRank = gradeScores.indexOf(currentUser.totalScore) + 1;
             elements.gradeRankAlert.textContent = 
-                `年级${totalField}排名：${currentUser.totalScore}，在${gradeScores.length}人中排名第${gradeRank}名`;
+                `年级${totalField}：${currentUser.totalScore}，在${gradeScores.length}人中排名第${gradeRank}名`;
 
-            // 3. 计算班级排名（如果存在班级字段）
+            // 3. 计算班级排名
             if (classIndex !== -1) {
                 // 筛选同班级的有效成绩
                 const classScores = validScores
@@ -529,9 +553,9 @@
                 
                 const classRank = classScores.indexOf(currentUser.totalScore) + 1;
                 elements.classRankAlert.textContent = 
-                    `班级${totalField}排名：${currentUser.totalScore}，在${classScores.length}人中排名第${classRank}名`;
+                    `班级${totalField}：${currentUser.totalScore}，在${classScores.length}人中排名第${classRank}名`;
             } else {
-                // 无班级字段时隐藏班级排名
+                // 无班级字段时提示
                 elements.classRankAlert.textContent = '未提供班级信息，无法计算班级排名';
                 elements.classRankAlert.classList.add('bg-amber-50', 'text-amber-800', 'border-amber-200');
                 elements.classRankAlert.classList.remove('alert-success');
@@ -539,37 +563,7 @@
         }
 
         /**
-         * 渲染成绩分布（动态生成按钮+图表）
-         */
-        function renderScoreDistribution(header, scores) {
-            // 1. 动态生成切换按钮（默认激活"总分"）
-            elements.scoreTabs.innerHTML = '';
-            scoreFields.forEach((field, index) => {
-                const isTotal = field === totalField; // 激活总分字段
-                const btn = document.createElement('button');
-                btn.className = `btn-tab ${isTotal ? 'active' : ''}`;
-                btn.textContent = field;
-                btn.dataset.index = index; // 存储字段索引
-                btn.addEventListener('click', () => {
-                    // 切换激活状态
-                    document.querySelectorAll('.btn-tab').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    // 更新图表
-                    updateScoreChart(header, scores, field);
-                });
-                elements.scoreTabs.appendChild(btn);
-
-                // 默认显示总分图表
-                if (isTotal) {
-                    updateScoreChart(header, scores, field);
-                }
-            });
-        }
-
-        /**
-         * 动态计算分数区间（核心改进点）
-         * @param {Array} scores - 该题型的所有有效分数
-         * @returns {Object} - 包含区间标签和每个区间的边界值
+         * 动态计算分数区间
          */
         function calculateDynamicBins(scores) {
             if (scores.length === 0) return { labels: [], bins: [] };
@@ -612,7 +606,7 @@
         }
 
         /**
-         * 更新成绩分布图表（使用动态区间）
+         * 更新成绩分布图表（响应式配置）
          */
         function updateScoreChart(header, scores, field) {
             const fieldIndex = header.indexOf(field);
@@ -641,7 +635,7 @@
                 allScores.filter(score => score >= min && score < max).length
             );
 
-            // 绘制图表
+            // 绘制图表（响应式配置）
             if (window.scoreChartInstance) {
                 window.scoreChartInstance.destroy();
             }
@@ -658,7 +652,8 @@
                     }]
                 },
                 options: {
-                    responsive: true,
+                    responsive: true,        // 开启响应式
+                    maintainAspectRatio: false, // 不强制维持宽高比，允许根据容器调整
                     scales: {
                         y: { 
                             beginAtZero: true, 
