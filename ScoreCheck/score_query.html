@@ -89,6 +89,16 @@
             margin: 1rem 0;
             border-left: 4px solid #3b82f6;
         }
+        .rank-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 640px) {
+            .rank-container {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body class="max-w-6xl mx-auto px-4 py-8 bg-gray-50">
@@ -138,7 +148,8 @@
         <div class="user-info">
             <span class="font-semibold">当前查询：</span>
             <span id="displayName">姓名</span> | 
-            <span id="displayNo">学号</span>
+            <span id="displayNo">学号</span> | 
+            <span id="displayClass">班级</span>
         </div>
 
         <!-- 个人成绩详情 -->
@@ -155,7 +166,11 @@
                     <!-- 动态插入成绩数据 -->
                 </tbody>
             </table>
-            <div class="alert alert-success" id="rankAlert"></div>
+            <!-- 排名展示区（班级+年级） -->
+            <div class="rank-container">
+                <div class="alert alert-success" id="classRankAlert"></div>
+                <div class="alert alert-success" id="gradeRankAlert"></div>
+            </div>
         </div>
 
         <!-- 成绩统计分析模块 -->
@@ -178,12 +193,12 @@
                 </table>
             </div>
 
-            <!-- 成绩分布（支持多维度切换） -->
+            <!-- 成绩分布（支持多维度切换，动态区间） -->
             <div>
                 <h3 class="text-lg font-semibold mb-3 text-gray-800">成绩分布</h3>
                 <!-- 动态生成切换按钮（题目+总分） -->
                 <div id="scoreTabs" class="mb-4 flex flex-wrap gap-2">
-                    <!-- 示例：<button class="btn-tab active" data-index="0">总分</button> -->
+                    <!-- 动态生成按钮 -->
                 </div>
                 <canvas id="scoreChart" height="300"></canvas>
             </div>
@@ -211,11 +226,15 @@
                 iv: CryptoJS.enc.Utf8.parse('1234567890abcdef') // 与加密端一致的偏移量
             },
             // 非成绩字段关键词（用于过滤平均分和分布统计）
-            nonScoreFields: ['学号', '姓名', '班级', '序号']
+            nonScoreFields: ['学号', '姓名', '班级', '序号'],
+            distribution: {
+                defaultBins: 5 // 默认区间数量（可根据数据动态调整）
+            }
         };
         let allScoreData = null; // 全量成绩数据
         let scoreFields = [];    // 有效成绩字段（题目+总分，排除非成绩字段）
-        let currentUser = null;  // 当前查询用户信息
+        let currentUser = null;  // 当前查询用户信息（含班级）
+        let totalField = '';     // 总分字段名称（用于排名计算）
 
         // DOM元素
         const elements = {
@@ -229,8 +248,10 @@
             resultArea: document.getElementById('resultArea'),
             displayName: document.getElementById('displayName'),
             displayNo: document.getElementById('displayNo'),
+            displayClass: document.getElementById('displayClass'),
             userScoreTable: document.getElementById('userScoreTable'),
-            rankAlert: document.getElementById('rankAlert'),
+            classRankAlert: document.getElementById('classRankAlert'),
+            gradeRankAlert: document.getElementById('gradeRankAlert'),
             avgScoreTable: document.getElementById('avgScoreTable'),
             scoreTabs: document.getElementById('scoreTabs'),
             scoreChart: document.getElementById('scoreChart')
@@ -281,24 +302,35 @@
                         throw new Error('未识别到有效成绩字段，请检查文件格式');
                     }
 
-                    // 3. 验证姓名和学号是否存在
+                    // 3. 确定总分字段（用于排名计算）
+                    totalField = scoreFields.find(field => field.includes('总分')) || scoreFields[scoreFields.length - 1];
+
+                    // 4. 验证姓名和学号是否存在，并获取班级信息
                     const [, ...scores] = allScoreData;
+                    const nameIndex = header.indexOf('姓名');
+                    const noIndex = header.indexOf('学号');
+                    const classIndex = header.indexOf('班级'); // 班级字段索引（可能不存在）
+
                     const userScore = scores.find(row => 
-                        row[header.indexOf('学号')]?.toString().trim() === elements.userNo.value.trim() && 
-                        row[header.indexOf('姓名')]?.toString().trim() === elements.userName.value.trim()
+                        row[noIndex]?.toString().trim() === elements.userNo.value.trim() && 
+                        row[nameIndex]?.toString().trim() === elements.userName.value.trim()
                     );
 
                     if (!userScore) {
                         throw new Error('未找到该用户的成绩，请检查姓名和学号是否正确');
                     }
+
+                    // 存储当前用户信息（含班级）
                     currentUser = {
                         name: elements.userName.value.trim(),
                         no: elements.userNo.value.trim(),
-                        score: userScore
+                        class: classIndex !== -1 ? userScore[classIndex]?.toString().trim() || '未知班级' : '无班级信息',
+                        score: userScore,
+                        totalScore: parseFloat(userScore[header.indexOf(totalField)]) || 0
                     };
 
-                    // 4. 验证成功，展示结果
-                    renderAllResults();
+                    // 5. 验证成功，展示结果
+                    renderAllResults(header, scores);
                     elements.resultArea.classList.remove('hidden');
                     elements.verifyBtn.textContent = '验证成功';
 
@@ -396,14 +428,13 @@
         }
 
         /**
-         * 渲染所有结果（个人成绩+平均分+分布图表）
+         * 渲染所有结果（个人成绩+平均分+分布图表+排名）
          */
-        function renderAllResults() {
-            const [header, ...scores] = allScoreData;
-            
-            // 1. 显示用户信息
+        function renderAllResults(header, scores) {
+            // 1. 显示用户信息（含班级）
             elements.displayName.textContent = currentUser.name;
             elements.displayNo.textContent = currentUser.no;
+            elements.displayClass.textContent = currentUser.class;
 
             // 2. 渲染个人成绩（仅显示有效成绩字段）
             let userScoreHtml = '';
@@ -427,7 +458,10 @@
             });
             elements.avgScoreTable.innerHTML = avgHtml;
 
-            // 4. 生成成绩分布切换按钮并渲染图表
+            // 4. 计算并显示班级排名和年级排名
+            calculateAndShowRanks(header, scores);
+
+            // 5. 生成成绩分布切换按钮并渲染图表
             renderScoreDistribution(header, scores);
         }
 
@@ -442,8 +476,9 @@
 
             scores.forEach(row => {
                 // 过滤无效行（无学号或姓名）
-                const hasUserInfo = row[header.indexOf('学号')]?.toString().trim() && 
-                                   row[header.indexOf('姓名')]?.toString().trim();
+                const nameIndex = header.indexOf('姓名');
+                const noIndex = header.indexOf('学号');
+                const hasUserInfo = row[noIndex]?.toString().trim() && row[nameIndex]?.toString().trim();
                 if (!hasUserInfo) return;
 
                 validCount++;
@@ -463,13 +498,54 @@
         }
 
         /**
+         * 计算并显示班级排名和年级排名
+         */
+        function calculateAndShowRanks(header, scores) {
+            const totalIndex = header.indexOf(totalField);
+            const classIndex = header.indexOf('班级');
+            const nameIndex = header.indexOf('姓名');
+            const noIndex = header.indexOf('学号');
+
+            // 1. 筛选有效成绩（排除空数据）
+            const validScores = scores.filter(row => {
+                const hasUserInfo = row[noIndex]?.toString().trim() && row[nameIndex]?.toString().trim();
+                const hasTotalScore = !isNaN(parseFloat(row[totalIndex]));
+                return hasUserInfo && hasTotalScore;
+            });
+
+            // 2. 计算年级排名
+            const gradeScores = validScores.map(row => parseFloat(row[totalIndex])).sort((a, b) => b - a);
+            const gradeRank = gradeScores.indexOf(currentUser.totalScore) + 1;
+            elements.gradeRankAlert.textContent = 
+                `年级${totalField}排名：${currentUser.totalScore}，在${gradeScores.length}人中排名第${gradeRank}名`;
+
+            // 3. 计算班级排名（如果存在班级字段）
+            if (classIndex !== -1) {
+                // 筛选同班级的有效成绩
+                const classScores = validScores
+                    .filter(row => row[classIndex]?.toString().trim() === currentUser.class)
+                    .map(row => parseFloat(row[totalIndex]))
+                    .sort((a, b) => b - a);
+                
+                const classRank = classScores.indexOf(currentUser.totalScore) + 1;
+                elements.classRankAlert.textContent = 
+                    `班级${totalField}排名：${currentUser.totalScore}，在${classScores.length}人中排名第${classRank}名`;
+            } else {
+                // 无班级字段时隐藏班级排名
+                elements.classRankAlert.textContent = '未提供班级信息，无法计算班级排名';
+                elements.classRankAlert.classList.add('bg-amber-50', 'text-amber-800', 'border-amber-200');
+                elements.classRankAlert.classList.remove('alert-success');
+            }
+        }
+
+        /**
          * 渲染成绩分布（动态生成按钮+图表）
          */
         function renderScoreDistribution(header, scores) {
             // 1. 动态生成切换按钮（默认激活"总分"）
             elements.scoreTabs.innerHTML = '';
             scoreFields.forEach((field, index) => {
-                const isTotal = field.includes('总分'); // 识别总分字段
+                const isTotal = field === totalField; // 激活总分字段
                 const btn = document.createElement('button');
                 btn.className = `btn-tab ${isTotal ? 'active' : ''}`;
                 btn.textContent = field;
@@ -491,14 +567,63 @@
         }
 
         /**
-         * 更新成绩分布图表
+         * 动态计算分数区间（核心改进点）
+         * @param {Array} scores - 该题型的所有有效分数
+         * @returns {Object} - 包含区间标签和每个区间的边界值
+         */
+        function calculateDynamicBins(scores) {
+            if (scores.length === 0) return { labels: [], bins: [] };
+            
+            // 1. 计算分数的最小值、最大值和极差
+            const min = Math.min(...scores);
+            const max = Math.max(...scores);
+            const range = max - min;
+
+            // 2. 特殊情况处理：所有分数相同
+            if (range === 0) {
+                return {
+                    labels: [`${min}`],
+                    bins: [[min - 0.5, min + 0.5]] // 单个区间包含该分数
+                };
+            }
+
+            // 3. 动态确定区间数量（根据数据量和极差调整）
+            let binCount = config.distribution.defaultBins;
+            // 数据量少则减少区间，数据量大则适当增加（最多8个）
+            if (scores.length < 20) binCount = 3;
+            else if (scores.length > 100) binCount = Math.min(8, binCount + 2);
+
+            // 4. 计算区间步长（向上取整确保覆盖所有数据）
+            const step = Math.ceil(range / (binCount - 1) * 10) / 10; // 保留一位小数
+
+            // 5. 生成区间边界和标签
+            const bins = [];
+            const labels = [];
+            let current = min;
+            
+            for (let i = 0; i < binCount; i++) {
+                const next = i === binCount - 1 ? max + 0.1 : current + step; // 最后一个区间包含最大值
+                bins.push([current, next]);
+                labels.push(`${current.toFixed(1)}-${next.toFixed(1)}`);
+                current = next;
+            }
+
+            return { labels, bins };
+        }
+
+        /**
+         * 更新成绩分布图表（使用动态区间）
          */
         function updateScoreChart(header, scores, field) {
             const fieldIndex = header.indexOf(field);
+            const nameIndex = header.indexOf('姓名');
+            const noIndex = header.indexOf('学号');
+
             // 收集该字段的所有有效分数
             const allScores = scores
+                .filter(row => row[noIndex]?.toString().trim() && row[nameIndex]?.toString().trim()) // 过滤无效行
                 .map(row => parseFloat(row[fieldIndex]))
-                .filter(score => !isNaN(score) && score >= 0);
+                .filter(score => !isNaN(score) && score !== null);
 
             if (allScores.length === 0) {
                 // 清空图表
@@ -508,12 +633,13 @@
                 return;
             }
 
-            // 定义分数段（自动适配0-100分）
-            const scoreRanges = ['0-59', '60-69', '70-79', '80-89', '90-100'];
-            const rangeCounts = scoreRanges.map(range => {
-                const [min, max] = range.split('-').map(Number);
-                return allScores.filter(score => score >= min && score <= max).length;
-            });
+            // 动态计算区间
+            const { labels, bins } = calculateDynamicBins(allScores);
+
+            // 统计每个区间的人数
+            const rangeCounts = bins.map(([min, max]) => 
+                allScores.filter(score => score >= min && score < max).length
+            );
 
             // 绘制图表
             if (window.scoreChartInstance) {
@@ -522,7 +648,7 @@
             window.scoreChartInstance = new Chart(elements.scoreChart, {
                 type: 'bar',
                 data: {
-                    labels: scoreRanges,
+                    labels: labels,
                     datasets: [{
                         label: `${field}分布（人数）`,
                         data: rangeCounts,
@@ -537,17 +663,16 @@
                         y: { 
                             beginAtZero: true, 
                             ticks: { precision: 0 } // 人数为整数
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: '分数区间'
+                            }
                         }
                     }
                 }
             });
-
-            // 计算并显示当前用户在该字段的排名
-            const userScore = parseFloat(currentUser.score[fieldIndex]) || 0;
-            const sortedScores = [...allScores].sort((a, b) => b - a);
-            const userRank = sortedScores.indexOf(userScore) + 1;
-            elements.rankAlert.textContent = 
-                `你的${field}：${userScore}，在${sortedScores.length}人中排名第${userRank}名`;
         }
 
         /**
