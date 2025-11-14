@@ -4,70 +4,127 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>成绩查询系统</title>
-    <!-- 引入依赖库 -->
-    <script src="https://cdn.tailwindcss.com"></script> <!-- 样式 -->
-    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script> <!-- 解密 -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script> <!-- 图表 -->
+    <!-- 外部依赖 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
     <style>
-        .module { border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
-        .btn-primary { background: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; border: none; }
-        .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
-        .result-hide { display: none; }
-        .alert { padding: 1rem; border-radius: 4px; margin-bottom: 1rem; }
-        .alert-success { background: #ecfdf5; color: #059669; }
-        .alert-error { background: #fef2f2; color: #dc2626; }
+        .module {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .module:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: #1d4ed8;
+        }
+        .btn-primary:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            transition: opacity 0.3s;
+        }
+        .alert-success {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #d1fae5;
+        }
+        .alert-error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fee2e2;
+        }
+        .hidden {
+            display: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem;
+        }
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+        }
     </style>
 </head>
-<body class="max-w-6xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-center mb-8">成绩查询系统</h1>
+<body class="max-w-6xl mx-auto px-4 py-8 bg-gray-50">
+    <header class="text-center mb-10">
+        <h1 class="text-3xl font-bold text-gray-800">成绩查询系统</h1>
+        <p class="text-gray-600 mt-2">安全查询加密的考试成绩数据</p>
+    </header>
 
-    <!-- 1. 选择成绩文件模块 -->
+    <!-- 1. 文件选择模块 -->
     <div class="module">
-        <h2 class="text-xl font-semibold mb-4">1. 选择成绩文件</h2>
-        <div class="alert alert-error" id="fileAlert" style="display: none;"></div>
-        <label for="scoreFile" class="block mb-2 font-medium">请选择考试成绩文件：</label>
-        <select id="scoreFile" class="w-full p-2 border border-gray-300 rounded mb-4">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">1. 选择成绩文件</h2>
+        <div class="alert alert-error hidden" id="fileAlert"></div>
+        <label for="scoreFile" class="block mb-2 font-medium text-gray-700">请选择考试成绩文件：</label>
+        <select id="scoreFile" class="w-full p-2 border border-gray-300 rounded mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             <option value="">加载中...</option>
         </select>
+        <p class="text-sm text-gray-500">提示：文件需为加密后的JSON格式（_encrypted.json后缀）</p>
     </div>
 
     <!-- 2. 密码验证模块 -->
     <div class="module">
-        <h2 class="text-xl font-semibold mb-4">2. 验证查询密码</h2>
-        <div class="alert alert-error" id="pwdAlert" style="display: none;"></div>
-        <label for="queryPwd" class="block mb-2 font-medium">请输入成绩查询密码：</label>
-        <input type="password" id="queryPwd" placeholder="输入加密时设置的密码" class="w-full p-2 border border-gray-300 rounded mb-4">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">2. 验证查询密码</h2>
+        <div class="alert alert-error hidden" id="pwdAlert"></div>
+        <label for="queryPwd" class="block mb-2 font-medium text-gray-700">请输入成绩查询密码：</label>
+        <input type="password" id="queryPwd" placeholder="输入加密时设置的密码（8-16位）" 
+               class="w-full p-2 border border-gray-300 rounded mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
         <button id="decryptBtn" class="btn-primary" disabled>验证密码并加载成绩</button>
     </div>
 
     <!-- 3. 个人成绩查询模块 -->
-    <div class="module result-hide" id="queryModule">
-        <h2 class="text-xl font-semibold mb-4">3. 查询个人成绩</h2>
-        <div class="alert alert-error" id="userAlert" style="display: none;"></div>
+    <div class="module hidden" id="queryModule">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">3. 查询个人成绩</h2>
+        <div class="alert alert-error hidden" id="userAlert"></div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-                <label for="userName" class="block mb-2 font-medium">姓名：</label>
-                <input type="text" id="userName" placeholder="输入你的姓名" class="w-full p-2 border border-gray-300 rounded">
+                <label for="userName" class="block mb-2 font-medium text-gray-700">姓名：</label>
+                <input type="text" id="userName" placeholder="请输入姓名" 
+                       class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div>
-                <label for="userNo" class="block mb-2 font-medium">学号：</label>
-                <input type="text" id="userNo" placeholder="输入你的学号" class="w-full p-2 border border-gray-300 rounded">
+                <label for="userNo" class="block mb-2 font-medium text-gray-700">学号：</label>
+                <input type="text" id="userNo" placeholder="请输入学号" 
+                       class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
         </div>
         <button id="searchBtn" class="btn-primary">查询我的成绩</button>
 
         <!-- 个人成绩展示区 -->
-        <div class="mt-6 result-hide" id="userScoreArea">
-            <h3 class="text-lg font-semibold mb-3">个人成绩详情</h3>
-            <table class="w-full border-collapse mb-4">
+        <div class="mt-6 hidden" id="userScoreArea">
+            <h3 class="text-lg font-semibold mb-3 text-gray-800">个人成绩详情</h3>
+            <table class="mb-4">
                 <thead>
-                    <tr class="bg-gray-100">
-                        <th class="border border-gray-300 p-2 text-left">项目</th>
-                        <th class="border border-gray-300 p-2 text-left">得分</th>
+                    <tr>
+                        <th class="text-left">项目</th>
+                        <th class="text-left">得分</th>
                     </tr>
                 </thead>
                 <tbody id="userScoreTable">
-                    <!-- 个人成绩将动态插入这里 -->
+                    <!-- 动态插入成绩数据 -->
                 </tbody>
             </table>
             <div class="alert alert-success" id="rankAlert"></div>
@@ -75,317 +132,342 @@
     </div>
 
     <!-- 4. 成绩统计分析模块 -->
-    <div class="module result-hide" id="statsModule">
-        <h2 class="text-xl font-semibold mb-4">4. 成绩统计分析</h2>
+    <div class="module hidden" id="statsModule">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">4. 成绩统计分析</h2>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- 平均分展示 -->
             <div>
-                <h3 class="text-lg font-semibold mb-3">各题及总分平均分</h3>
-                <table class="w-full border-collapse">
+                <h3 class="text-lg font-semibold mb-3 text-gray-800">各题及总分平均分</h3>
+                <table>
                     <thead>
-                        <tr class="bg-gray-100">
-                            <th class="border border-gray-300 p-2 text-left">项目</th>
-                            <th class="border border-gray-300 p-2 text-left">平均分</th>
+                        <tr>
+                            <th class="text-left">项目</th>
+                            <th class="text-left">平均分</th>
                         </tr>
                     </thead>
                     <tbody id="avgScoreTable">
-                        <!-- 平均分数据将动态插入这里 -->
+                        <!-- 动态插入平均分数据 -->
                     </tbody>
                 </table>
             </div>
             <!-- 成绩分布图 -->
             <div>
-                <h3 class="text-lg font-semibold mb-3">总分成绩分布</h3>
+                <h3 class="text-lg font-semibold mb-3 text-gray-800">总分成绩分布</h3>
                 <canvas id="scoreChart" height="250"></canvas>
             </div>
         </div>
     </div>
 
-    <!-- 底部加密工具链接（适配scorecheck子文件夹路径） -->
-    <div class="text-center mt-12 text-gray-600">
-        <a href="excel_encryptor.html" target="_blank" class="text-blue-600 underline hover:text-blue-800">
-            前往成绩文件加密工具 →
+    <!-- 底部链接 -->
+    <footer class="text-center mt-12 text-gray-600">
+        <a href="excel_encryptor.html" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
+            成绩文件加密工具 →
         </a>
-    </div>
+        <p class="mt-2 text-sm">数据存储在本地，不会上传至服务器</p>
+    </footer>
 
     <script>
-        // 全局变量：存储解密后的全量成绩数据
-        let allScoreData = null;
-        // 你的GitHub仓库配置（已按需求填写，无需修改）
-        const GITHUB_CONFIG = {
-            username: "gaoqy219",    // 你的GitHub用户名
-            repo: "SMBU",            // 你的仓库名
-            branch: "main",          // 仓库分支（默认main）
-            folder: "ScoreCheck"     // 成绩查询页所在子文件夹
+        // 全局配置与状态
+        const config = {
+            github: {
+                username: "gaoqy219",
+                repo: "SMBU",
+                branch: "main",
+                folder: "ScoreCheck"
+            },
+            encryption: {
+                iv: CryptoJS.enc.Utf8.parse('1234567890abcdef') // 固定偏移量，需与加密端一致
+            }
+        };
+        let allScoreData = null; // 存储解密后的全量成绩数据
+
+        // DOM元素
+        const elements = {
+            fileSelect: document.getElementById('scoreFile'),
+            fileAlert: document.getElementById('fileAlert'),
+            queryPwd: document.getElementById('queryPwd'),
+            decryptBtn: document.getElementById('decryptBtn'),
+            pwdAlert: document.getElementById('pwdAlert'),
+            queryModule: document.getElementById('queryModule'),
+            statsModule: document.getElementById('statsModule'),
+            userName: document.getElementById('userName'),
+            userNo: document.getElementById('userNo'),
+            searchBtn: document.getElementById('searchBtn'),
+            userAlert: document.getElementById('userAlert'),
+            userScoreArea: document.getElementById('userScoreArea'),
+            userScoreTable: document.getElementById('userScoreTable'),
+            rankAlert: document.getElementById('rankAlert'),
+            avgScoreTable: document.getElementById('avgScoreTable'),
+            scoreChart: document.getElementById('scoreChart')
         };
 
-        // 页面加载完成后执行
+        // 初始化
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. 加载scorecheck文件夹下的_encrypted.json文件列表
             loadEncryptedFiles();
-            // 2. 绑定密码输入框事件（输入后启用验证按钮）
-            const queryPwd = document.getElementById('queryPwd');
-            const decryptBtn = document.getElementById('decryptBtn');
-            queryPwd.addEventListener('input', () => {
-                decryptBtn.disabled = queryPwd.value.length < 8;
-            });
-            // 3. 绑定密码验证按钮事件
-            decryptBtn.addEventListener('click', decryptScoreFile);
-            // 4. 绑定个人成绩查询按钮事件
-            document.getElementById('searchBtn').addEventListener('click', searchUserScore);
+            bindEvents();
         });
 
         /**
-         * 1. 加载scorecheck文件夹下的_encrypted.json文件（通过GitHub API）
-         * 关键修改：API路径新增scorecheck文件夹参数，仅读取该文件夹下的文件
+         * 绑定所有事件处理函数
+         */
+        function bindEvents() {
+            // 密码输入验证
+            elements.queryPwd.addEventListener('input', () => {
+                elements.decryptBtn.disabled = elements.queryPwd.value.length < 8 || elements.queryPwd.value.length > 16;
+            });
+
+            // 解密按钮点击
+            elements.decryptBtn.addEventListener('click', decryptScoreFile);
+
+            // 查询按钮点击
+            elements.searchBtn.addEventListener('click', searchUserScore);
+        }
+
+        /**
+         * 加载SMBU/ScoreCheck目录下的加密文件列表
          */
         async function loadEncryptedFiles() {
-            const fileSelect = document.getElementById('fileSelect');
-            const fileAlert = document.getElementById('fileAlert');
             try {
-                // GitHub API路径：指定读取scorecheck文件夹下的文件
-                const apiUrl = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.folder}?ref=${GITHUB_CONFIG.branch}`;
+                const apiUrl = `https://api.github.com/repos/${config.github.username}/${config.github.repo}/contents/${config.github.folder}?ref=${config.github.branch}`;
                 const response = await fetch(apiUrl);
-                
-                // 处理API返回错误（如文件夹不存在）
-                if (response.status === 404) throw new Error(`未找到${GITHUB_CONFIG.folder}文件夹，请检查目录是否正确`);
-                if (!response.ok) throw new Error('文件列表加载失败');
-                
+
+                if (response.status === 404) {
+                    throw new Error(`未找到${config.github.folder}文件夹，请检查路径是否正确`);
+                }
+                if (!response.ok) {
+                    throw new Error(`文件列表加载失败 (${response.status})`);
+                }
+
                 const files = await response.json();
-                // 筛选出scorecheck文件夹下的_encrypted.json文件
                 const encryptedFiles = files.filter(file => 
-                    file.name.includes('_encrypted.json') && file.type === 'file'
+                    file.name.endsWith('_encrypted.json') && file.type === 'file'
                 );
 
                 if (encryptedFiles.length === 0) {
-                    fileSelect.innerHTML = '<option value="">未找到任何成绩文件</option>';
-                    fileAlert.textContent = `${GITHUB_CONFIG.folder}文件夹下无可用的成绩文件，请先上传_encrypted.json文件`;
-                    fileAlert.style.display = 'block';
+                    elements.fileSelect.innerHTML = '<option value="">未找到任何成绩文件</option>';
+                    showAlert(elements.fileAlert, `${config.github.folder}文件夹下无可用的成绩文件，请先上传加密文件`, 'error');
                     return;
                 }
 
-                // 生成文件下拉选项（value为文件下载URL，文本为简化后的文件名）
-                let optionHtml = '<option value="">请选择成绩文件</option>';
+                // 生成下拉选项
+                let options = '<option value="">请选择成绩文件</option>';
                 encryptedFiles.forEach(file => {
-                    const fileName = file.name.replace('_encrypted.json', ''); // 去掉后缀，简化显示
-                    optionHtml += `<option value="${file.download_url}">${fileName}</option>`;
+                    const fileName = file.name.replace('_encrypted.json', '');
+                    options += `<option value="${file.download_url}">${fileName}</option>`;
                 });
-                fileSelect.innerHTML = optionHtml;
-                fileAlert.style.display = 'none';
+                elements.fileSelect.innerHTML = options;
+                hideAlert(elements.fileAlert);
 
             } catch (err) {
-                fileSelect.innerHTML = '<option value="">文件加载失败</option>';
-                fileAlert.textContent = `错误：${err.message}`;
-                fileAlert.style.display = 'block';
+                elements.fileSelect.innerHTML = '<option value="">文件加载失败</option>';
+                showAlert(elements.fileAlert, `错误：${err.message}`, 'error');
                 console.error('文件加载错误：', err);
             }
         }
 
         /**
-         * 2. 解密选择的成绩文件（无需修改，下载URL已通过API正确获取）
+         * 解密选中的成绩文件
          */
         async function decryptScoreFile() {
-            const fileSelect = document.getElementById('fileSelect');
-            const queryPwd = document.getElementById('queryPwd');
-            const decryptBtn = document.getElementById('decryptBtn');
-            const pwdAlert = document.getElementById('pwdAlert');
-            const queryModule = document.getElementById('queryModule');
-            const statsModule = document.getElementById('statsModule');
-
-            // 验证文件选择
-            if (!fileSelect.value) {
-                pwdAlert.textContent = '请先选择成绩文件';
-                pwdAlert.style.display = 'block';
+            if (!elements.fileSelect.value) {
+                showAlert(elements.pwdAlert, '请先选择成绩文件', 'error');
                 return;
             }
 
             try {
-                decryptBtn.disabled = true;
-                decryptBtn.textContent = '解密中...';
-                pwdAlert.style.display = 'none';
+                // 状态更新
+                elements.decryptBtn.disabled = true;
+                elements.decryptBtn.textContent = '解密中...';
+                hideAlert(elements.pwdAlert);
 
-                // 1. 下载scorecheck文件夹下的加密JSON文件
-                const response = await fetch(fileSelect.value);
+                // 下载加密文件
+                const response = await fetch(elements.fileSelect.value);
                 if (!response.ok) throw new Error('文件下载失败');
                 const encryptedJson = await response.json();
 
-                // 2. 验证文件格式（需与加密网页输出格式一致）
+                // 验证文件格式
                 if (encryptedJson.type !== 'excel_encrypted' || !encryptedJson.data) {
                     throw new Error('无效的成绩文件格式');
                 }
 
-                // 3. AES解密（与加密网页算法完全一致）
-                const key = CryptoJS.MD5(queryPwd.value).toString(); // 密钥：密码MD5
-                const iv = CryptoJS.enc.Utf8.parse('1234567890abcdef'); // 固定偏移量
+                // 验证文件时效性（30天有效期）
+                const now = new Date().getTime();
+                const fileAgeDays = (now - encryptedJson.timestamp) / (1000 * 60 * 60 * 24);
+                if (fileAgeDays > 30) {
+                    throw new Error('成绩文件已过期，请联系管理员更新');
+                }
+
+                // AES解密
+                const key = CryptoJS.MD5(elements.queryPwd.value).toString();
                 const decrypted = CryptoJS.AES.decrypt(
                     encryptedJson.data,
                     CryptoJS.enc.Hex.parse(key),
-                    { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+                    { 
+                        iv: config.encryption.iv,
+                        mode: CryptoJS.mode.CBC,
+                        padding: CryptoJS.pad.Pkcs7
+                    }
                 );
-                // 解密后转为JSON数组（Excel原始数据）
+
+                // 解析解密后的数据
                 const decryptedStr = decrypted.toString(CryptoJS.enc.Utf8);
                 allScoreData = JSON.parse(decryptedStr);
 
-                // 4. 验证数据有效性（需包含表头和至少1条成绩）
+                // 验证数据有效性
                 if (!Array.isArray(allScoreData) || allScoreData.length < 2) {
                     throw new Error('成绩文件数据无效');
                 }
 
-                // 解密成功：显示查询和统计模块
-                queryModule.classList.remove('result-hide');
-                statsModule.classList.remove('result-hide');
-                // 生成成绩统计（平均分+分布图）
+                // 解密成功处理
+                elements.queryModule.classList.remove('hidden');
+                elements.statsModule.classList.remove('hidden');
                 generateScoreStats();
-                decryptBtn.textContent = '密码验证成功';
+                elements.decryptBtn.textContent = '密码验证成功';
 
             } catch (err) {
-                pwdAlert.textContent = `解密失败：${err.message}（可能是密码错误或文件损坏）`;
-                pwdAlert.style.display = 'block';
-                decryptBtn.textContent = '重新验证密码';
-                decryptBtn.disabled = false;
+                showAlert(elements.pwdAlert, `解密失败：${err.message}（可能是密码错误或文件损坏）`, 'error');
+                elements.decryptBtn.textContent = '重新验证密码';
+                elements.decryptBtn.disabled = false;
                 console.error('解密错误：', err);
             }
         }
 
         /**
-         * 3. 生成成绩统计（平均分+分布图）（无需修改）
+         * 生成成绩统计数据（平均分和分布图）
          */
         function generateScoreStats() {
-            const avgScoreTable = document.getElementById('avgScoreTable');
-            const scoreChart = document.getElementById('scoreChart');
-            const [header, ...scores] = allScoreData; // 表头+成绩数据
+            const [header, ...scores] = allScoreData;
+            if (!header || scores.length === 0) return;
 
-            // 1. 计算各题及总分的平均分（跳过非数字得分）
+            // 计算平均分
             const avgScores = {};
-            // 初始化平均分对象（key：表头，value：总分）
             header.forEach(item => avgScores[item] = 0);
-            let validCount = 0; // 有效成绩条数（排除空数据）
+            let validCount = 0;
 
-            scores.forEach(scoreRow => {
-                // 跳过空行或无效行（假设学号/姓名不为空即为有效行）
-                const hasUserName = scoreRow[1]?.toString().trim() !== ''; // 第2列：姓名
-                const hasUserNo = scoreRow[0]?.toString().trim() !== '';   // 第1列：学号
-                if (!hasUserName || !hasUserNo) return;
+            scores.forEach(row => {
+                const hasUserInfo = row[0]?.toString().trim() && row[1]?.toString().trim();
+                if (!hasUserInfo) return;
 
                 validCount++;
-                // 累加每道题的得分
                 header.forEach((item, index) => {
-                    const score = parseFloat(scoreRow[index]);
+                    const score = parseFloat(row[index]);
                     if (!isNaN(score)) avgScores[item] += score;
                 });
             });
 
-            // 计算平均分（保留1位小数）
-            Object.keys(avgScores).forEach(key => {
-                avgScores[key] = validCount > 0 ? (avgScores[key] / validCount).toFixed(1) : '0.0';
-            });
-
-            // 2. 渲染平均分表格
+            // 渲染平均分表格
             let avgHtml = '';
             header.forEach(key => {
+                const avg = validCount > 0 ? (avgScores[key] / validCount).toFixed(1) : '0.0';
                 avgHtml += `<tr>
-                    <td class="border border-gray-300 p-2">${key}</td>
-                    <td class="border border-gray-300 p-2">${avgScores[key]}</td>
+                    <td>${key}</td>
+                    <td>${avg}</td>
                 </tr>`;
             });
-            avgScoreTable.innerHTML = avgHtml;
+            elements.avgScoreTable.innerHTML = avgHtml;
 
-            // 3. 生成总分成绩分布图（假设最后一列是总分）
+            // 生成成绩分布图
             const totalScoreIndex = header.length - 1;
             const totalScores = scores
                 .map(row => parseFloat(row[totalScoreIndex]))
-                .filter(score => !isNaN(score)); // 筛选有效总分
+                .filter(score => !isNaN(score));
 
-            if (totalScores.length === 0) return;
+            if (totalScores.length > 0) {
+                const scoreRanges = ['0-59', '60-69', '70-79', '80-89', '90-100'];
+                const rangeCounts = scoreRanges.map(range => {
+                    const [min, max] = range.split('-').map(Number);
+                    return totalScores.filter(score => score >= min && score <= max).length;
+                });
 
-            // 定义分数段（可根据需求调整）
-            const scoreRanges = ['0-59', '60-69', '70-79', '80-89', '90-100'];
-            const rangeCounts = scoreRanges.map(range => {
-                const [min, max] = range.split('-').map(Number);
-                return totalScores.filter(score => score >= min && score <= max).length;
-            });
-
-            // 渲染Chart.js图表
-            new Chart(scoreChart, {
-                type: 'bar',
-                data: {
-                    labels: scoreRanges,
-                    datasets: [{
-                        label: '人数',
-                        data: rangeCounts,
-                        backgroundColor: 'rgba(37, 99, 235, 0.7)',
-                        borderColor: 'rgba(37, 99, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: { beginAtZero: true, ticks: { precision: 0 } } // Y轴为整数（人数）
+                new Chart(elements.scoreChart, {
+                    type: 'bar',
+                    data: {
+                        labels: scoreRanges,
+                        datasets: [{
+                            label: '人数',
+                            data: rangeCounts,
+                            backgroundColor: 'rgba(37, 99, 235, 0.7)',
+                            borderColor: 'rgba(37, 99, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { 
+                                beginAtZero: true, 
+                                ticks: { precision: 0 } 
+                            }
+                        }
                     }
-                }
-            });
+                });
+            }
         }
 
         /**
-         * 4. 查询个人成绩（无需修改）
+         * 查询个人成绩
          */
         function searchUserScore() {
-            const userName = document.getElementById('userName').value.trim();
-            const userNo = document.getElementById('userNo').value.trim();
-            const userAlert = document.getElementById('userAlert');
-            const userScoreArea = document.getElementById('userScoreArea');
-            const userScoreTable = document.getElementById('userScoreTable');
-            const rankAlert = document.getElementById('rankAlert');
-            const [header, ...scores] = allScoreData; // 表头+所有成绩
-
-            // 1. 验证输入
+            const userName = elements.userName.value.trim();
+            const userNo = elements.userNo.value.trim();
+            
             if (!userName || !userNo) {
-                userAlert.textContent = '请输入姓名和学号';
-                userAlert.style.display = 'block';
-                userScoreArea.classList.add('result-hide');
+                showAlert(elements.userAlert, '请输入姓名和学号', 'error');
+                elements.userScoreArea.classList.add('hidden');
                 return;
             }
-            userAlert.style.display = 'none';
+            hideAlert(elements.userAlert);
 
-            // 2. 匹配个人成绩（第1列：学号，第2列：姓名，需与Excel格式一致）
+            const [header, ...scores] = allScoreData;
             const userScore = scores.find(row => 
                 row[0]?.toString().trim() === userNo && 
                 row[1]?.toString().trim() === userName
             );
 
             if (!userScore) {
-                userAlert.textContent = '未找到该用户的成绩，请检查姓名和学号是否正确';
-                userAlert.style.display = 'block';
-                userScoreArea.classList.add('result-hide');
+                showAlert(elements.userAlert, '未找到该用户的成绩，请检查姓名和学号是否正确', 'error');
+                elements.userScoreArea.classList.add('hidden');
                 return;
             }
 
-            // 3. 渲染个人成绩表格
+            // 渲染个人成绩
             let scoreHtml = '';
             header.forEach((item, index) => {
                 scoreHtml += `<tr>
-                    <td class="border border-gray-300 p-2">${item}</td>
-                    <td class="border border-gray-300 p-2 font-medium">${userScore[index] || '0'}</td>
+                    <td>${item}</td>
+                    <td class="font-medium">${userScore[index] || '-'}</td>
                 </tr>`;
             });
-            userScoreTable.innerHTML = scoreHtml;
+            elements.userScoreTable.innerHTML = scoreHtml;
 
-            // 4. 计算个人总分排名（假设最后一列是总分）
+            // 计算排名
             const totalScoreIndex = header.length - 1;
             const userTotal = parseFloat(userScore[totalScoreIndex]) || 0;
-            // 计算所有有效总分并排序（降序）
             const sortedTotals = scores
                 .map(row => parseFloat(row[totalScoreIndex]))
                 .filter(score => !isNaN(score))
                 .sort((a, b) => b - a);
-            // 找到个人排名（相同分数并列）
+            
             const userRank = sortedTotals.indexOf(userTotal) + 1;
-            const totalCount = sortedTotals.length;
+            elements.rankAlert.textContent = `你的总分：${userTotal}，在${sortedTotals.length}人中排名第${userRank}名`;
+            elements.userScoreArea.classList.remove('hidden');
+        }
 
-            // 5. 显示排名信息
-            rankAlert.textContent = `你的总分：${userTotal}，在${totalCount}人中排名第${userRank}名`;
-            userScoreArea.classList.remove('result-hide');
+        /**
+         * 显示提示信息
+         */
+        function showAlert(element, message, type) {
+            element.textContent = message;
+            element.classList.remove('hidden');
+            element.classList.add(`alert-${type}`);
+        }
+
+        /**
+         * 隐藏提示信息
+         */
+        function hideAlert(element) {
+            element.classList.add('hidden');
+            element.textContent = '';
         }
     </script>
 </body>
