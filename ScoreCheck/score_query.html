@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>成绩查询系统</title>
+    <title>成绩查询系统 Система просмотра результатов</title>
     <!-- 外部依赖 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
@@ -119,42 +119,41 @@
 <body class="max-w-6xl mx-auto px-4 py-8 bg-gray-50">
     <header class="text-center mb-10">
         <h1 class="text-3xl font-bold text-gray-800">成绩查询系统</h1>
-        <p class="text-gray-600 mt-2">安全查询加密的考试成绩数据</p>
+        <p class="text-gray-600 mt-2">Система просмотра результатов</p>
     </header>
 
     <!-- 1. 文件选择模块 -->
     <div class="module">
-        <h2 class="text-xl font-semibold mb-4 text-gray-800">1. 选择成绩文件</h2>
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">1. 选择考试科目 Выбор экзаменационных предметов</h2>
         <div class="alert alert-error hidden" id="fileAlert"></div>
-        <label for="scoreFile" class="block mb-2 font-medium text-gray-700">请选择考试成绩文件：</label>
+        <label for="scoreFile" class="block mb-2 font-medium text-gray-700">请从下面选择考试科目 Пожалуйста, выберите экзаменационные предметы из списка ниже：</label>
         <select id="scoreFile" class="w-full p-2 border border-gray-300 rounded mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             <option value="">加载中...</option>
         </select>
-        <p class="text-sm text-gray-500">提示：文件需为加密后的JSON格式（_encrypted.json后缀）</p>
     </div>
 
     <!-- 2. 三合一验证模块 -->
     <div class="module">
-        <h2 class="text-xl font-semibold mb-4 text-gray-800">2. 身份验证</h2>
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">2. 身份验证 Аутентификация</h2>
         <div class="alert alert-error hidden" id="verifyAlert"></div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-                <label for="queryPwd" class="block mb-2 font-medium text-gray-700">查询密码：</label>
-                <input type="password" id="queryPwd" placeholder="输入加密时设置的密码（8-16位）" 
+                <label for="queryPwd" class="block mb-2 font-medium text-gray-700">FID：</label>
+                <input type="password" id="queryPwd" placeholder="Пожалуйста, введите FID" 
                        class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div>
-                <label for="userName" class="block mb-2 font-medium text-gray-700">姓名：</label>
-                <input type="text" id="userName" placeholder="请输入姓名" 
+                <label for="userName" class="block mb-2 font-medium text-gray-700">姓名 Имя и фамилия：</label>
+                <input type="text" id="userName" placeholder="请输入姓名 Пожалуйста, введите ФИО" 
                        class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div>
-                <label for="userNo" class="block mb-2 font-medium text-gray-700">学号：</label>
-                <input type="text" id="userNo" placeholder="请输入学号" 
+                <label for="userNo" class="block mb-2 font-medium text-gray-700">学号 Студенческий номер：</label>
+                <input type="text" id="userNo" placeholder="请输入学号 Пожалуйста, введите студенческий номер" 
                        class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
         </div>
-        <button id="verifyBtn" class="btn-primary" disabled>验证信息并查询成绩</button>
+        <button id="verifyBtn" class="btn-primary" disabled>查询成绩 Просмотреть результаты</button>
     </div>
 
     <!-- 3. 结果展示区 -->
@@ -167,12 +166,12 @@
         </div>
 
         <div class="module">
-            <h2 class="text-xl font-semibold mb-4 text-gray-800">个人成绩详情</h2>
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">个人成绩详情 Личные детали результатов</h2>
             <table class="mb-4">
                 <thead>
                     <tr>
-                        <th class="text-left">项目</th>
-                        <th class="text-left">得分</th>
+                        <th class="text-left">项目 Пункты</th>
+                        <th class="text-left">得分 Баллы</th>
                     </tr>
                 </thead>
                 <tbody id="userScoreTable"></tbody>
@@ -184,15 +183,15 @@
         </div>
 
         <div class="module">
-            <h2 class="text-xl font-semibold mb-4 text-gray-800">成绩统计分析</h2>
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">成绩统计分析 Статистический анализ результатов экзаменов по курсам</h2>
             
             <div class="mb-6">
                 <h3 class="text-lg font-semibold mb-3 text-gray-800">各题及总分平均分</h3>
                 <table>
                     <thead>
                         <tr>
-                            <th class="text-left">项目</th>
-                            <th class="text-left">平均分</th>
+                            <th class="text-left">项目 Пункты</th>
+                            <th class="text-left">平均分 Средний балл</th>
                         </tr>
                     </thead>
                     <tbody id="avgScoreTable"></tbody>
@@ -200,7 +199,7 @@
             </div>
 
             <div>
-                <h3 class="text-lg font-semibold mb-3 text-gray-800">成绩分布</h3>
+                <h3 class="text-lg font-semibold mb-3 text-gray-800">成绩分布 Распределение баллов</h3>
                 <div id="scoreTabs" class="mb-4 flex flex-wrap gap-2"></div>
                 <div class="chart-container">
                     <canvas id="scoreChart"></canvas>
@@ -213,7 +212,7 @@
         <a href="excel_encryptor.html" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
             成绩文件加密工具 →
         </a>
-        <p class="mt-2 text-sm">数据存储在本地，不会上传至服务器</p>
+        <p class="mt-2 text-sm">版权所有 © 2025 ChingyuKao。保留追究侵权行为的权利。</p>
     </footer>
 
     <script>
