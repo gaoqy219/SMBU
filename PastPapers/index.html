@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>试题检索系统</title>
+    <!-- 外部依赖 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .module {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .module:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: #1d4ed8;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .alert-success {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #d1fae5;
+        }
+        .alert-error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fee2e2;
+        }
+        .hidden {
+            display: none;
+        }
+        .file-info {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f0f9ff;
+            border-radius: 6px;
+            border-left: 4px solid #3b82f6;
+        }
+        .file-list {
+            margin-top: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .file-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 1rem;
+            transition: all 0.2s ease;
+        }
+        .file-card:hover {
+            border-color: #2563eb;
+            background: #f8fafc;
+        }
+        .file-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #1e40af;
+        }
+        .file-card p {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 0.8rem;
+        }
+    </style>
+</head>
+<body class="max-w-6xl mx-auto px-4 py-8 bg-gray-50">
+    <header class="text-center mb-10">
+        <h1 class="text-3xl font-bold text-gray-800">试题检索系统</h1>
+        <p class="text-gray-600 mt-2">检索考试真题，点击直接练习</p>
+    </header>
+
+    <!-- 检索模块 -->
+    <div class="module">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">1. 筛选试题条件</h2>
+        <div class="alert alert-error hidden" id="fileAlert"></div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <!-- 考试时间筛选 -->
+            <div>
+                <label for="timeFilter" class="block mb-2 font-medium text-gray-700">考试时间</label>
+                <select id="timeFilter" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="all">全部时间</option>
+                </select>
+            </div>
+            <!-- 班级类型筛选 -->
+            <div>
+                <label for="classFilter" class="block mb-2 font-medium text-gray-700">班级类型</label>
+                <select id="classFilter" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="all">全部类型</option>
+                </select>
+            </div>
+            <!-- 考试课程筛选 -->
+            <div>
+                <label for="courseFilter" class="block mb-2 font-medium text-gray-700">考试课程</label>
+                <select id="courseFilter" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="all">全部课程</option>
+                </select>
+            </div>
+            <!-- 考试类型筛选 -->
+            <div>
+                <label for="typeFilter" class="block mb-2 font-medium text-gray-700">考试类型</label>
+                <select id="typeFilter" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="all">全部类型</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="alert alert-success hidden" id="countAlert"></div>
+        <!-- 试题列表展示 -->
+        <div class="file-list" id="fileListContainer">
+            <!-- 加载状态 -->
+            <div class="col-span-full text-center py-12 text-gray-500">
+                <i class="fa fa-spinner fa-spin fa-2x mb-3"></i>
+                <p>正在加载试题文件...</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center mt-12 text-gray-600">
+        <p class="text-sm">版权所有 © 2025 ChingyuKao</p>
+    </footer>
+
+    <script>
+        // 全局配置（替换为你的GitHub仓库信息）
+        const config = {
+            github: {
+                username: "gaoqy219", // 你的GitHub用户名
+                repo: "SMBU", // 仓库名
+                branch: "main", // 分支名
+                folder: "PastPapers", // 试题HTML所在目录（同目录即填部署后的目录名）
+            },
+            // 文件名解析规则：时间+班级类型+课程+考试类型.html
+            fileParseRule: {
+                separator: "+", // 分隔符
+                fields: ["time", "classType", "course", "examType"] // 字段顺序
+            }
+        };
+
+        // DOM元素
+        const elements = {
+            timeFilter: document.getElementById("timeFilter"),
+            classFilter: document.getElementById("classFilter"),
+            courseFilter: document.getElementById("courseFilter"),
+            typeFilter: document.getElementById("typeFilter"),
+            fileAlert: document.getElementById("fileAlert"),
+            countAlert: document.getElementById("countAlert"),
+            fileListContainer: document.getElementById("fileListContainer")
+        };
+
+        // 存储解析后的试题数据
+        let examData = [];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadExamFiles();
+            bindFilterEvents();
+        });
+
+        // 绑定筛选事件
+        function bindFilterEvents() {
+            [elements.timeFilter, elements.classFilter, elements.courseFilter, elements.typeFilter].forEach(filter => {
+                filter.addEventListener('change', filterExamFiles);
+            });
+        }
+
+        // 加载试题HTML文件列表
+        async function loadExamFiles() {
+            try {
+                // 1. 调用GitHub API获取目录文件列表
+                const apiUrl = `https://api.github.com/repos/${config.github.username}/${config.github.repo}/contents/${config.github.folder}?ref=${config.github.branch}`;
+                const response = await fetch(apiUrl);
+
+                // 错误处理
+                if (response.status === 404) throw new Error(`未找到${config.github.folder}目录，请检查仓库配置`);
+                if (!response.ok) throw new Error(`文件加载失败 (状态码：${response.status})`);
+
+                const files = await response.json();
+                // 2. 筛选：只保留.html结尾的试题文件
+                const examFiles = files.filter(file => 
+                    file.name.endsWith(".html") && file.type === "file"
+                );
+
+                if (examFiles.length === 0) {
+                    showAlert(elements.fileAlert, "未找到任何试题", "error");
+                    renderEmptyState();
+                    return;
+                }
+
+                // 3. 解析文件名（提取时间、班级、课程、考试类型）
+                examData = parseExamFilenames(examFiles);
+
+                // 4. 初始化筛选下拉框选项
+                initFilterOptions();
+
+                // 5. 渲染初始试题列表
+                renderExamFiles(examData);
+
+                // 显示结果计数
+                elements.countAlert.textContent = `共找到 ${examData.length} 个试题文件`;
+                elements.countAlert.classList.remove("hidden");
+
+            } catch (err) {
+                showAlert(elements.fileAlert, `加载失败：${err.message}`, "error");
+                renderEmptyState("加载失败，请稍后重试");
+            }
+        }
+
+        // 解析文件名（提取字段）
+        function parseExamFilenames(files) {
+            return files.map(file => {
+                // 移除.html后缀
+                const nameWithoutExt = file.name.replace(".html", "");
+                // 按分隔符分割字段
+                const parts = nameWithoutExt.split(config.fileParseRule.separator);
+                const parsed = {
+                    filename: file.name,
+                    downloadUrl: file.download_url, // HTML文件下载/访问链接
+                    rawName: file.name // 原始文件名
+                };
+
+                // 按规则赋值字段
+                config.fileParseRule.fields.forEach((field, index) => {
+                    parsed[field] = parts[index] || "未知";
+                });
+
+                // 格式化时间（8位数字→YYYY-MM-DD）
+                if (parsed.time && /^\d{8}$/.test(parsed.time)) {
+                    parsed.formattedTime = `${parsed.time.slice(0,4)}-${parsed.time.slice(4,6)}-${parsed.time.slice(6,8)}`;
+                } else {
+                    parsed.formattedTime = parsed.time;
+                }
+
+                return parsed;
+            });
+        }
+
+        // 初始化筛选下拉框选项
+        function initFilterOptions() {
+            // 提取不重复的字段值
+            const times = [...new Set(examData.map(item => item.time))].sort().reverse();
+            const classTypes = [...new Set(examData.map(item => item.classType))].sort();
+            const courses = [...new Set(examData.map(item => item.course))].sort();
+            const examTypes = [...new Set(examData.map(item => item.examType))].sort();
+
+            // 填充时间筛选
+            times.forEach(time => {
+                const option = document.createElement("option");
+                option.value = time;
+                option.textContent = examData.find(item => item.time === time).formattedTime;
+                elements.timeFilter.appendChild(option);
+            });
+
+            // 填充班级类型筛选
+            classTypes.forEach(type => {
+                const option = document.createElement("option");
+                option.value = type;
+                option.textContent = type;
+                elements.classFilter.appendChild(option);
+            });
+
+            // 填充课程筛选
+            courses.forEach(course => {
+                const option = document.createElement("option");
+                option.value = course;
+                option.textContent = course;
+                elements.courseFilter.appendChild(option);
+            });
+
+            // 填充考试类型筛选
+            examTypes.forEach(type => {
+                const option = document.createElement("option");
+                option.value = type;
+                option.textContent = type;
+                elements.typeFilter.appendChild(option);
+            });
+        }
+
+        // 筛选试题文件
+        function filterExamFiles() {
+            const selectedTime = elements.timeFilter.value;
+            const selectedClass = elements.classFilter.value;
+            const selectedCourse = elements.courseFilter.value;
+            const selectedType = elements.typeFilter.value;
+
+            // 筛选逻辑
+            const filtered = examData.filter(item => {
+                const timeMatch = selectedTime === "all" || item.time === selectedTime;
+                const classMatch = selectedClass === "all" || item.classType === selectedClass;
+                const courseMatch = selectedCourse === "all" || item.course === selectedCourse;
+                const typeMatch = selectedType === "all" || item.examType === selectedType;
+                return timeMatch && classMatch && courseMatch && typeMatch;
+            });
+
+            // 更新结果计数
+            elements.countAlert.textContent = `共找到 ${filtered.length} 个匹配试题文件`;
+
+            // 渲染筛选结果
+            if (filtered.length === 0) {
+                renderEmptyState("未找到匹配的试题文件");
+                return;
+            }
+
+            renderExamFiles(filtered);
+        }
+
+        // 渲染试题列表
+        function renderExamFiles(data) {
+            elements.fileListContainer.innerHTML = "";
+
+            data.forEach(item => {
+                const fileCard = document.createElement("div");
+                fileCard.className = "file-card";
+                fileCard.innerHTML = `
+                    <h3 class="font-medium hover:text-blue-600 transition">
+                        <a href="${item.downloadUrl}" target="_blank" rel="noopener noreferrer">${item.course}</a>
+                    </h3>
+                    <p><span class="font-semibold">班级：</span>${item.classType}</p>
+                    <p><span class="font-semibold">考试类型：</span>${item.examType}</p>
+                    <p><span class="font-semibold">考试时间：</span>${item.formattedTime}</p>
+                    <button onclick="window.open('${item.downloadUrl}', '_blank')" class="btn-primary w-full">
+                        打开试题
+                    </button>
+                `;
+                elements.fileListContainer.appendChild(fileCard);
+            });
+        }
+
+        // 渲染空状态
+        function renderEmptyState(text = "暂无试题文件") {
+            elements.fileListContainer.innerHTML = `
+                <div class="col-span-full text-center py-12 text-gray-500">
+                    <i class="fa fa-search fa-2x mb-3 opacity-30"></i>
+                    <p>${text}</p>
+                </div>
+            `;
+        }
+
+        // 提示信息工具
+        function showAlert(element, message, type) {
+            element.textContent = message;
+            element.classList.remove("hidden");
+            element.classList.add(`alert-${type}`);
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                element.classList.add("hidden");
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
