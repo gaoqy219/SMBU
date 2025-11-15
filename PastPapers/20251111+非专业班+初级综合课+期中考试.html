@@ -11,7 +11,7 @@
         .question-title i { margin-right: 0.5rem; color: #2563eb; }
         .translation { font-size: 0.9rem; color: #64748b; margin: 0.3rem 0 1rem; font-style: italic; }
         .question-list { list-style: none; padding: 0; margin: 0; }
-        .question-item { margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .question-item { margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
         .question-item > span { min-width: 30px; text-align: right; }
         .input-control { padding: 0.3rem 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.95rem; }
         .input-control:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1); }
@@ -25,9 +25,13 @@
         .word-bank { background-color: #f8fafc; padding: 0.8rem; border-radius: 4px; margin: 0.5rem 0 1rem; }
         .word-tag { display: inline-block; padding: 0.3rem 0.6rem; background-color: #e0f2fe; color: #0369a1; border-radius: 20px; margin: 0.3rem; font-size: 0.9rem; }
         .essay-hint { background-color: #f8fafc; padding: 0.8rem; border-radius: 4px; margin: 0.5rem 0 1rem; font-size: 0.95rem; }
-        .tone-select-group { display: flex; gap: 0.5rem; align-items: center; }
+        .tone-select-group { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
         .tone-select-item { display: flex; align-items: center; gap: 0.2rem; }
         .audio-container { margin-bottom: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: 6px; }
+        /* 得分显示样式 */
+        .score-display { margin-top: 1.2rem; padding: 0.8rem; background: #f0f9ff; border-left: 3px solid #2563eb; border-radius: 4px; font-size: 0.95rem; color: #1e40af; }
+        .score-correct { color: #059669; font-weight: 500; }
+        .score-incorrect { color: #dc2626; font-weight: 500; }
     </style>
 </head>
 <body class="max-w-7xl mx-auto px-4 py-6 bg-gray-50">
@@ -47,7 +51,7 @@
             <i class="fa fa-circle-o"></i>一、根据听到的音节填写声母（每个声母0.5分，共10分）
         </div>
         <p class="translation">Впишите начальные согласные в услышанные слоги (0,5 балла за каждую согласную, всего 10 баллов)</p>
-        <ul class="question-list" id="q1-list">
+        <ul class="question-list" id="q1-list" data-total-score="10" data-question-count="15">
             <li class="question-item"><span>1.</span> <input type="text" class="input-control w-10" data-answer="m">ò <span class="feedback"></span><span class="answer-hint"></span></li>
             <li class="question-item"><span>2.</span> <input type="text" class="input-control w-10" data-answer="h">óng <span class="feedback"></span><span class="answer-hint"></span></li>
             <li class="question-item"><span>3.</span> <input type="text" class="input-control w-10" data-answer="ch">uān <span class="feedback"></span><span class="answer-hint"></span></li>
@@ -65,6 +69,8 @@
             <li class="question-item"><span>15.</span> <input type="text" class="input-control w-10" data-answer="p">íng<input type="text" class="input-control w-10 ml-2" data-answer="g">uǒ <span class="feedback"></span><span class="answer-hint"></span></li>
         </ul>
         <button class="btn-submit" onclick="checkAnswers('q1-list')">提交答案并判分</button>
+        <!-- 得分显示区域 -->
+        <div class="score-display" style="display: none;"></div>
     </div>
 
     <!-- 第二大题：填韵母 -->
@@ -73,7 +79,7 @@
             <i class="fa fa-circle-o"></i>二、根据听到的音节填写韵母（每个韵母0.5分，共10分）
         </div>
         <p class="translation">Впишите финали (гласные части слогов) в услышанные слоги (0,5 балла за каждую финаль, всего 10 баллов)</p>
-        <ul class="question-list" id="q2-list">
+        <ul class="question-list" id="q2-list" data-total-score="10" data-question-count="15">
             <li class="question-item"><span>1.</span> l<input type="text" class="input-control w-10" data-answer="ǜ"> <span class="feedback"></span><span class="answer-hint"></span></li>
             <li class="question-item"><span>2.</span> h<input type="text" class="input-control w-10" data-answer="áo"> <span class="feedback"></span><span class="answer-hint"></span></li>
             <li class="question-item"><span>3.</span> zh<input type="text" class="input-control w-10" data-answer="ǎi"> <span class="feedback"></span><span class="answer-hint"></span></li>
@@ -91,6 +97,7 @@
             <li class="question-item"><span>15.</span> b<input type="text" class="input-control w-10" data-answer="ú">l<input type="text" class="input-control w-10 ml-2" data-answer="èi"> <span class="feedback"></span><span class="answer-hint"></span></li>
         </ul>
         <button class="btn-submit" onclick="checkAnswers('q2-list')">提交答案并判分</button>
+        <div class="score-display" style="display: none;"></div>
     </div>
 
     <!-- 第三大题：标声调（选择式） -->
@@ -99,7 +106,7 @@
             <i class="fa fa-circle-o"></i>三、根据听到的音节标声调（每个声调0.5分，共10分）
         </div>
         <p class="translation">Отметьте тона в услышанных слогах (0,5 балла за каждый тон, всего 10 баллов)</p>
-        <ul class="question-list" id="q3-list">
+        <ul class="question-list" id="q3-list" data-total-score="10" data-question-count="10">
             <!-- mingtian → míng tiān -->
             <li class="question-item">
                 <span>1.</span> 
@@ -392,6 +399,7 @@
             </li>
         </ul>
         <button class="btn-submit" onclick="checkAnswers('q3-list')">提交答案并判分</button>
+        <div class="score-display" style="display: none;"></div>
     </div>
 
     <!-- 第四大题："一""不"标调（选择式） -->
@@ -400,7 +408,7 @@
             <i class="fa fa-circle-o"></i>四、给下面的“一”和“不”标正确的声调（每个声调1分，共5分）
         </div>
         <p class="translation">Отметьте правильные тона для иероглифов «一» и «不», приведённых ниже (1 балл за каждый тон, всего 5 баллов)</p>
-        <ul class="question-list" id="q4-list">
+        <ul class="question-list" id="q4-list" data-total-score="5" data-question-count="5">
             <li class="question-item">
                 <span>1.</span> 我差一刻八点去教室上课。（yi）
                 <select class="select-control w-20 ml-2" data-answer="2">
@@ -460,6 +468,7 @@
             </li>
         </ul>
         <button class="btn-submit" onclick="checkAnswers('q4-list')">提交答案并判分</button>
+        <div class="score-display" style="display: none;"></div>
     </div>
 
     <!-- 第五大题：写拼音 -->
@@ -469,7 +478,7 @@
         </div>
         <p class="translation">Запишите пиньинь для слов, приведённых ниже (1 балл за каждое слово, всего 5 баллов)</p>
         <p class="text-sm text-gray-500 mb-2">例如：商场  shāngchǎng</p>
-        <ul class="question-list" id="q5-list">
+        <ul class="question-list" id="q5-list" data-total-score="5" data-question-count="5">
             <li class="question-item"><span>1.</span> 搬家 <input type="text" class="input-control w-32" data-answer="ban jia"> <span class="feedback"></span><span class="answer-hint"></span></li>
             <li class="question-item"><span>2.</span> 房间 <input type="text" class="input-control w-32" data-answer="fang jian"> <span class="feedback"></span><span class="answer-hint"></span></li>
             <li class="question-item"><span>3.</span> 安排 <input type="text" class="input-control w-32" data-answer="an pai"> <span class="feedback"></span><span class="answer-hint"></span></li>
@@ -477,6 +486,7 @@
             <li class="question-item"><span>5.</span> 洗澡 <input type="text" class="input-control w-32" data-answer="xi zao"> <span class="feedback"></span><span class="answer-hint"></span></li>
         </ul>
         <button class="btn-submit" onclick="checkAnswers('q5-list')">提交答案并判分</button>
+        <div class="score-display" style="display: none;"></div>
     </div>
 
     <!-- 第六大题：写汉字 -->
@@ -486,7 +496,7 @@
         </div>
         <p class="translation">Запишите соответствующие китайские иероглифы по данному пиньиню (1 балл за каждое слово, всего 10 баллов)</p>
         <p class="text-sm text-gray-500 mb-2">例如：jiàoshì  教室</p>
-        <ul class="question-list" id="q6-list">
+        <ul class="question-list" id="q6-list" data-total-score="10" data-question-count="10">
             <li class="question-item"><span>1.</span> ránhòu <input type="text" class="input-control w-24" data-answer="然后"> <span class="feedback"></span><span class="answer-hint"></span></li>
             <li class="question-item"><span>2.</span> kāfēi <input type="text" class="input-control w-24" data-answer="咖啡"> <span class="feedback"></span><span class="answer-hint"></span></li>
             <li class="question-item"><span>3.</span> xìngqù <input type="text" class="input-control w-24" data-answer="兴趣"> <span class="feedback"></span><span class="answer-hint"></span></li>
@@ -499,6 +509,7 @@
             <li class="question-item"><span>10.</span> miànbāo <input type="text" class="input-control w-24" data-answer="面包"> <span class="feedback"></span><span class="answer-hint"></span></li>
         </ul>
         <button class="btn-submit" onclick="checkAnswers('q6-list')">提交答案并判分</button>
+        <div class="score-display" style="display: none;"></div>
     </div>
 
     <!-- 第七大题：选词填空（下拉选择） -->
@@ -516,7 +527,7 @@
             <span class="word-tag">家</span>
             <span class="word-tag">本</span>
         </div>
-        <ul class="question-list" id="q7-list-1">
+        <ul class="question-list" id="q7-list-1" data-total-score="5" data-question-count="5">
             <li class="question-item"><span>1.</span> 林娜家有四
                 <select class="select-control w-12 ml-1" data-answer="口">
                     <option value="">选词语</option>
@@ -582,7 +593,7 @@
             <span class="word-tag">在</span>
             <span class="word-tag">又</span>
         </div>
-        <ul class="question-list" id="q7-list-2">
+        <ul class="question-list" id="q7-list-2" data-total-score="5" data-question-count="5">
             <li class="question-item"><span>6.</span> 他去年去日本了，今年
                 <select class="select-control w-12 ml-1" data-answer="又">
                     <option value="">选词语</option>
@@ -643,6 +654,8 @@
             <button class="btn-submit" onclick="checkAnswers('q7-list-1')">提交第一组答案</button>
             <button class="btn-submit" onclick="checkAnswers('q7-list-2')">提交第二组答案</button>
         </div>
+        <div class="score-display" id="q7-score-1" style="display: none;"></div>
+        <div class="score-display" id="q7-score-2" style="display: none;"></div>
     </div>
 
     <!-- 第八大题：连词成句 -->
@@ -652,7 +665,7 @@
         </div>
         <p class="translation">Составьте предложения из предложенных слов (2 балла за каждое задание, всего 10 баллов)</p>
         <p class="text-sm text-gray-500 mb-2">例如：早饭  我  了  吃 → 我吃早饭了。</p>
-        <ul class="question-list" id="q8-list">
+        <ul class="question-list" id="q8-list" data-total-score="10" data-question-count="5">
             <li class="question-item"><span>1.</span> 你  什么  做  昨天  了 → <input type="text" class="input-control w-64" data-answer="昨天你做什么了？,你昨天做什么了？">  <span class="feedback"></span><span class="answer-hint"></span></li>
             <li class="question-item"><span>2.</span> 一  红茶  我  杯  要 → <input type="text" class="input-control w-64" data-answer="我要一杯红茶。">  <span class="feedback"></span><span class="answer-hint"></span></li>
             <li class="question-item"><span>3.</span> 阿明  感  太极拳  很  对  兴趣 → <input type="text" class="input-control w-64" data-answer="阿明对太极拳很感兴趣。">  <span class="feedback"></span><span class="answer-hint"></span></li>
@@ -660,6 +673,7 @@
             <li class="question-item"><span>5.</span> 什么  有  安排  你  明年 → <input type="text" class="input-control w-64" data-answer="你明年有什么安排？,明年你有什么安排？">  <span class="feedback"></span><span class="answer-hint"></span></li>
         </ul>
         <button class="btn-submit" onclick="checkAnswers('q8-list')">提交答案并判分</button>
+        <div class="score-display" style="display: none;"></div>
     </div>
 
     <!-- 第九大题：完成对话（给参考答案） -->
@@ -724,13 +738,16 @@
     </div>
 
     <script>
-        // 客观题判分逻辑
+        // 客观题判分逻辑（取消弹窗，页面内显示得分）
         function checkAnswers(listId) {
             const list = document.getElementById(listId);
             const items = list.querySelectorAll('.question-item');
-            let total = items.length;
+            const totalScore = parseFloat(list.getAttribute('data-total-score'));
+            const questionCount = parseInt(list.getAttribute('data-question-count'));
+            const scorePerQ = totalScore / questionCount; // 每题分值
             let correctCount = 0;
 
+            // 遍历每题判分
             items.forEach(item => {
                 const inputs = item.querySelectorAll('.input-control, .select-control');
                 let isItemCorrect = true;
@@ -747,12 +764,12 @@
                     const isCorrect = answerList.includes(userAnswer);
                     if (!isCorrect) isItemCorrect = false;
 
-                    // 显示反馈
+                    // 输入框样式反馈（正确绿色，错误红色）
                     input.classList.remove('border-green-500', 'border-red-500');
                     input.classList.add(isCorrect ? 'border-green-500' : 'border-red-500');
                 });
 
-                // 显示整体反馈和正确答案
+                // 显示每题反馈（正确/错误）和正确答案
                 const feedback = item.querySelector('.feedback');
                 const answerHint = item.querySelector('.answer-hint');
                 
@@ -767,8 +784,24 @@
                 answerHint.textContent = `（正确答案：${correctAnswers.join(' ')}）`;
             });
 
-            // 显示大题得分
-            alert(`本大题共${total}题，正确${correctCount}题，得分：${(correctCount / total * 100).toFixed(1)}分`);
+            // 计算总分
+            const finalScore = (correctCount * scorePerQ).toFixed(1);
+            // 确定得分显示元素（第七大题分两组，单独匹配）
+            let scoreDisplay;
+            if (listId === 'q7-list-1') {
+                scoreDisplay = document.getElementById('q7-score-1');
+            } else if (listId === 'q7-list-2') {
+                scoreDisplay = document.getElementById('q7-score-2');
+            } else {
+                scoreDisplay = list.nextElementSibling.nextElementSibling; // 提交按钮后的得分区域
+            }
+
+            // 显示大题得分信息
+            scoreDisplay.style.display = 'block';
+            scoreDisplay.innerHTML = `
+                本大题得分：<span class="score-correct">${finalScore}</span> / ${totalScore} 分 
+                （共${questionCount}题，正确<span class="score-correct">${correctCount}</span>题，错误<span class="score-incorrect">${questionCount - correctCount}</span>题，每题${scorePerQ}分）
+            `;
         }
     </script>
 </body>
