@@ -41,7 +41,7 @@
         <audio controls class="w-full max-w-md">
             <source src="20251110+非专业班+初级综合课+期中考试.mp3" type="audio/mpeg">
             您的浏览器不支持音频播放，请更新浏览器版本。
-        </audio>
+        
         <p class="text-sm text-gray-500 mt-1">提示：请播放录音完成前三大题，可根据需要暂停或重复播放</p>
     </div>
 
@@ -617,7 +617,7 @@
                 去医院。 <span class="feedback"></span><span class="answer-hint"></span>
             </li>
             <li class="question-item"><span>8.</span> 他
-                <select class="select-control w-12 ml-1" data-answer="还">
+                <select class="select-control w-12 ml-1" data-answer="还,就"> <!-- 修正：支持“还”“就”双答案 -->
                     <option value="">选词语</option>
                     <option value="还">还</option>
                     <option value="就">就</option>
@@ -628,7 +628,7 @@
                 不知道这件事。 <span class="feedback"></span><span class="answer-hint"></span>
             </li>
             <li class="question-item"><span>9.</span> 我
-                <select class="select-control w-12 ml-1" data-answer="最">
+                <select class="select-control w-12 ml-1" data-answer="最,还"> <!-- 修正：支持“最”“还”双答案 -->
                     <option value="">选词语</option>
                     <option value="还">还</option>
                     <option value="就">就</option>
@@ -666,11 +666,11 @@
         <p class="translation">Составьте предложения из предложенных слов (2 балла за каждое задание, всего 10 баллов)</p>
         <p class="text-sm text-gray-500 mb-2">例如：早饭  我  了  吃 → 我吃早饭了。</p>
         <ul class="question-list" id="q8-list" data-total-score="10" data-question-count="5">
-            <li class="question-item"><span>1.</span> 你  什么  做  昨天  了 → <input type="text" class="input-control w-64" data-answer="昨天你做什么了？,你昨天做什么了？">  <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>1.</span> 你  什么  做  昨天  了 → <input type="text" class="input-control w-64" data-answer="昨天你做什么了？,你昨天做什么了？,你昨天做了什么,昨天你做了什么">  <span class="feedback"></span><span class="answer-hint"></span></li> <!-- 修正：4个答案都支持 -->
             <li class="question-item"><span>2.</span> 一  红茶  我  杯  要 → <input type="text" class="input-control w-64" data-answer="我要一杯红茶。">  <span class="feedback"></span><span class="answer-hint"></span></li>
             <li class="question-item"><span>3.</span> 阿明  感  太极拳  很  对  兴趣 → <input type="text" class="input-control w-64" data-answer="阿明对太极拳很感兴趣。">  <span class="feedback"></span><span class="answer-hint"></span></li>
             <li class="question-item"><span>4.</span> 非常  听说  漂亮  公园 → <input type="text" class="input-control w-64" data-answer="听说公园非常漂亮。">  <span class="feedback"></span><span class="answer-hint"></span></li>
-            <li class="question-item"><span>5.</span> 什么  有  安排  你  明年 → <input type="text" class="input-control w-64" data-answer="你明年有什么安排？,明年你有什么安排？">  <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>5.</span> 什么  有  安排  你  明年 → <input type="text" class="input-control w-64" data-answer="你明年有什么安排,明年你有什么安排">  <span class="feedback"></span><span class="answer-hint"></span></li> <!-- 修正：去掉问号，2个答案支持 -->
         </ul>
         <button class="btn-submit" onclick="checkAnswers('q8-list')">提交答案并判分</button>
         <div class="score-display" style="display: none;"></div>
@@ -705,7 +705,7 @@
         </ul>
     </div>
 
-    <!-- 第十大题：写作（给范文） -->
+    <!-- 第十大题：写作（给范文）- 修正：删除答题文本框 -->
     <div class="question-group">
         <div class="question-title">
             <i class="fa fa-circle-o"></i>十、根据要求，选择一个话题，写一段话（15分）
@@ -723,12 +723,9 @@
         <div class="essay-hint mt-2 bg-amber-50 border-l-2 border-amber-500">
             <p class="text-sm text-amber-800">要求Требования：1. 字数不少于60字；2. 字体工整，正确使用标点符号；3. 注意格式。</p>
         </div>
-        <!-- 答题区域 -->
-        <div class="mt-2 h-48 border border-gray-200 rounded p-2 mb-3">
-            请在此处书写答案...
-        </div>
+        <!-- 修正：删除“请在此处书写答案...”文本框 -->
         <!-- 范文展示 -->
-        <div class="bg-gray-50 p-3 rounded">
+        <div class="bg-gray-50 p-3 rounded mt-2">
             <p class="font-medium text-sm mb-1">范文1：《我的周末》</p>
             <p class="text-sm text-gray-700">我的周末很有意思。上午先起床吃早饭，然后看一会儿汉语书。下午常常找朋友一起玩，我们有时候去公园散步，有时候在宿舍聊天。晚上我会和家人视频通话，分享一周的生活。和朋友、家人在一起，我觉得很开心，周末过得特别快。（共86字）</p>
             
