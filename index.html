@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMBU 成绩查询入口</title>
+    <title>SMBU 在线工具平台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .container {
@@ -15,7 +15,7 @@
             width: 90%;
             max-width: 500px;
         }
-        .jump-btn {
+        .function-btn {
             background: #2563eb;
             color: white;
             padding: 1rem 2rem;
@@ -23,36 +23,46 @@
             font-size: 1.2rem;
             cursor: pointer;
             border: none;
-            margin-top: 2rem;
+            margin: 1rem 0.5rem;
             transition: background 0.3s;
+            width: 90%;
+            max-width: 300px;
         }
-        .jump-btn:hover {
+        .function-btn:hover {
             background: #1d4ed8;
         }
-        .auto-jump {
-            margin-top: 1rem;
+        .functions-container {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        .intro-text {
             color: #6b7280;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            margin-top: 1rem;
         }
     </style>
 </head>
 <body class="bg-gray-50">
     <div class="container">
-        <h1 class="text-3xl font-bold text-gray-800 mb-4">SMBU 成绩查询系统</h1>
-        <p class="text-gray-600 text-lg">点击下方按钮进入成绩查询页面</p>
-        <!-- 跳转按钮：指向scorecheck文件夹下的查询页 -->
-        <button class="jump-btn" onclick="window.location.href='./ScoreCheck/score_query.html'">
-            进入成绩查询 →
-        </button>
-        <!-- 自动跳转提示（可选） -->
-        <p class="auto-jump">若未自动跳转，将在5秒后自动进入...</p>
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">SMBU 在线工具平台</h1>
+        <p class="text-gray-600 text-lg">请选择需要使用的功能</p>
+        
+        <div class="functions-container">
+            <!-- 分数查询功能按钮 -->
+            <button class="function-btn" onclick="window.location.href='./ScoreCheck/index.html'">
+                成绩查询系统 →
+            </button>
+            
+            <!-- 真题练习功能按钮 -->
+            <button class="function-btn" onclick="window.location.href='./PastPapers/index.html'">
+                真题练习系统 →
+            </button>
+        </div>
+        
+        <p class="intro-text">更多实用工具正在开发中，敬请期待...</p>
     </div>
-
-    <!-- 5秒自动跳转脚本 -->
-    <script>
-        setTimeout(() => {
-            window.location.href = './ScoreCheck/score_query.html';
-        }, 5000);
-    </script>
 </body>
 </html>
