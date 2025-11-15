@@ -6,135 +6,506 @@
     <title>25级非专业班初级综合课期中考试</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .question-group { margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #eee; }
-        .question-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #1e40af; }
+        .question-group { margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid #eee; }
+        .question-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #1e40af; display: flex; align-items: center; }
+        .question-title i { margin-right: 0.5rem; color: #2563eb; }
         .translation { font-size: 0.9rem; color: #64748b; margin: 0.3rem 0 1rem; font-style: italic; }
         .question-list { list-style: none; padding: 0; margin: 0; }
-        .question-item { margin-bottom: 0.8rem; }
+        .question-item { margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .question-item > span { min-width: 30px; text-align: right; }
+        .input-control { padding: 0.3rem 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.95rem; }
+        .input-control:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1); }
+        .select-control { padding: 0.3rem 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.95rem; background: white; }
+        .btn-submit { margin-top: 1rem; padding: 0.5rem 1.2rem; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
+        .btn-submit:hover { background: #1d4ed8; }
+        .feedback { margin-left: 0.5rem; font-size: 0.9rem; font-weight: 500; }
+        .correct { color: #059669; }
+        .incorrect { color: #dc2626; }
+        .answer-hint { margin-left: 0.5rem; font-size: 0.9rem; color: #64748b; }
         .word-bank { background-color: #f8fafc; padding: 0.8rem; border-radius: 4px; margin: 0.5rem 0 1rem; }
         .word-tag { display: inline-block; padding: 0.3rem 0.6rem; background-color: #e0f2fe; color: #0369a1; border-radius: 20px; margin: 0.3rem; font-size: 0.9rem; }
         .essay-hint { background-color: #f8fafc; padding: 0.8rem; border-radius: 4px; margin: 0.5rem 0 1rem; font-size: 0.95rem; }
+        .tone-select-group { display: flex; gap: 0.5rem; align-items: center; }
+        .tone-select-item { display: flex; align-items: center; gap: 0.2rem; }
+        .audio-container { margin-bottom: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: 6px; }
     </style>
 </head>
 <body class="max-w-7xl mx-auto px-4 py-6 bg-gray-50">
-    <!-- 听力部分提示 -->
-    <div class="bg-amber-50 border-l-4 border-amber-500 p-3 mb-6">
-        <p class="text-amber-800">听录音完成以下题目，录音按考试要求播放指定遍数</p>
+    <!-- 听力音频播放区 -->
+    <div class="audio-container">
+        <h3 class="font-medium text-gray-800 mb-2">听力录音播放</h3>
+        <audio controls class="w-full max-w-md">
+            <source src="20251110+非专业班+初级综合课+期中考试.mp3" type="audio/mpeg">
+            您的浏览器不支持音频播放，请更新浏览器版本。
+        </audio>
+        <p class="text-sm text-gray-500 mt-1">提示：请播放录音完成前三大题，可根据需要暂停或重复播放</p>
     </div>
 
     <!-- 第一大题：填声母 -->
     <div class="question-group">
-        <div class="question-title">一、根据听到的音节填写声母（每个声母0.5分，共10分）</div>
+        <div class="question-title">
+            <i class="fa fa-circle-o"></i>一、根据听到的音节填写声母（每个声母0.5分，共10分）
+        </div>
         <p class="translation">Впишите начальные согласные в услышанные слоги (0,5 балла за каждую согласную, всего 10 баллов)</p>
-        <ul class="question-list">
-            <li class="question-item">1. ___ò</li>
-            <li class="question-item">2. ___óng</li>
-            <li class="question-item">3. ___uān</li>
-            <li class="question-item">4. ___èn</li>
-            <li class="question-item">5. ___iāng</li>
-            <li class="question-item">6. ___íng</li>
-            <li class="question-item">7. ___ǎi</li>
-            <li class="question-item">8. ___ào</li>
-            <li class="question-item">9. ___iā</li>
-            <li class="question-item">10. ___án</li>
-            <li class="question-item">11. ___iān___ào</li>
-            <li class="question-item">12. ___è___uān</li>
-            <li class="question-item">13. ___àn___ù</li>
-            <li class="question-item">14. ___ā___uò</li>
-            <li class="question-item">15. ___íng___uǒ</li>
+        <ul class="question-list" id="q1-list">
+            <li class="question-item"><span>1.</span> <input type="text" class="input-control w-10" data-answer="m">ò <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>2.</span> <input type="text" class="input-control w-10" data-answer="h">óng <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>3.</span> <input type="text" class="input-control w-10" data-answer="ch">uān <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>4.</span> <input type="text" class="input-control w-10" data-answer="sh">èn <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>5.</span> <input type="text" class="input-control w-10" data-answer="q">iāng <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>6.</span> <input type="text" class="input-control w-10" data-answer="x">íng <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>7.</span> <input type="text" class="input-control w-10" data-answer="b">ǎi <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>8.</span> <input type="text" class="input-control w-10" data-answer="r">ào <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>9.</span> <input type="text" class="input-control w-10" data-answer="j">iā <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>10.</span> <input type="text" class="input-control w-10" data-answer="y">án <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>11.</span> <input type="text" class="input-control w-10" data-answer="b">iān<input type="text" class="input-control w-10 ml-2" data-answer="p">ào <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>12.</span> <input type="text" class="input-control w-10" data-answer="k">è<input type="text" class="input-control w-10 ml-2" data-answer="g">uān <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>13.</span> <input type="text" class="input-control w-10" data-answer="z">àn<input type="text" class="input-control w-10 ml-2" data-answer="zh">ù <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>14.</span> <input type="text" class="input-control w-10" data-answer="ch">ā<input type="text" class="input-control w-10 ml-2" data-answer="c">uò <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>15.</span> <input type="text" class="input-control w-10" data-answer="p">íng<input type="text" class="input-control w-10 ml-2" data-answer="g">uǒ <span class="feedback"></span><span class="answer-hint"></span></li>
         </ul>
+        <button class="btn-submit" onclick="checkAnswers('q1-list')">提交答案并判分</button>
     </div>
 
     <!-- 第二大题：填韵母 -->
     <div class="question-group">
-        <div class="question-title">二、根据听到的音节填写韵母（每个韵母0.5分，共10分）</div>
+        <div class="question-title">
+            <i class="fa fa-circle-o"></i>二、根据听到的音节填写韵母（每个韵母0.5分，共10分）
+        </div>
         <p class="translation">Впишите финали (гласные части слогов) в услышанные слоги (0,5 балла за каждую финаль, всего 10 баллов)</p>
-        <ul class="question-list">
-            <li class="question-item">1. l___</li>
-            <li class="question-item">2. h___</li>
-            <li class="question-item">3. zh___</li>
-            <li class="question-item">4. j___</li>
-            <li class="question-item">5. x___</li>
-            <li class="question-item">6. t___</li>
-            <li class="question-item">7. y___</li>
-            <li class="question-item">8. t___</li>
-            <li class="question-item">9. ch___</li>
-            <li class="question-item">10. r___</li>
-            <li class="question-item">11. d___r___</li>
-            <li class="question-item">12. b___f___</li>
-            <li class="question-item">13. g___b___</li>
-            <li class="question-item">14. sh___t___</li>
-            <li class="question-item">15. b___l___</li>
+        <ul class="question-list" id="q2-list">
+            <li class="question-item"><span>1.</span> l<input type="text" class="input-control w-10" data-answer="ǜ"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>2.</span> h<input type="text" class="input-control w-10" data-answer="áo"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>3.</span> zh<input type="text" class="input-control w-10" data-answer="ǎi"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>4.</span> j<input type="text" class="input-control w-10" data-answer="iù"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>5.</span> x<input type="text" class="input-control w-10" data-answer="ué"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>6.</span> t<input type="text" class="input-control w-10" data-answer="óng"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>7.</span> y<input type="text" class="input-control w-10" data-answer="īng"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>8.</span> t<input type="text" class="input-control w-10" data-answer="ài"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>9.</span> ch<input type="text" class="input-control w-10" data-answer="uān"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>10.</span> r<input type="text" class="input-control w-10" data-answer="ú"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>11.</span> d<input type="text" class="input-control w-10" data-answer="à">r<input type="text" class="input-control w-10 ml-2" data-answer="én"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>12.</span> b<input type="text" class="input-control w-10" data-answer="ěi">f<input type="text" class="input-control w-10 ml-2" data-answer="ēng"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>13.</span> g<input type="text" class="input-control w-10" data-answer="uǎng">b<input type="text" class="input-control w-10 ml-2" data-answer="ō"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>14.</span> sh<input type="text" class="input-control w-10" data-answer="ēn">t<input type="text" class="input-control w-10 ml-2" data-answer="ǐ"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>15.</span> b<input type="text" class="input-control w-10" data-answer="ú">l<input type="text" class="input-control w-10 ml-2" data-answer="èi"> <span class="feedback"></span><span class="answer-hint"></span></li>
         </ul>
+        <button class="btn-submit" onclick="checkAnswers('q2-list')">提交答案并判分</button>
     </div>
 
-    <!-- 第三大题：标声调 -->
+    <!-- 第三大题：标声调（选择式） -->
     <div class="question-group">
-        <div class="question-title">三、根据听到的音节标声调（每个声调0.5分，共10分）</div>
+        <div class="question-title">
+            <i class="fa fa-circle-o"></i>三、根据听到的音节标声调（每个声调0.5分，共10分）
+        </div>
         <p class="translation">Отметьте тона в услышанных слогах (0,5 балла за каждый тон, всего 10 баллов)</p>
-        <ul class="question-list">
-            <li class="question-item">1. mingtian</li>
-            <li class="question-item">2. zhidao</li>
-            <li class="question-item">3. shengri</li>
-            <li class="question-item">4. kaishi</li>
-            <li class="question-item">5. xiangjiao</li>
-            <li class="question-item">6. kele</li>
-            <li class="question-item">7. bu he</li>
-            <li class="question-item">8. zuzhi</li>
-            <li class="question-item">9. tudi</li>
-            <li class="question-item">10. jiaoshi</li>
+        <ul class="question-list" id="q3-list">
+            <!-- mingtian → míng tiān -->
+            <li class="question-item">
+                <span>1.</span> 
+                <div class="tone-select-group">
+                    <div class="tone-select-item">
+                        ming 
+                        <select class="select-control w-16" data-answer="2">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                    <div class="tone-select-item">
+                        tian 
+                        <select class="select-control w-16" data-answer="1">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                </div>
+                <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <!-- zhidao → zhī dào -->
+            <li class="question-item">
+                <span>2.</span> 
+                <div class="tone-select-group">
+                    <div class="tone-select-item">
+                        zhi 
+                        <select class="select-control w-16" data-answer="1">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                    <div class="tone-select-item">
+                        dao 
+                        <select class="select-control w-16" data-answer="4">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                </div>
+                <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <!-- shengri → shēng rì -->
+            <li class="question-item">
+                <span>3.</span> 
+                <div class="tone-select-group">
+                    <div class="tone-select-item">
+                        sheng 
+                        <select class="select-control w-16" data-answer="1">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                    <div class="tone-select-item">
+                        ri 
+                        <select class="select-control w-16" data-answer="4">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                </div>
+                <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <!-- kaishi → kāi shǐ -->
+            <li class="question-item">
+                <span>4.</span> 
+                <div class="tone-select-group">
+                    <div class="tone-select-item">
+                        kai 
+                        <select class="select-control w-16" data-answer="1">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                    <div class="tone-select-item">
+                        shi 
+                        <select class="select-control w-16" data-answer="3">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                </div>
+                <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <!-- xiangjiao → xiāng jiāo -->
+            <li class="question-item">
+                <span>5.</span> 
+                <div class="tone-select-group">
+                    <div class="tone-select-item">
+                        xiang 
+                        <select class="select-control w-16" data-answer="1">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                    <div class="tone-select-item">
+                        jiao 
+                        <select class="select-control w-16" data-answer="1">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                </div>
+                <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <!-- kele → kě lè -->
+            <li class="question-item">
+                <span>6.</span> 
+                <div class="tone-select-group">
+                    <div class="tone-select-item">
+                        ke 
+                        <select class="select-control w-16" data-answer="3">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                    <div class="tone-select-item">
+                        le 
+                        <select class="select-control w-16" data-answer="4">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                </div>
+                <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <!-- bu he → bù hē -->
+            <li class="question-item">
+                <span>7.</span> 
+                <div class="tone-select-group">
+                    <div class="tone-select-item">
+                        bu 
+                        <select class="select-control w-16" data-answer="4">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                    <div class="tone-select-item">
+                        he 
+                        <select class="select-control w-16" data-answer="1">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                </div>
+                <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <!-- zuzhi → zǔ zhī -->
+            <li class="question-item">
+                <span>8.</span> 
+                <div class="tone-select-group">
+                    <div class="tone-select-item">
+                        zu 
+                        <select class="select-control w-16" data-answer="3">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                    <div class="tone-select-item">
+                        zhi 
+                        <select class="select-control w-16" data-answer="1">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                </div>
+                <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <!-- tudi → tǔ dì -->
+            <li class="question-item">
+                <span>9.</span> 
+                <div class="tone-select-group">
+                    <div class="tone-select-item">
+                        tu 
+                        <select class="select-control w-16" data-answer="3">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                    <div class="tone-select-item">
+                        di 
+                        <select class="select-control w-16" data-answer="4">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                </div>
+                <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <!-- jiaoshi → jiào shī -->
+            <li class="question-item">
+                <span>10.</span> 
+                <div class="tone-select-group">
+                    <div class="tone-select-item">
+                        jiao 
+                        <select class="select-control w-16" data-answer="4">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                    <div class="tone-select-item">
+                        shi 
+                        <select class="select-control w-16" data-answer="1">
+                            <option value="">选择声调</option>
+                            <option value="1">一声（ˉ）</option>
+                            <option value="2">二声（ˊ）</option>
+                            <option value="3">三声（ˇ）</option>
+                            <option value="4">四声（ˋ）</option>
+                            <option value="5">轻声（·）</option>
+                        </select>
+                    </div>
+                </div>
+                <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
         </ul>
+        <button class="btn-submit" onclick="checkAnswers('q3-list')">提交答案并判分</button>
     </div>
 
-    <!-- 第四大题："一""不"标调 -->
+    <!-- 第四大题："一""不"标调（选择式） -->
     <div class="question-group">
-        <div class="question-title">四、给下面的“一”和“不”标正确的声调（每个声调1分，共5分）</div>
+        <div class="question-title">
+            <i class="fa fa-circle-o"></i>四、给下面的“一”和“不”标正确的声调（每个声调1分，共5分）
+        </div>
         <p class="translation">Отметьте правильные тона для иероглифов «一» и «不», приведённых ниже (1 балл за каждый тон, всего 5 баллов)</p>
-        <ul class="question-list">
-            <li class="question-item">1. 我差一刻八点去教室上课。（yi）</li>
-            <li class="question-item">2. 星期天我们去爬山，你去不去？（bu）</li>
-            <li class="question-item">3. 我也想跟你们一起去。（yi）</li>
-            <li class="question-item">4. 明天我不上班。（bu）</li>
-            <li class="question-item">5. 这儿是第一教学楼，旁边是图书馆。（yi）</li>
+        <ul class="question-list" id="q4-list">
+            <li class="question-item">
+                <span>1.</span> 我差一刻八点去教室上课。（yi）
+                <select class="select-control w-20 ml-2" data-answer="2">
+                    <option value="">选择声调</option>
+                    <option value="1">一声（yī）</option>
+                    <option value="2">二声（yí）</option>
+                    <option value="3">三声（yǐ）</option>
+                    <option value="4">四声（yì）</option>
+                </select>
+                <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <li class="question-item">
+                <span>2.</span> 星期天我们去爬山，你去不去？（bu）
+                <select class="select-control w-20 ml-2" data-answer="5">
+                    <option value="">选择声调</option>
+                    <option value="1">一声（bū）</option>
+                    <option value="2">二声（bú）</option>
+                    <option value="3">三声（bǔ）</option>
+                    <option value="4">四声（bù）</option>
+                    <option value="5">轻声（bu）</option>
+                </select>
+                <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <li class="question-item">
+                <span>3.</span> 我也想跟你们一起去。（yi）
+                <select class="select-control w-20 ml-2" data-answer="4">
+                    <option value="">选择声调</option>
+                    <option value="1">一声（yī）</option>
+                    <option value="2">二声（yí）</option>
+                    <option value="3">三声（yǐ）</option>
+                    <option value="4">四声（yì）</option>
+                </select>
+                <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <li class="question-item">
+                <span>4.</span> 明天我不上班。（bu）
+                <select class="select-control w-20 ml-2" data-answer="2">
+                    <option value="">选择声调</option>
+                    <option value="1">一声（bū）</option>
+                    <option value="2">二声（bú）</option>
+                    <option value="3">三声（bǔ）</option>
+                    <option value="4">四声（bù）</option>
+                    <option value="5">轻声（bu）</option>
+                </select>
+                <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <li class="question-item">
+                <span>5.</span> 这儿是第一教学楼，旁边是图书馆。（yi）
+                <select class="select-control w-20 ml-2" data-answer="1">
+                    <option value="">选择声调</option>
+                    <option value="1">一声（yī）</option>
+                    <option value="2">二声（yí）</option>
+                    <option value="3">三声（yǐ）</option>
+                    <option value="4">四声（yì）</option>
+                </select>
+                <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
         </ul>
+        <button class="btn-submit" onclick="checkAnswers('q4-list')">提交答案并判分</button>
     </div>
 
     <!-- 第五大题：写拼音 -->
     <div class="question-group">
-        <div class="question-title">五、写出下列词语的拼音（每个词语1分，共5分）</div>
+        <div class="question-title">
+            <i class="fa fa-circle-o"></i>五、写出下列词语的拼音（每个词语1分，共5分）
+        </div>
         <p class="translation">Запишите пиньинь для слов, приведённых ниже (1 балл за каждое слово, всего 5 баллов)</p>
         <p class="text-sm text-gray-500 mb-2">例如：商场  shāngchǎng</p>
-        <ul class="question-list">
-            <li class="question-item">1. 搬家 __________</li>
-            <li class="question-item">2. 房间 __________</li>
-            <li class="question-item">3. 安排 __________</li>
-            <li class="question-item">4. 律师 __________</li>
-            <li class="question-item">5. 洗澡 __________</li>
+        <ul class="question-list" id="q5-list">
+            <li class="question-item"><span>1.</span> 搬家 <input type="text" class="input-control w-32" data-answer="ban jia"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>2.</span> 房间 <input type="text" class="input-control w-32" data-answer="fang jian"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>3.</span> 安排 <input type="text" class="input-control w-32" data-answer="an pai"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>4.</span> 律师 <input type="text" class="input-control w-32" data-answer="lv shi"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>5.</span> 洗澡 <input type="text" class="input-control w-32" data-answer="xi zao"> <span class="feedback"></span><span class="answer-hint"></span></li>
         </ul>
+        <button class="btn-submit" onclick="checkAnswers('q5-list')">提交答案并判分</button>
     </div>
 
     <!-- 第六大题：写汉字 -->
     <div class="question-group">
-        <div class="question-title">六、根据拼音写出对应的汉字（每个词语1分，共10分）</div>
+        <div class="question-title">
+            <i class="fa fa-circle-o"></i>六、根据拼音写出对应的汉字（每个词语1分，共10分）
+        </div>
         <p class="translation">Запишите соответствующие китайские иероглифы по данному пиньиню (1 балл за каждое слово, всего 10 баллов)</p>
         <p class="text-sm text-gray-500 mb-2">例如：jiàoshì  教室</p>
-        <ul class="question-list">
-            <li class="question-item">1. ránhòu __________</li>
-            <li class="question-item">2. kāfēi __________</li>
-            <li class="question-item">3. xìngqù __________</li>
-            <li class="question-item">4. qǐng kè __________</li>
-            <li class="question-item">5. mǎnyì __________</li>
-            <li class="question-item">6. dànshì __________</li>
-            <li class="question-item">7. diànyǐng __________</li>
-            <li class="question-item">8. sùshè __________</li>
-            <li class="question-item">9. yínháng __________</li>
-            <li class="question-item">10. miànbāo __________</li>
+        <ul class="question-list" id="q6-list">
+            <li class="question-item"><span>1.</span> ránhòu <input type="text" class="input-control w-24" data-answer="然后"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>2.</span> kāfēi <input type="text" class="input-control w-24" data-answer="咖啡"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>3.</span> xìngqù <input type="text" class="input-control w-24" data-answer="兴趣"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>4.</span> qǐng kè <input type="text" class="input-control w-24" data-answer="请客"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>5.</span> mǎnyì <input type="text" class="input-control w-24" data-answer="满意"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>6.</span> dànshì <input type="text" class="input-control w-24" data-answer="但是"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>7.</span> diànyǐng <input type="text" class="input-control w-24" data-answer="电影"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>8.</span> sùshè <input type="text" class="input-control w-24" data-answer="宿舍"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>9.</span> yínháng <input type="text" class="input-control w-24" data-answer="银行"> <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>10.</span> miànbāo <input type="text" class="input-control w-24" data-answer="面包"> <span class="feedback"></span><span class="answer-hint"></span></li>
         </ul>
+        <button class="btn-submit" onclick="checkAnswers('q6-list')">提交答案并判分</button>
     </div>
 
-    <!-- 第七大题：选词填空 -->
+    <!-- 第七大题：选词填空（下拉选择） -->
     <div class="question-group">
-        <div class="question-title">七、选词填空（每题1分，共10分）</div>
+        <div class="question-title">
+            <i class="fa fa-circle-o"></i>七、选词填空（每题1分，共10分）
+        </div>
         <p class="translation">Заполните пропуски предложенными словами (1 балл за каждое задание, всего 10 баллов)</p>
         
         <div class="word-bank">
@@ -145,12 +516,62 @@
             <span class="word-tag">家</span>
             <span class="word-tag">本</span>
         </div>
-        <ul class="question-list">
-            <li class="question-item">1. 林娜家有四_____人。</li>
-            <li class="question-item">2. 我爸爸是一_____职员。</li>
-            <li class="question-item">3. 马丁想买那_____汉语书。</li>
-            <li class="question-item">4. 教室里有两_____电脑。</li>
-            <li class="question-item">5. 学校南边有一_____银行。</li>
+        <ul class="question-list" id="q7-list-1">
+            <li class="question-item"><span>1.</span> 林娜家有四
+                <select class="select-control w-12 ml-1" data-answer="口">
+                    <option value="">选词语</option>
+                    <option value="台">台</option>
+                    <option value="口">口</option>
+                    <option value="位">位</option>
+                    <option value="家">家</option>
+                    <option value="本">本</option>
+                </select>
+                人。 <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <li class="question-item"><span>2.</span> 我爸爸是一
+                <select class="select-control w-12 ml-1" data-answer="位">
+                    <option value="">选词语</option>
+                    <option value="台">台</option>
+                    <option value="口">口</option>
+                    <option value="位">位</option>
+                    <option value="家">家</option>
+                    <option value="本">本</option>
+                </select>
+                职员。 <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <li class="question-item"><span>3.</span> 马丁想买那
+                <select class="select-control w-12 ml-1" data-answer="本">
+                    <option value="">选词语</option>
+                    <option value="台">台</option>
+                    <option value="口">口</option>
+                    <option value="位">位</option>
+                    <option value="家">家</option>
+                    <option value="本">本</option>
+                </select>
+                汉语书。 <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <li class="question-item"><span>4.</span> 教室里有两
+                <select class="select-control w-12 ml-1" data-answer="台">
+                    <option value="">选词语</option>
+                    <option value="台">台</option>
+                    <option value="口">口</option>
+                    <option value="位">位</option>
+                    <option value="家">家</option>
+                    <option value="本">本</option>
+                </select>
+                电脑。 <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <li class="question-item"><span>5.</span> 学校南边有一
+                <select class="select-control w-12 ml-1" data-answer="家">
+                    <option value="">选词语</option>
+                    <option value="台">台</option>
+                    <option value="口">口</option>
+                    <option value="位">位</option>
+                    <option value="家">家</option>
+                    <option value="本">本</option>
+                </select>
+                银行。 <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
         </ul>
 
         <div class="word-bank mt-3">
@@ -161,47 +582,120 @@
             <span class="word-tag">在</span>
             <span class="word-tag">又</span>
         </div>
-        <ul class="question-list">
-            <li class="question-item">6. 他去年去日本了，今年_____去了。</li>
-            <li class="question-item">7. 林娜一下课_____去医院。</li>
-            <li class="question-item">8. 他_____不知道这件事。</li>
-            <li class="question-item">9. 我_____喜欢听音乐。</li>
-            <li class="question-item">10. 马丁常常_____图书馆学习汉语。</li>
+        <ul class="question-list" id="q7-list-2">
+            <li class="question-item"><span>6.</span> 他去年去日本了，今年
+                <select class="select-control w-12 ml-1" data-answer="又">
+                    <option value="">选词语</option>
+                    <option value="还">还</option>
+                    <option value="就">就</option>
+                    <option value="最">最</option>
+                    <option value="在">在</option>
+                    <option value="又">又</option>
+                </select>
+                去了。 <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <li class="question-item"><span>7.</span> 林娜一下课
+                <select class="select-control w-12 ml-1" data-answer="就">
+                    <option value="">选词语</option>
+                    <option value="还">还</option>
+                    <option value="就">就</option>
+                    <option value="最">最</option>
+                    <option value="在">在</option>
+                    <option value="又">又</option>
+                </select>
+                去医院。 <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <li class="question-item"><span>8.</span> 他
+                <select class="select-control w-12 ml-1" data-answer="还">
+                    <option value="">选词语</option>
+                    <option value="还">还</option>
+                    <option value="就">就</option>
+                    <option value="最">最</option>
+                    <option value="在">在</option>
+                    <option value="又">又</option>
+                </select>
+                不知道这件事。 <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <li class="question-item"><span>9.</span> 我
+                <select class="select-control w-12 ml-1" data-answer="最">
+                    <option value="">选词语</option>
+                    <option value="还">还</option>
+                    <option value="就">就</option>
+                    <option value="最">最</option>
+                    <option value="在">在</option>
+                    <option value="又">又</option>
+                </select>
+                喜欢听音乐。 <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
+            <li class="question-item"><span>10.</span> 马丁常常
+                <select class="select-control w-12 ml-1" data-answer="在">
+                    <option value="">选词语</option>
+                    <option value="还">还</option>
+                    <option value="就">就</option>
+                    <option value="最">最</option>
+                    <option value="在">在</option>
+                    <option value="又">又</option>
+                </select>
+                图书馆学习汉语。 <span class="feedback"></span><span class="answer-hint"></span>
+            </li>
         </ul>
+        <div class="flex gap-2 mt-1">
+            <button class="btn-submit" onclick="checkAnswers('q7-list-1')">提交第一组答案</button>
+            <button class="btn-submit" onclick="checkAnswers('q7-list-2')">提交第二组答案</button>
+        </div>
     </div>
 
     <!-- 第八大题：连词成句 -->
     <div class="question-group">
-        <div class="question-title">八、连词成句（每题2分，共10分）</div>
+        <div class="question-title">
+            <i class="fa fa-circle-o"></i>八、连词成句（每题2分，共10分）
+        </div>
         <p class="translation">Составьте предложения из предложенных слов (2 балла за каждое задание, всего 10 баллов)</p>
         <p class="text-sm text-gray-500 mb-2">例如：早饭  我  了  吃 → 我吃早饭了。</p>
-        <ul class="question-list">
-            <li class="question-item">1. 你  什么  做  昨天  了 → __________ ？</li>
-            <li class="question-item">2. 一  红茶  我  杯  要 → __________ 。</li>
-            <li class="question-item">3. 阿明  感  太极拳  很  对  兴趣 → __________ 。</li>
-            <li class="question-item">4. 非常  听说  漂亮  公园 → __________ 。</li>
-            <li class="question-item">5. 什么  有  安排  你  明年 → __________ ？</li>
+        <ul class="question-list" id="q8-list">
+            <li class="question-item"><span>1.</span> 你  什么  做  昨天  了 → <input type="text" class="input-control w-64" data-answer="昨天你做什么了？,你昨天做什么了？">  <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>2.</span> 一  红茶  我  杯  要 → <input type="text" class="input-control w-64" data-answer="我要一杯红茶。">  <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>3.</span> 阿明  感  太极拳  很  对  兴趣 → <input type="text" class="input-control w-64" data-answer="阿明对太极拳很感兴趣。">  <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>4.</span> 非常  听说  漂亮  公园 → <input type="text" class="input-control w-64" data-answer="听说公园非常漂亮。">  <span class="feedback"></span><span class="answer-hint"></span></li>
+            <li class="question-item"><span>5.</span> 什么  有  安排  你  明年 → <input type="text" class="input-control w-64" data-answer="你明年有什么安排？,明年你有什么安排？">  <span class="feedback"></span><span class="answer-hint"></span></li>
         </ul>
+        <button class="btn-submit" onclick="checkAnswers('q8-list')">提交答案并判分</button>
     </div>
 
-    <!-- 第九大题：完成对话 -->
+    <!-- 第九大题：完成对话（给参考答案） -->
     <div class="question-group">
-        <div class="question-title">九、用指定词语完成对话（每题2.5分，共15分）</div>
+        <div class="question-title">
+            <i class="fa fa-circle-o"></i>九、用指定词语完成对话（每题2.5分，共15分）
+        </div>
         <p class="translation">Завершите диалоги указанными словами (2,5 балла за каждое задание, всего 15 баллов)</p>
         <p class="text-sm text-gray-500 mb-2">例如：A：你是哪国人？（哪） → B：我是俄罗斯人。</p>
         <ul class="question-list">
-            <li class="question-item">1. A：__________ ？（西山公园） → B：对不起，我不知道。</li>
-            <li class="question-item">2. A：__________ ？（几） → B：今天11月11日。</li>
-            <li class="question-item">3. A：__________ ？（谁） → B：这是我的汉语书。</li>
-            <li class="question-item">4. A：__________ ？（还是） → B：我是学生。</li>
-            <li class="question-item">5. A：他怎么没来？ → B：__________ 。（了）</li>
-            <li class="question-item">6. A：你的汉语词典怎么样？ → B：__________ 。（可是）</li>
+            <li class="question-item"><span>1.</span> A：__________ ？（西山公园） → B：对不起，我不知道。<br>
+                <span class="text-sm text-gray-600 ml-6">参考答案：西山公园在哪？</span>
+            </li>
+            <li class="question-item"><span>2.</span> A：__________ ？（几） → B：今天11月11日。<br>
+                <span class="text-sm text-gray-600 ml-6">参考答案：今天（几月）几号？</span>
+            </li>
+            <li class="question-item"><span>3.</span> A：__________ ？（谁） → B：这是我的汉语书。<br>
+                <span class="text-sm text-gray-600 ml-6">参考答案：这是谁的汉语书？</span>
+            </li>
+            <li class="question-item"><span>4.</span> A：__________ ？（还是） → B：我是学生。<br>
+                <span class="text-sm text-gray-600 ml-6">参考答案：你是老师还是学生？</span>
+            </li>
+            <li class="question-item"><span>5.</span> A：他怎么没来？ → B：__________ 。（了）<br>
+                <span class="text-sm text-gray-600 ml-6">参考答案：他生病了。（答案不唯一，符合逻辑即可）</span>
+            </li>
+            <li class="question-item"><span>6.</span> A：你的汉语词典怎么样？ → B：__________ 。（可是）<br>
+                <span class="text-sm text-gray-600 ml-6">参考答案：我的汉语词典很好，可是太贵了。（答案不唯一，符合逻辑即可）</span>
+            </li>
         </ul>
     </div>
 
-    <!-- 第十大题：写作 -->
+    <!-- 第十大题：写作（给范文） -->
     <div class="question-group">
-        <div class="question-title">十、根据要求，选择一个话题，写一段话（15分）</div>
+        <div class="question-title">
+            <i class="fa fa-circle-o"></i>十、根据要求，选择一个话题，写一段话（15分）
+        </div>
         <p class="translation">Выберите одну тему и напишите небольшой текст в соответствии с требованиями (всего 15 баллов)</p>
         
         <div class="essay-hint">
@@ -215,9 +709,67 @@
         <div class="essay-hint mt-2 bg-amber-50 border-l-2 border-amber-500">
             <p class="text-sm text-amber-800">要求Требования：1. 字数不少于60字；2. 字体工整，正确使用标点符号；3. 注意格式。</p>
         </div>
-        <div class="mt-2 h-48 border border-gray-200 rounded p-2">
-            <!-- 答题区域 -->
+        <!-- 答题区域 -->
+        <div class="mt-2 h-48 border border-gray-200 rounded p-2 mb-3">
+            请在此处书写答案...
+        </div>
+        <!-- 范文展示 -->
+        <div class="bg-gray-50 p-3 rounded">
+            <p class="font-medium text-sm mb-1">范文1：《我的周末》</p>
+            <p class="text-sm text-gray-700">我的周末很有意思。上午先起床吃早饭，然后看一会儿汉语书。下午常常找朋友一起玩，我们有时候去公园散步，有时候在宿舍聊天。晚上我会和家人视频通话，分享一周的生活。和朋友、家人在一起，我觉得很开心，周末过得特别快。（共86字）</p>
+            
+            <p class="font-medium text-sm mt-3 mb-1">范文2：《我的家》</p>
+            <p class="text-sm text-gray-700">我有一个幸福的家。家里有爸爸、妈妈和哥哥三个人。爸爸是一名医生，每天在医院帮助病人；妈妈是教师，教孩子们英语。哥哥和我都是学生，他在大学学习计算机，我在深圳北理莫斯科大学学习汉语。我们一家人都很和睦，每天晚上会一起吃晚饭、聊天。我爱我的家，也爱我的家人。（共98字）</p>
         </div>
     </div>
+
+    <script>
+        // 客观题判分逻辑
+        function checkAnswers(listId) {
+            const list = document.getElementById(listId);
+            const items = list.querySelectorAll('.question-item');
+            let total = items.length;
+            let correctCount = 0;
+
+            items.forEach(item => {
+                const inputs = item.querySelectorAll('.input-control, .select-control');
+                let isItemCorrect = true;
+                let correctAnswers = [];
+
+                inputs.forEach(input => {
+                    const userAnswer = input.value.trim().toLowerCase();
+                    const answer = input.getAttribute('data-answer').toLowerCase();
+                    // 处理多答案情况（用逗号分隔）
+                    const answerList = answer.split(',').map(a => a.trim());
+                    correctAnswers.push(answerList.join(' / '));
+
+                    // 判断是否正确
+                    const isCorrect = answerList.includes(userAnswer);
+                    if (!isCorrect) isItemCorrect = false;
+
+                    // 显示反馈
+                    input.classList.remove('border-green-500', 'border-red-500');
+                    input.classList.add(isCorrect ? 'border-green-500' : 'border-red-500');
+                });
+
+                // 显示整体反馈和正确答案
+                const feedback = item.querySelector('.feedback');
+                const answerHint = item.querySelector('.answer-hint');
+                
+                if (isItemCorrect) {
+                    feedback.textContent = '✓ 正确';
+                    feedback.className = 'feedback correct';
+                    correctCount++;
+                } else {
+                    feedback.textContent = '✗ 错误';
+                    feedback.className = 'feedback incorrect';
+                }
+                answerHint.textContent = `（正确答案：${correctAnswers.join(' ')}）`;
+            });
+
+            // 显示大题得分
+            alert(`本大题共${total}题，正确${correctCount}题，得分：${(correctCount / total * 100).toFixed(1)}分`);
+        }
+    </script>
 </body>
 </html>
