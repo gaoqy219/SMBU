@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北京植物园介绍（含互动习题）</title>
+    <title>北京植物园介绍</title>
     <style>
         * {
             margin: 0;
@@ -190,6 +190,15 @@
             z-index: 998;
             display: none;
         }
+        /* 课文后图片样式 */
+        .article-img {
+            display: block; /* 居中必备 */
+            max-width: 100%; /* 适配容器宽度，不溢出 */
+            height: auto; /* 保持图片比例 */
+            margin: 25px auto; /* 上下边距25px，左右自动居中 */
+            border-radius: 8px; /* 轻微圆角，更美观 */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* 轻微阴影，提升层次感 */
+        }
     </style>
 </head>
 <body>
@@ -210,9 +219,10 @@
         <br><br>
         另外，还有<span class="vocab" data-word="热带植物">热带植物</span><span class="vocab" data-word="展览温室">展览温室</span>，室内分为<span class="vocab" data-word="热带雨林室">热带雨林室</span>、<span class="vocab" data-word="沙漠植物室">沙漠植物室</span>和<span class="vocab" data-word="四季花园">四季花园</span>等 4 个展区，<span class="vocab" data-word="展示">展示</span>热带、<span class="vocab" data-word="亚热带">亚热带</span>植物 4100 多种。还有 2000 平方米的<span class="vocab" data-word="低温温室">低温温室</span>和 1350 平方米的<span class="vocab" data-word="盆景展室">盆景展室</span>，共 20, 350 平方米，是亚洲面积最大的植物展览<span class="vocab" data-word="温室群">温室群</span>。
         <br><br>
-        <span class="vocab" data-word="古迹">古迹</span>包括：<span class="vocab" data-word="卧佛寺">卧佛寺</span>（Wòfó Sì）、<span class="vocab" data-word="曹雪芹纪念馆">曹雪芹纪念馆</span>¹、樱桃沟、“一二·九”运动<span class="vocab" data-word="纪念亭">纪念亭</span>（pavilion）、<span class="vocab" data-word="梁启超墓">梁启超墓</span>²（cemetery）等。
+        <span class="vocab" data-word="古迹">古迹</span>包括：<span class="vocab" data-word="卧佛寺">卧佛寺</span>（Wòfó Sì）、<span class="vocab" data-word="曹雪芹纪念馆">曹雪芹纪念馆</span>、樱桃沟、“一二·九”运动<span class="vocab" data-word="纪念亭">纪念亭</span>（pavilion）、<span class="vocab" data-word="梁启超">梁启超</span><span class="vocab" data-word="墓">墓</span>（cemetery）等。
     </div>
-
+    <!-- 图片：9-5-1.png -->
+    <img src="9-5-1.png" alt="北京植物园风光" class="article-img" />
     <!-- 习题部分 -->
     <div class="exercise" id="exercise">
         <!-- 一、根据文章内容填空 -->
@@ -244,7 +254,7 @@
 
         <!-- 二、从植物园门票查找信息 -->
         <div class="exercise-section">
-            <h3 class="exercise-title">二、从植物园门票查找信息（参考北京植物园实际运营信息）</h3>
+            <h3 class="exercise-title">二、从植物园门票查找信息</h3>
             <div class="question-group" id="fill2-group">
                 <div class="fill-blank">
                     <span class="fill-label">1. 植物园普通成人票价格是</span>
@@ -504,11 +514,17 @@
                 en: "memorial pavilion", 
                 ru: "памятный павильон" 
             },
-            "梁启超墓": { 
-                pinyin: "Liáng Qǐchāo Mù", 
-                cnExplain: "梁启超的墓地", 
-                en: "Liang Qichao Cemetery", 
-                ru: "Кладбище Лян Цичао" 
+            "梁启超": { 
+                pinyin: "Liáng Qǐchāo", 
+                cnExplain: "历史人物，近代思想家，清末维新运动的代表人物", 
+                en: "Liang Qichao", 
+                ru: "Лян Цичао" 
+            },
+            "墓": { 
+                pinyin: "Mù", 
+                cnExplain: "墓地", 
+                en: "Cemetery", 
+                ru: "Кладбище" 
             }
         };
 
@@ -586,14 +602,14 @@
             fill1: [
                 { correct: ['京西香山脚下', '京西香山脚下，距离市中心23公里'], tips: '正确答案：京西香山脚下' },
                 { correct: ['古迹'], tips: '正确答案：古迹（文章中明确将其列为古迹之一）' },
-                { correct: ['历史人物', '近代思想家', '学者', '清末民初思想家'], tips: '正确答案：历史人物（或“近代思想家”“学者”等合理表述）' },
+                { correct: ['历史人物', '近代思想家', '学者', '清末维新运动的代表人物'], tips: '正确答案：清末维新运动的代表人物' },
                 { correct: ['植物展览温室群', '温室群'], tips: '正确答案：植物展览温室群' }
             ],
             // 第二部分：北京植物园实际门票/运营信息（作为正确答案）
             fill2: [
-                { correct: ['10元', '10元/人', '10块', '10块钱'], tips: '正确答案：10元（普通成人票）' },
-                { correct: ['6:30-18:00', '早上6点半到下午6点', '6:30至18:00', '7:00-18:00'], tips: '正确答案：6:30-18:00（夏季常规售票时间）' },
-                { correct: ['17:00', '下午5点', '17点', '17:30'], tips: '正确答案：17:00（冬季常规静园时间）' }
+                { correct: ['5元', '5元/人', '5块', '5块钱', '五元', '伍元'], tips: '正确答案：5元' },
+                { correct: ['6:00-19:00', '早上6点到下午7点', '6:00至19:00'], tips: '正确答案：6:00-19:00' },
+                { correct: ['19:00', '下午7点', '19点'], tips: '正确答案：19:00' }
             ]
         };
 
