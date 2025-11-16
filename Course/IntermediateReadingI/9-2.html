@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>说地道汉语 写典雅文章（含互动习题）</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            color: #333;
+            font-size: 16px; /* 基础字体大小 */
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .font-control {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .font-control button {
+            padding: 8px 16px;
+            margin: 0 8px;
+            border: 1px solid #e74c3c;
+            border-radius: 4px;
+            background: #fff;
+            color: #e74c3c;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+        .font-control button:hover {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .article {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .vocab {
+            color: #e74c3c;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        /* 习题样式 */
+        .exercise {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .exercise-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
+        .exercise-section:last-child {
+            border-bottom: none;
+        }
+        .exercise-title {
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .question {
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 3px solid #e74c3c;
+        }
+        /* 填空题样式 */
+        .fill-blank {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .fill-label {
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        .fill-input {
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 180px;
+            margin-right: 15px;
+            font-size: 1em;
+            flex-shrink: 0;
+        }
+        /* 选择题样式 */
+        .option-group {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        .option {
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .option input {
+            margin-right: 8px;
+        }
+        /* 提交按钮样式 */
+        .submit-btn {
+            display: block;
+            margin: 30px auto;
+            padding: 12px 24px;
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+        .submit-btn:hover {
+            background: #c0392b;
+        }
+        /* 结果显示样式 */
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            display: none;
+        }
+        .score {
+            text-align: center;
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-weight: bold;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .correct-answer {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .answer-item {
+            margin-bottom: 10px;
+        }
+        /* 弹窗样式 */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            max-width: 550px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 25px;
+            z-index: 999;
+            display: none;
+        }
+        .popup h3 {
+            margin-bottom: 15px;
+            color: #e74c3c;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .popup p {
+            margin-bottom: 10px;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+        .popup .lang-label {
+            font-weight: bold;
+            color: #2c3e50;
+            display: inline-block;
+            width: 60px;
+        }
+        .popup .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.2s;
+        }
+        .popup .close:hover {
+            color: #e74c3c;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>说地道汉语 写典雅文章</h1>
+    <div class="font-control">
+        <button id="font-small">- 缩小字体</button>
+        <button id="font-normal">默认字体</button>
+        <button id="font-large">放大字体 +</button>
+    </div>
+
+    <!-- 文章部分 -->
+    <div class="article" id="article">
+        “利用暑假，去中国学汉语！”这是97个美国大学生的<span class="vocab" data-word="心愿">心愿</span>（wish）。6月中旬，他们在北京语言大学参加了北京书院的<span class="vocab" data-word="开学典礼">开学典礼</span>²，开始了9周的紧张学习。
+        <br><br>
+        “汉语是练出来的，不是教出来的”，这是赵元任³先生<span class="vocab" data-word="开创">开创</span>（initiate）的教学方法。暑期班教材用“<span class="vocab" data-word="地道">地道</span>的<span class="vocab" data-word="口语">口语</span>”说话，上课用“直接的方法”练习。在教学中，注重“听说为先”，通过大量的句型<span class="vocab" data-word="操练">操练</span>（practice），让学生能听会说，把“<span class="vocab" data-word="识字">识字</span>”这一难点放到了课下，让学生自己去练。
+        <br><br>
+        朗读课是北京书院暑期班的<span class="vocab" data-word="亮点">亮点</span>课程。朗读的内容，是大班课学过的知识点，朗读课老师的主要任务，是<span class="vocab" data-word="引导">引导</span>（guide）学生<span class="vocab" data-word="准确">准确</span>（accurately）地<span class="vocab" data-word="发音">发音</span>。朗读课只有短短的15分钟，整个过程，无论是老师还是学生，都不见一点儿<span class="vocab" data-word="马虎">马虎</span>（careless）。学生们错误的发音或容易出错的字，用拼音的方式写在一块小黑板上，老师有针对性⁴地进行<span class="vocab" data-word="纠正">纠正</span>和<span class="vocab" data-word="提醒">提醒</span>（remind）。由于句子都很有趣，学生们几乎是在笑声中完成了这些练习。
+        <br><br>
+        <span class="vocab" data-word="社会调查">社会调查</span>⁵是北京书院的又一<span class="vocab" data-word="特色">特色</span>（unique feature）。学生要到中国社会中，去进行<span class="vocab" data-word="采访">采访</span>（interview）调查。每人都要<span class="vocab" data-word="设计">设计</span>10个问题，<span class="vocab" data-word="访问">访问</span><span class="vocab" data-word="对象">对象</span>，然后写一篇<span class="vocab" data-word="调查报告">调查报告</span>。每年北京书院都会<span class="vocab" data-word="出版">出版</span>《美国大学生看中国报告》一书。这些作者中，有些人学习中文的时间不过两三年，却已经能够初步<span class="vocab" data-word="掌握">掌握</span>（grasp, master）现代汉语<span class="vocab" data-word="书面语">书面语</span>。从书中的题目，也可以看到美国学生看中国的独特<span class="vocab" data-word="角度">角度</span>（angle）。
+        <br><br>
+        如今，已经有近300名学生从北京书院暑期班毕业。他们中很多人都对中文越来越<span class="vocab" data-word="着迷">着迷</span>⁶，学习兴趣得到进一步的<span class="vocab" data-word="激发">激发</span>（stimulate）；有的喜欢上了中国文化，在美国完成学业后又来到中国工作。
+    </div>
+
+    <!-- 习题部分 -->
+    <div class="exercise" id="exercise">
+        <!-- 一、根据文章内容填空 -->
+        <div class="exercise-section">
+            <h3 class="exercise-title">一、根据文章内容填空</h3>
+            <div class="question-group" id="fill1-group">
+                <div class="fill-blank">
+                    <span class="fill-label">1. 利用暑假，来中国学汉语的是</span>
+                    <input type="text" class="fill-input" id="fill1-1" placeholder="请填国家">
+                    <span class="correct-answer" id="fill1-1-ans"></span>
+                </div>
+                <div class="fill-blank">
+                    <span class="fill-label">2. 北京书院暑期班在教学中注重</span>
+                    <input type="text" class="fill-input" id="fill1-2" placeholder="请填教学重点">
+                    <span class="correct-answer" id="fill1-2-ans"></span>
+                </div>
+                <div class="fill-blank">
+                    <span class="fill-label">3.</span>
+                    <input type="text" class="fill-input" id="fill1-3" placeholder="请填课程名称">
+                    <span class="fill-label">课是北京书院暑期班的亮点课程。</span>
+                    <span class="correct-answer" id="fill1-3-ans"></span>
+                </div>
+                <div class="fill-blank">
+                    <span class="fill-label">4. 学生要到中国社会中去进行</span>
+                    <input type="text" class="fill-input" id="fill1-4" placeholder="请填活动内容">
+                    <span class="correct-answer" id="fill1-4-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 二、根据文章内容选择正确答案 -->
+        <div class="exercise-section">
+            <h3 class="exercise-title">二、根据文章内容选择正确答案（从A、B、C、D中选最佳答案）</h3>
+            <div class="question-group" id="choice-group">
+                <div class="question">1. “他们在北京语言大学参加了北京书院的开学典礼，开始了9周的紧张学习。”这里“紧张”的意思是什么？()</div>
+                <div class="option-group">
+                    <div class="option"><input type="radio" name="choice-1" value="A"> A. 害怕</div>
+                    <div class="option"><input type="radio" name="choice-1" value="B"> B. 担心</div>
+                    <div class="option"><input type="radio" name="choice-1" value="C"> C. 时间太少</div>
+                    <div class="option"><input type="radio" name="choice-1" value="D"> D. 学习内容很难</div>
+                    <span class="correct-answer" id="choice-1-ans"></span>
+                </div>
+
+                <div class="question">2. “汉语是练出来的，不是教出来的”，这种方法是什么？()</div>
+                <div class="option-group">
+                    <div class="option"><input type="radio" name="choice-2" value="A"> A. 有老师才可以学</div>
+                    <div class="option"><input type="radio" name="choice-2" value="B"> B. 学生不用老师教</div>
+                    <div class="option"><input type="radio" name="choice-2" value="C"> C. 老师好很重要</div>
+                    <div class="option"><input type="radio" name="choice-2" value="D"> D. 学生多练习才能学会</div>
+                    <span class="correct-answer" id="choice-2-ans"></span>
+                </div>
+
+                <div class="question">3. “学生们几乎是在笑声中完成了这些练习”，这句话的意思是什么？()</div>
+                <div class="option-group">
+                    <div class="option"><input type="radio" name="choice-3" value="A"> A. 学生上课只是笑</div>
+                    <div class="option"><input type="radio" name="choice-3" value="B"> B. 朗读课轻松有趣</div>
+                    <div class="option"><input type="radio" name="choice-3" value="C"> C. 老师喜欢开玩笑</div>
+                    <div class="option"><input type="radio" name="choice-3" value="D"> D. 学生觉得朗读课很好笑</div>
+                    <span class="correct-answer" id="choice-3-ans"></span>
+                </div>
+
+                <div class="question">4. “从书中的题目，也可以看到美国学生看中国的独特角度。”这句话的意思是什么？()</div>
+                <div class="option-group">
+                    <div class="option"><input type="radio" name="choice-4" value="A"> A. 书中的题目选得好</div>
+                    <div class="option"><input type="radio" name="choice-4" value="B"> B. 书中的题目反映学生的独特观点</div>
+                    <div class="option"><input type="radio" name="choice-4" value="C"> C. 书中的题目很有趣</div>
+                    <div class="option"><input type="radio" name="choice-4" value="D"> D. 美国学生会选择特别的题目</div>
+                    <span class="correct-answer" id="choice-4-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 三、根据文章内容，用适当的词语填空 -->
+        <div class="exercise-section">
+            <h3 class="exercise-title">三、根据文章内容，用适当的词语填空</h3>
+            <div class="question-group" id="fill2-group">
+                <div class="fill-blank">
+                    <span class="fill-label">1. 考试让学生感到有点儿</span>
+                    <input type="text" class="fill-input" id="fill2-1" placeholder="请填形容词">
+                    <span class="correct-answer" id="fill2-1-ans"></span>
+                </div>
+                <div class="fill-blank">
+                    <span class="fill-label">2. 他的作业写得很</span>
+                    <input type="text" class="fill-input" id="fill2-2" placeholder="请填形容词">
+                    <span class="correct-answer" id="fill2-2-ans"></span>
+                </div>
+                <div class="fill-blank">
+                    <span class="fill-label">3. 很多外国人都对中国文化</span>
+                    <input type="text" class="fill-input" id="fill2-3" placeholder="请填形容词/动词短语">
+                    <span class="correct-answer" id="fill2-3-ans"></span>
+                </div>
+                <div class="fill-blank">
+                    <span class="fill-label">4. 学习兴趣对掌握汉语来说</span>
+                    <input type="text" class="fill-input" id="fill2-4" placeholder="请填副词">
+                    <span class="fill-label">重要。</span>
+                    <span class="correct-answer" id="fill2-4-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <button class="submit-btn" id="submit-btn">提交答案并查看结果</button>
+
+        <div class="result" id="result">
+            <div class="score" id="score"></div>
+            <div id="answer-details">
+                <!-- 正确答案详情动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 词汇弹窗 -->
+    <div class="overlay" id="vocab-overlay"></div>
+    <div class="popup" id="vocab-popup">
+        <div class="close" id="vocab-close">×</div>
+        <h3 id="vocabName"></h3>
+        <p><span class="lang-label">拼音：</span><span id="vocabPinyin"></span></p>
+        <p><span class="lang-label">中文解释：</span><span id="vocabCnExplain"></span></p>
+        <p><span class="lang-label">英文翻译：</span><span id="vocabEn"></span></p>
+        <p><span class="lang-label">俄文翻译：</span><span id="vocabRu"></span></p>
+    </div>
+
+    <script>
+        // 一、词汇数据字典（中、英、俄三语）
+        const vocabData = {
+            "心愿": { 
+                pinyin: "xīnyuàn", 
+                cnExplain: "心中的愿望，对某件事的期盼", 
+                en: "wish; aspiration", 
+                ru: "желание; стремление" 
+            },
+            "开学典礼": { 
+                pinyin: "kāixué diǎnlǐ", 
+                cnExplain: "学校在新学期开始时举行的仪式，标志着开学", 
+                en: "opening ceremony of the school year", 
+                ru: "церемония открытия учебного года" 
+            },
+            "开创": { 
+                pinyin: "kāichuàng", 
+                cnExplain: "开始建立、创建（新的事业、方法等）", 
+                en: "initiate; found; create", 
+                ru: "основывать; создавать; начинать" 
+            },
+            "地道": { 
+                pinyin: "dìdao", 
+                cnExplain: "真正的、纯粹的（常用于形容语言、食物等很正宗）", 
+                en: "authentic; genuine", 
+                ru: "подлинный; настоящий" 
+            },
+            "口语": { 
+                pinyin: "kǒuyǔ", 
+                cnExplain: "人们口头交流时使用的语言，区别于书面语", 
+                en: "spoken language; oral language", 
+                ru: "разговорный язык; устный язык" 
+            },
+            "操练": { 
+                pinyin: "cāoliàn", 
+                cnExplain: "通过反复练习来掌握技能（如语言、军事动作等）", 
+                en: "practice; drill", 
+                ru: "упражнение; дриль" 
+            },
+            "识字": { 
+                pinyin: "shízì", 
+                cnExplain: "认识文字，学会阅读", 
+                en: "learn to read; recognize characters", 
+                ru: "научиться читать; признавать символы" 
+            },
+            "亮点": { 
+                pinyin: "liàngdiǎn", 
+                cnExplain: "有光彩、吸引人注意的地方或特点", 
+                en: "highlight; bright spot", 
+                ru: "выделенный момент; яркий момент" 
+            },
+            "引导": { 
+                pinyin: "yǐndǎo", 
+                cnExplain: "带领、指引，使朝着某个方向或目标前进", 
+                en: "guide; lead; direct", 
+                ru: "направлять; вести; направлять" 
+            },
+            "准确": { 
+                pinyin: "zhǔnquè", 
+                cnExplain: "行动或结果完全符合实际、预期或要求", 
+                en: "accurate; precise", 
+                ru: "точный; точный" 
+            },
+            "发音": { 
+                pinyin: "fāyīn", 
+                cnExplain: "发出语音，说话时的读音", 
+                en: "pronunciation; utterance", 
+                ru: "произношение; произношение" 
+            },
+            "马虎": { 
+                pinyin: "mǎhu", 
+                cnExplain: "做事草率、不认真，疏忽大意", 
+                en: "careless; sloppy", 
+                ru: "небрежный; небрежный" 
+            },
+            "纠正": { 
+                pinyin: "jiūzhèng", 
+                cnExplain: "改正错误、缺点", 
+                en: "correct; rectify", 
+                ru: "исправлять; исправлять" 
+            },
+            "提醒": { 
+                pinyin: "tíxǐng", 
+                cnExplain: "从旁指点，促使别人注意到某事", 
+                en: "remind; alert", 
+                ru: "напоминать; предупреждать" 
+            },
+            "社会调查": { 
+                pinyin: "shèhuì diàochá", 
+                cnExplain: "对社会情况、现象等进行的调查研究", 
+                en: "social survey; social investigation", 
+                ru: "социальное исследование; социальное расследование" 
+            },
+            "特色": { 
+                pinyin: "tèsè", 
+                cnExplain: "事物所具有的独特的风格、特点", 
+                en: "unique feature; characteristic", 
+                ru: "уникальная черта; характеристика" 
+            },
+            "采访": { 
+                pinyin: "cǎifǎng", 
+                cnExplain: "搜集新闻、资料等，通过访问、交谈获取信息", 
+                en: "interview; cover (a story)", 
+                ru: "интервью; покрывать (юмор)" 
+            },
+            "设计": { 
+                pinyin: "shèjì", 
+                cnExplain: "在做某项工作前，预先制定方案、图样等", 
+                en: "design; plan", 
+                ru: "проектирование; планирование" 
+            },
+            "访问": { 
+                pinyin: "fǎngwèn", 
+                cnExplain: "有目的地去探望人并交谈，或指进入计算机网络等获取信息", 
+                en: "visit; access", 
+                ru: "в посещении; доступ" 
+            },
+            "对象": { 
+                pinyin: "duìxiàng", 
+                cnExplain: "行动或思考时作为目标的人或事物", 
+                en: "object; target; person (in a relationship)", 
+                ru: "объект; цель; человек (в отношениях)" 
+            },
+            "调查报告": { 
+                pinyin: "diàochá bàogào", 
+                cnExplain: "对某一情况、事件等进行调查后写出的报告", 
+                en: "survey report; investigation report", 
+                ru: "доклад об исследовании; доклад о расследовании" 
+            },
+            "出版": { 
+                pinyin: "chūbǎn", 
+                cnExplain: "把书刊、音像制品等编印或制作出来，向公众发行", 
+                en: "publish; issue", 
+                ru: "издавать; выпускать" 
+            },
+            "掌握": { 
+                pinyin: "zhǎngwò", 
+                cnExplain: "了解并能充分运用、支配（知识、技能等）", 
+                en: "grasp; master; control", 
+                ru: "освоить; овладеть; контролировать" 
+            },
+            "书面语": { 
+                pinyin: "shūmiànyǔ", 
+                cnExplain: "用文字写出来的语言，区别于口语", 
+                en: "written language", 
+                ru: "письменный язык" 
+            },
+            "角度": { 
+                pinyin: "jiǎodù", 
+                cnExplain: "看问题的出发点，或几何中的角的大小", 
+                en: "angle; perspective", 
+                ru: "угол; перспектива" 
+            },
+            "着迷": { 
+                pinyin: "zháomí", 
+                cnExplain: "对人或事物产生浓厚的兴趣，难以舍弃", 
+                en: "fascinated; obsessed", 
+                ru: "заведаться; одержимый" 
+            },
+            "激发": { 
+                pinyin: "jīfā", 
+                cnExplain: "刺激使奋发，引发（兴趣、积极性等）", 
+                en: "stimulate; inspire; arouse", 
+                ru: "возбуждать; вдохновлять; пробуждать" 
+            }
+        };
+
+        // 二、字体大小控制（修复核心：确保事件绑定生效，字体同步调整）
+        const body = document.body;
+        const fontSmall = document.getElementById('font-small');
+        const fontNormal = document.getElementById('font-normal');
+        const fontLarge = document.getElementById('font-large');
+        let currentFontSize = 16; // 初始字体大小
+
+        // 绑定字体调整事件（确保事件正确触发）
+        function updateFontSize() {
+            body.style.fontSize = `${currentFontSize}px`;
+            console.log("字体大小更新为：", currentFontSize); // 调试用，可删除
+        }
+
+        fontLarge.addEventListener('click', () => {
+            if (currentFontSize < 24) {
+                currentFontSize += 2;
+                updateFontSize();
+            }
+        });
+
+        fontSmall.addEventListener('click', () => {
+            if (currentFontSize > 12) {
+                currentFontSize -= 2;
+                updateFontSize();
+            }
+        });
+
+        fontNormal.addEventListener('click', () => {
+            currentFontSize = 16;
+            updateFontSize();
+        });
+
+        // 初始化字体大小
+        updateFontSize();
+
+        // 三、词汇弹窗控制
+        const vocabElements = document.querySelectorAll('.vocab');
+        const vocabPopup = document.getElementById('vocab-popup');
+        const vocabOverlay = document.getElementById('vocab-overlay');
+        const vocabClose = document.getElementById('vocab-close');
+        const vocabName = document.getElementById('vocabName');
+        const vocabPinyin = document.getElementById('vocabPinyin');
+        const vocabCnExplain = document.getElementById('vocabCnExplain');
+        const vocabEn = document.getElementById('vocabEn');
+        const vocabRu = document.getElementById('vocabRu');
+
+        vocabElements.forEach(element => {
+            element.addEventListener('click', function() {
+                const word = this.getAttribute('data-word');
+                const data = vocabData[word];
+                if (data) {
+                    vocabName.textContent = word;
+                    vocabPinyin.textContent = data.pinyin;
+                    vocabCnExplain.textContent = data.cnExplain;
+                    vocabEn.textContent = data.en;
+                    vocabRu.textContent = data.ru;
+                    vocabPopup.style.display = 'block';
+                    vocabOverlay.style.display = 'block';
+                }
+            });
+        });
+
+        // 关闭弹窗
+        function closePopup() {
+            vocabPopup.style.display = 'none';
+            vocabOverlay.style.display = 'none';
+        }
+
+        vocabClose.addEventListener('click', closePopup);
+        vocabOverlay.addEventListener('click', closePopup);
+
+        // 四、习题互动逻辑（修复核心：语法错误 + 逻辑优化）
+        const correctAnswers = {
+            // 一、根据内容填空（支持同义表达）
+            fill1: [
+                { correct: ['美', '美国'], tips: '正确答案：美（或“美国”）' },
+                { correct: ['听说为先'], tips: '正确答案：听说为先' },
+                { correct: ['朗读'], tips: '正确答案：朗读' },
+                { correct: ['采访调查', '调查', '采访'], tips: '正确答案：采访调查（或“调查”“采访”）' }
+            ],
+            // 二、选择题
+            choice: ['D', 'D', 'B', 'B'],
+            // 三、适当词语填空（支持多个合理答案）
+            fill2: [
+                { correct: ['紧张'], tips: '参考答案：紧张' },
+                { correct: ['认真', '仔细', '好', '出色'], tips: '参考答案：认真（或“仔细”“好”“出色”等）' },
+                { correct: ['着迷', '感兴趣', '喜欢', '感兴趣'], tips: '参考答案：着迷（或“感兴趣”“喜欢”等）' },
+                { correct: ['非常', '很', '十分', '特别'], tips: '参考答案：非常（或“很”“十分”“特别”等）' }
+            ]
+        };
+
+        // 提交答案处理
+        const submitBtn = document.getElementById('submit-btn');
+        const result = document.getElementById('result');
+        const scoreEl = document.getElementById('score');
+        const answerDetails = document.getElementById('answer-details');
+
+        submitBtn.addEventListener('click', () => {
+            let totalScore = 0;
+            const totalQuestions = 4 + 4 + 4; // 修复：去掉错误的连续赋值
+            let detailsHtml = '';
+
+            // （1）处理“一、根据文章内容填空”
+            let fill1Score = 0;
+            detailsHtml += '<h4 style="margin:15px 0;">一、根据文章内容填空 正确答案：</h4>';
+            for (let i = 0; i < 4; i++) {
+                const inputEl = document.getElementById(`fill1-${i+1}`);
+                const userAnswer = inputEl.value.trim().replace(/\s+/g, '');
+                const { correct, tips } = correctAnswers.fill1[i];
+                const isCorrect = correct.some(ans => ans.toLowerCase() === userAnswer.toLowerCase());
+
+                detailsHtml += `<div class="answer-item">第${i+1}题：${tips}`;
+                if (isCorrect) {
+                    fill1Score++;
+                    detailsHtml += `（你的答案：${userAnswer}，正确，得1分）</div>`;
+                } else if (userAnswer === '') {
+                    detailsHtml += `（未作答，不得分）</div>`;
+                } else {
+                    detailsHtml += `（你的答案：${userAnswer}，不正确，不得分）</div>`;
+                }
+                // 显示正确答案到题目旁
+                document.getElementById(`fill1-${i+1}-ans`).textContent = `→ ${tips}`;
+            }
+
+            // （2）处理“二、选择题”
+            let choiceScore = 0;
+            detailsHtml += '<h4 style="margin:15px 0;">二、选择题 正确答案：</h4>';
+            for (let i = 0; i < 4; i++) {
+                const selected = document.querySelector(`input[name="choice-${i+1}"]:checked`);
+                const userAnswer = selected ? selected.value : null;
+                const correct = correctAnswers.choice[i];
+
+                detailsHtml += `<div class="answer-item">第${i+1}题：正确答案为「${correct}」`;
+                if (userAnswer === correct) {
+                    choiceScore++;
+                    detailsHtml += `（你的答案：${userAnswer}，正确，得1分）</div>`;
+                } else if (userAnswer === null) {
+                    detailsHtml += `（未作答，不得分）</div>`;
+                } else {
+                    detailsHtml += `（你的答案：${userAnswer}，不正确，不得分）</div>`;
+                }
+                document.getElementById(`choice-${i+1}-ans`).textContent = `→ 正确答案：${correct}`;
+            }
+
+            // （3）处理“三、适当词语填空”
+            let fill2Score = 0;
+            detailsHtml += '<h4 style="margin:15px 0;">三、适当词语填空 参考答案：</h4>';
+            for (let i = 0; i < 4; i++) {
+                const inputEl = document.getElementById(`fill2-${i+1}`);
+                const userAnswer = inputEl.value.trim();
+                const { correct, tips } = correctAnswers.fill2[i];
+                const isCorrect = correct.some(ans => ans.toLowerCase() === userAnswer.toLowerCase());
+
+                detailsHtml += `<div class="answer-item">第${i+1}题：${tips}`;
+                if (isCorrect) {
+                    fill2Score++;
+                    detailsHtml += `（你的答案：${userAnswer}，正确，得1分）</div>`;
+                } else if (userAnswer === '') {
+                    detailsHtml += `（未作答，不得分）</div>`;
+                } else {
+                    detailsHtml += `（你的答案：${userAnswer}，可参考上述答案）</div>`;
+                }
+                document.getElementById(`fill2-${i+1}-ans`).textContent = `→ ${tips}`;
+            }
+
+            // 计算总分并显示
+            totalScore = fill1Score + choiceScore + fill2Score;
+            scoreEl.textContent = `你的总得分：${totalScore}/${totalQuestions} 分`;
+            answerDetails.innerHTML = detailsHtml;
+            result.style.display = 'block';
+
+            // 滚动到结果区域（优化体验）
+            result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    </script>
+</body>
+</html>

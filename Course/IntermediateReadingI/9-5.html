@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北京植物园介绍（含互动习题）</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            color: #333;
+            font-size: 16px; /* 基础字体大小 */
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .font-control {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .font-control button {
+            padding: 8px 16px;
+            margin: 0 8px;
+            border: 1px solid #e74c3c;
+            border-radius: 4px;
+            background: #fff;
+            color: #e74c3c;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+        .font-control button:hover {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .article {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .vocab {
+            color: #e74c3c;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        /* 习题样式 */
+        .exercise {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .exercise-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
+        .exercise-section:last-child {
+            border-bottom: none;
+        }
+        .exercise-title {
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        /* 填空题样式 */
+        .fill-blank {
+            margin: 18px 0;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .fill-label {
+            margin-right: 10px;
+            flex-shrink: 0;
+            width: 150px;
+        }
+        .fill-input {
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            flex: 1;
+            min-width: 200px;
+            margin-right: 15px;
+            font-size: 1em;
+        }
+        /* 提交按钮样式 */
+        .submit-btn {
+            display: block;
+            margin: 30px auto;
+            padding: 12px 24px;
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+        .submit-btn:hover {
+            background: #c0392b;
+        }
+        /* 结果显示样式 */
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            display: none;
+        }
+        .score {
+            text-align: center;
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-weight: bold;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .correct-answer {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .answer-item {
+            margin-bottom: 15px;
+        }
+        /* 弹窗样式 */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            max-width: 550px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 25px;
+            z-index: 999;
+            display: none;
+        }
+        .popup h3 {
+            margin-bottom: 15px;
+            color: #e74c3c;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .popup p {
+            margin-bottom: 10px;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+        .popup .lang-label {
+            font-weight: bold;
+            color: #2c3e50;
+            display: inline-block;
+            width: 60px;
+        }
+        .popup .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.2s;
+        }
+        .popup .close:hover {
+            color: #e74c3c;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>北京植物园介绍</h1>
+    <div class="font-control">
+        <button id="font-small">- 缩小字体</button>
+        <button id="font-normal">默认字体</button>
+        <button id="font-large">放大字体 +</button>
+    </div>
+
+    <!-- 文章部分 -->
+    <div class="article" id="article">
+        北京植物园是<span class="vocab" data-word="国家级">国家级</span> AAAA <span class="vocab" data-word="旅游景区">旅游景区</span>，<span class="vocab" data-word="位于">位于</span>京西香山脚下，距离<span class="vocab" data-word="市中心">市中心</span> 23 公里。
+        <br><br>
+        <span class="vocab" data-word="植物园">植物园</span>里有植物 62 万余株，草地 100 万余平方米。可<span class="vocab" data-word="划分">划分</span>为<span class="vocab" data-word="专门园">专门园</span>、<span class="vocab" data-word="树木园">树木园</span>、<span class="vocab" data-word="温室">温室</span>（greenhouse）<span class="vocab" data-word="花区">花区</span>和<span class="vocab" data-word="盆景园">盆景园</span>。
+        <br><br>
+        中心路<span class="vocab" data-word="两侧">两侧</span>，已<span class="vocab" data-word="建成">建成</span>月季园、碧桃园、丁香园、<span class="vocab" data-word="牡丹园">牡丹园</span>（mǔdān yuán）、<span class="vocab" data-word="芍药园">芍药园</span>（sháoyào yuán）、<span class="vocab" data-word="海棠园">海棠园</span>（hǎitáng yuán）、<span class="vocab" data-word="竹园">竹园</span>、<span class="vocab" data-word="梅园">梅园</span>等 11 个植物专门园。树木园包括<span class="vocab" data-word="银杏">银杏</span>（yínxìng）松柏区、<span class="vocab" data-word="杨柳区">杨柳区</span>、<span class="vocab" data-word="木兰区">木兰区</span>等 6 个<span class="vocab" data-word="展区">展区</span>。
+        <br><br>
+        另外，还有<span class="vocab" data-word="热带植物">热带植物</span><span class="vocab" data-word="展览温室">展览温室</span>，室内分为<span class="vocab" data-word="热带雨林室">热带雨林室</span>、<span class="vocab" data-word="沙漠植物室">沙漠植物室</span>和<span class="vocab" data-word="四季花园">四季花园</span>等 4 个展区，<span class="vocab" data-word="展示">展示</span>热带、<span class="vocab" data-word="亚热带">亚热带</span>植物 4100 多种。还有 2000 平方米的<span class="vocab" data-word="低温温室">低温温室</span>和 1350 平方米的<span class="vocab" data-word="盆景展室">盆景展室</span>，共 20, 350 平方米，是亚洲面积最大的植物展览<span class="vocab" data-word="温室群">温室群</span>。
+        <br><br>
+        <span class="vocab" data-word="古迹">古迹</span>包括：<span class="vocab" data-word="卧佛寺">卧佛寺</span>（Wòfó Sì）、<span class="vocab" data-word="曹雪芹纪念馆">曹雪芹纪念馆</span>¹、樱桃沟、“一二·九”运动<span class="vocab" data-word="纪念亭">纪念亭</span>（pavilion）、<span class="vocab" data-word="梁启超墓">梁启超墓</span>²（cemetery）等。
+    </div>
+
+    <!-- 习题部分 -->
+    <div class="exercise" id="exercise">
+        <!-- 一、根据文章内容填空 -->
+        <div class="exercise-section">
+            <h3 class="exercise-title">一、根据文章内容填空</h3>
+            <div class="question-group" id="fill1-group">
+                <div class="fill-blank">
+                    <span class="fill-label">1. 北京植物园位于</span>
+                    <input type="text" class="fill-input" id="fill1-1" placeholder="请填地点">
+                    <span class="correct-answer" id="fill1-1-ans"></span>
+                </div>
+                <div class="fill-blank">
+                    <span class="fill-label">2. 曹雪芹纪念馆是一处</span>
+                    <input type="text" class="fill-input" id="fill1-2" placeholder="请填类别">
+                    <span class="correct-answer" id="fill1-2-ans"></span>
+                </div>
+                <div class="fill-blank">
+                    <span class="fill-label">3. 梁启超先生是</span>
+                    <input type="text" class="fill-input" id="fill1-3" placeholder="请填身份">
+                    <span class="correct-answer" id="fill1-3-ans"></span>
+                </div>
+                <div class="fill-blank">
+                    <span class="fill-label">4. 植物园内有亚洲面积最大的</span>
+                    <input type="text" class="fill-input" id="fill1-4" placeholder="请填设施名称">
+                    <span class="correct-answer" id="fill1-4-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 二、从植物园门票查找信息 -->
+        <div class="exercise-section">
+            <h3 class="exercise-title">二、从植物园门票查找信息（参考北京植物园实际运营信息）</h3>
+            <div class="question-group" id="fill2-group">
+                <div class="fill-blank">
+                    <span class="fill-label">1. 植物园普通成人票价格是</span>
+                    <input type="text" class="fill-input" id="fill2-1" placeholder="请填价格">
+                    <span class="correct-answer" id="fill2-1-ans"></span>
+                </div>
+                <div class="fill-blank">
+                    <span class="fill-label">2. 夏季售票时间是</span>
+                    <input type="text" class="fill-input" id="fill2-2" placeholder="请填时间范围">
+                    <span class="correct-answer" id="fill2-2-ans"></span>
+                </div>
+                <div class="fill-blank">
+                    <span class="fill-label">3. 冬季静园时间是</span>
+                    <input type="text" class="fill-input" id="fill2-3" placeholder="请填具体时间">
+                    <span class="correct-answer" id="fill2-3-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <button class="submit-btn" id="submit-btn">提交答案并查看结果</button>
+
+        <div class="result" id="result">
+            <div class="score" id="score"></div>
+            <div id="answer-details">
+                <!-- 正确答案详情动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 词汇弹窗 -->
+    <div class="overlay" id="vocab-overlay"></div>
+    <div class="popup" id="vocab-popup">
+        <div class="close" id="vocab-close">×</div>
+        <h3 id="vocabName"></h3>
+        <p><span class="lang-label">拼音：</span><span id="vocabPinyin"></span></p>
+        <p><span class="lang-label">中文解释：</span><span id="vocabCnExplain"></span></p>
+        <p><span class="lang-label">英文翻译：</span><span id="vocabEn"></span></p>
+        <p><span class="lang-label">俄文翻译：</span><span id="vocabRu"></span></p>
+    </div>
+
+    <script>
+        // 一、词汇数据字典（中、英、俄三语）
+        const vocabData = {
+            "国家级": { 
+                pinyin: "guójiājí", 
+                cnExplain: "由国家认定的级别", 
+                en: "national-level", 
+                ru: "национального уровня" 
+            },
+            "旅游景区": { 
+                pinyin: "lǚyóu jǐngqū", 
+                cnExplain: "供游客游览的风景名胜区域", 
+                en: "tourist attraction", 
+                ru: "туристическая достопримечательность" 
+            },
+            "位于": { 
+                pinyin: "wèiyú", 
+                cnExplain: "处在某个地点", 
+                en: "be located in", 
+                ru: "находиться в" 
+            },
+            "市中心": { 
+                pinyin: "shìzhōngxīn", 
+                cnExplain: "城市的中心区域", 
+                en: "city center", 
+                ru: "центр города" 
+            },
+            "植物园": { 
+                pinyin: "zhíwùyuán", 
+                cnExplain: "种植、研究、展示植物的园地", 
+                en: "botanical garden", 
+                ru: "ботанический сад" 
+            },
+            "划分": { 
+                pinyin: "huàfēn", 
+                cnExplain: "把整体分成若干部分", 
+                en: "divide", 
+                ru: "разделять" 
+            },
+            "专门园": { 
+                pinyin: "zhuānményuán", 
+                cnExplain: "专门种植某类植物的园区", 
+                en: "specialized garden", 
+                ru: "специализированный сад" 
+            },
+            "树木园": { 
+                pinyin: "shùmùyuán", 
+                cnExplain: "种植各类树木的园区", 
+                en: "arboretum", 
+                ru: "древесник" 
+            },
+            "温室": { 
+                pinyin: "wēnshì", 
+                cnExplain: "用于种植热带、亚热带植物的保暖建筑", 
+                en: "greenhouse", 
+                ru: "теплица" 
+            },
+            "花区": { 
+                pinyin: "huāqū", 
+                cnExplain: "种植花卉的区域", 
+                en: "flower area", 
+                ru: "цветочный участок" 
+            },
+            "盆景园": { 
+                pinyin: "pénjǐngyuán", 
+                cnExplain: "展示盆景艺术的园区", 
+                en: "bonsai garden", 
+                ru: "сад бонсаи" 
+            },
+            "两侧": { 
+                pinyin: "liǎngcè", 
+                cnExplain: "两边的位置", 
+                en: "both sides", 
+                ru: "оба стороны" 
+            },
+            "建成": { 
+                pinyin: "jiànchéng", 
+                cnExplain: "建造完成", 
+                en: "be built", 
+                ru: "быть построенным" 
+            },
+            "牡丹园": { 
+                pinyin: "mǔdānyuán", 
+                cnExplain: "种植牡丹花的园区", 
+                en: "peony garden", 
+                ru: "сад пионов" 
+            },
+            "芍药园": { 
+                pinyin: "sháoyàoyuán", 
+                cnExplain: "种植芍药花的园区", 
+                en: "paeony garden", 
+                ru: "сад пионов" 
+            },
+            "海棠园": { 
+                pinyin: "hǎitángyuán", 
+                cnExplain: "种植海棠花的园区", 
+                en: "crabapple garden", 
+                ru: "сад яблони" 
+            },
+            "竹园": { 
+                pinyin: "zhúyuán", 
+                cnExplain: "种植竹子的园区", 
+                en: "bamboo garden", 
+                ru: "сад бамбука" 
+            },
+            "梅园": { 
+                pinyin: "méiyuán", 
+                cnExplain: "种植梅花的园区", 
+                en: "plum garden", 
+                ru: "сад сливы" 
+            },
+            "银杏": { 
+                pinyin: "yínxìng", 
+                cnExplain: "一种落叶乔木，种子可食用和药用", 
+                en: "ginkgo", 
+                ru: "гинкго" 
+            },
+            "杨柳区": { 
+                pinyin: "yángliǔqū", 
+                cnExplain: "种植杨树和柳树的区域", 
+                en: "willow and poplar area", 
+                ru: "участок ивы и тополя" 
+            },
+            "木兰区": { 
+                pinyin: "mùlánqū", 
+                cnExplain: "种植木兰科植物的区域", 
+                en: "magnolia area", 
+                ru: "участок магнолий" 
+            },
+            "展区": { 
+                pinyin: "zhǎnqū", 
+                cnExplain: "展览的区域", 
+                en: "exhibition area", 
+                ru: "экспозиционный участок" 
+            },
+            "热带植物": { 
+                pinyin: "rèdài zhíwù", 
+                cnExplain: "生长在热带地区的植物", 
+                en: "tropical plants", 
+                ru: "тропические растения" 
+            },
+            "展览温室": { 
+                pinyin: "zhǎnlǎn wēnshì", 
+                cnExplain: "用于展览植物的温室", 
+                en: "exhibition greenhouse", 
+                ru: "выставочная теплица" 
+            },
+            "热带雨林室": { 
+                pinyin: "rèdài yǔlín shì", 
+                cnExplain: "模拟热带雨林环境的展览室", 
+                en: "tropical rainforest room", 
+                ru: "комната тропического дождевого леса" 
+            },
+            "沙漠植物室": { 
+                pinyin: "shāmò zhíwù shì", 
+                cnExplain: "展示沙漠植物的展览室", 
+                en: "desert plant room", 
+                ru: "комната пустынных растений" 
+            },
+            "四季花园": { 
+                pinyin: "sìjì huāyuán", 
+                cnExplain: "四季都有花卉的花园", 
+                en: "four-season garden", 
+                ru: "сад четырех сезонов" 
+            },
+            "展示": { 
+                pinyin: "zhǎnshì", 
+                cnExplain: "清楚地摆出来让人看", 
+                en: "display", 
+                ru: "показывать" 
+            },
+            "亚热带": { 
+                pinyin: "yàrèdài", 
+                cnExplain: "热带和温带之间的气候带", 
+                en: "subtropical", 
+                ru: "субтропический" 
+            },
+            "低温温室": { 
+                pinyin: "dīwēn wēnshì", 
+                cnExplain: "温度较低的温室", 
+                en: "low-temperature greenhouse", 
+                ru: "низкотемпературная теплица" 
+            },
+            "盆景展室": { 
+                pinyin: "pénjǐng zhǎnshì", 
+                cnExplain: "展示盆景的房间", 
+                en: "bonsai exhibition room", 
+                ru: "комната выставки бонсаи" 
+            },
+            "温室群": { 
+                pinyin: "wēnshì qún", 
+                cnExplain: "多个温室组成的群体", 
+                en: "greenhouse complex", 
+                ru: "комплекс теплиц" 
+            },
+            "古迹": { 
+                pinyin: "gǔjì", 
+                cnExplain: "古代留存下来的建筑物或遗迹", 
+                en: "historical site", 
+                ru: "исторический памятник" 
+            },
+            "卧佛寺": { 
+                pinyin: "Wòfó Sì", 
+                cnExplain: "一座寺庙名称", 
+                en: "Wofo Temple", 
+                ru: "Храм Лежащего Будды" 
+            },
+            "曹雪芹纪念馆": { 
+                pinyin: "Cáo Xuěqín Jìniànguǎn", 
+                cnExplain: "纪念曹雪芹的场馆", 
+                en: "Cao Xueqin Memorial Museum", 
+                ru: "Мемориальный музей Цао Сюэцзина" 
+            },
+            "纪念亭": { 
+                pinyin: "jìniàntíng", 
+                cnExplain: "为纪念某事或某人而建的亭子", 
+                en: "memorial pavilion", 
+                ru: "памятный павильон" 
+            },
+            "梁启超墓": { 
+                pinyin: "Liáng Qǐchāo Mù", 
+                cnExplain: "梁启超的墓地", 
+                en: "Liang Qichao Cemetery", 
+                ru: "Кладбище Лян Цичао" 
+            }
+        };
+
+        // 二、字体大小控制（确保正常生效）
+        const body = document.body;
+        const fontSmall = document.getElementById('font-small');
+        const fontNormal = document.getElementById('font-normal');
+        const fontLarge = document.getElementById('font-large');
+        let currentFontSize = 16;
+
+        function updateFontSize() {
+            body.style.fontSize = `${currentFontSize}px`;
+        }
+
+        fontLarge.addEventListener('click', () => {
+            if (currentFontSize < 24) {
+                currentFontSize += 2;
+                updateFontSize();
+            }
+        });
+
+        fontSmall.addEventListener('click', () => {
+            if (currentFontSize > 12) {
+                currentFontSize -= 2;
+                updateFontSize();
+            }
+        });
+
+        fontNormal.addEventListener('click', () => {
+            currentFontSize = 16;
+            updateFontSize();
+        });
+
+        // 初始化字体
+        updateFontSize();
+
+        // 三、词汇弹窗控制
+        const vocabElements = document.querySelectorAll('.vocab');
+        const vocabPopup = document.getElementById('vocab-popup');
+        const vocabOverlay = document.getElementById('vocab-overlay');
+        const vocabClose = document.getElementById('vocab-close');
+        const vocabName = document.getElementById('vocabName');
+        const vocabPinyin = document.getElementById('vocabPinyin');
+        const vocabCnExplain = document.getElementById('vocabCnExplain');
+        const vocabEn = document.getElementById('vocabEn');
+        const vocabRu = document.getElementById('vocabRu');
+
+        vocabElements.forEach(element => {
+            element.addEventListener('click', function() {
+                const word = this.getAttribute('data-word');
+                const data = vocabData[word];
+                if (data) {
+                    vocabName.textContent = word;
+                    vocabPinyin.textContent = data.pinyin;
+                    vocabCnExplain.textContent = data.cnExplain;
+                    vocabEn.textContent = data.en;
+                    vocabRu.textContent = data.ru;
+                    vocabPopup.style.display = 'block';
+                    vocabOverlay.style.display = 'block';
+                }
+            });
+        });
+
+        function closePopup() {
+            vocabPopup.style.display = 'none';
+            vocabOverlay.style.display = 'none';
+        }
+
+        vocabClose.addEventListener('click', closePopup);
+        vocabOverlay.addEventListener('click', closePopup);
+
+        // 四、习题互动逻辑（核心修复：空值绝对不得分）
+        const correctAnswers = {
+            // 第一部分：根据文章内容填空
+            fill1: [
+                { correct: ['京西香山脚下', '京西香山脚下，距离市中心23公里'], tips: '正确答案：京西香山脚下' },
+                { correct: ['古迹'], tips: '正确答案：古迹（文章中明确将其列为古迹之一）' },
+                { correct: ['历史人物', '近代思想家', '学者', '清末民初思想家'], tips: '正确答案：历史人物（或“近代思想家”“学者”等合理表述）' },
+                { correct: ['植物展览温室群', '温室群'], tips: '正确答案：植物展览温室群' }
+            ],
+            // 第二部分：北京植物园实际门票/运营信息（作为正确答案）
+            fill2: [
+                { correct: ['10元', '10元/人', '10块', '10块钱'], tips: '正确答案：10元（普通成人票）' },
+                { correct: ['6:30-18:00', '早上6点半到下午6点', '6:30至18:00', '7:00-18:00'], tips: '正确答案：6:30-18:00（夏季常规售票时间）' },
+                { correct: ['17:00', '下午5点', '17点', '17:30'], tips: '正确答案：17:00（冬季常规静园时间）' }
+            ]
+        };
+
+        const submitBtn = document.getElementById('submit-btn');
+        const result = document.getElementById('result');
+        const scoreEl = document.getElementById('score');
+        const answerDetails = document.getElementById('answer-details');
+
+        submitBtn.addEventListener('click', () => {
+            let totalScore = 0;
+            const totalQuestions = 4 + 3; // 两部分共7题，每题1分
+            let detailsHtml = '';
+
+            // （1）处理第一部分填空题（修复空值得分问题）
+            let fill1Score = 0;
+            detailsHtml += '<h4 style="margin:15px 0;">一、根据文章内容填空 正确答案：</h4>';
+            for (let i = 0; i < 4; i++) {
+                const inputEl = document.getElementById(`fill1-${i+1}`);
+                const userAnswer = inputEl.value.trim(); // 去空格，空输入直接为""
+                const { correct, tips } = correctAnswers.fill1[i];
+                let isCorrect = false;
+
+                // 关键修复：空值直接判定为不正确，不参与后续判断
+                if (userAnswer === '') {
+                    detailsHtml += `<div class="answer-item">第${i+1}题：${tips}（未作答，不得分）</div>`;
+                    document.getElementById(`fill1-${i+1}-ans`).textContent = `→ ${tips.split('（')[0]}`;
+                    continue; // 跳过后续正确判断
+                }
+
+                // 非空值才判断是否正确
+                isCorrect = correct.some(ans => 
+                    ans.toLowerCase().includes(userAnswer.toLowerCase()) || 
+                    userAnswer.toLowerCase().includes(ans.toLowerCase())
+                );
+
+                if (isCorrect) {
+                    fill1Score++;
+                    detailsHtml += `<div class="answer-item">第${i+1}题：${tips}（你的答案：${userAnswer}，正确，得1分）</div>`;
+                } else {
+                    detailsHtml += `<div class="answer-item">第${i+1}题：${tips}（你的答案：${userAnswer}，不正确，不得分）</div>`;
+                }
+                document.getElementById(`fill1-${i+1}-ans`).textContent = `→ ${tips.split('（')[0]}`;
+            }
+
+            // （2）处理第二部分填空题（同步空值修复逻辑）
+            let fill2Score = 0;
+            detailsHtml += '<h4 style="margin:15px 0;">二、从植物园门票查找信息 正确答案：</h4>';
+            for (let i = 0; i < 3; i++) {
+                const inputEl = document.getElementById(`fill2-${i+1}`);
+                const userAnswer = inputEl.value.trim();
+                const { correct, tips } = correctAnswers.fill2[i];
+                let isCorrect = false;
+
+                // 空值直接判定为不得分
+                if (userAnswer === '') {
+                    detailsHtml += `<div class="answer-item">第${i+1}题：${tips}（未作答，不得分）</div>`;
+                    document.getElementById(`fill2-${i+1}-ans`).textContent = `→ ${tips.split('（')[0]}`;
+                    continue;
+                }
+
+                // 非空值判断正确性
+                isCorrect = correct.some(ans => 
+                    ans.toLowerCase().includes(userAnswer.toLowerCase()) || 
+                    userAnswer.toLowerCase().includes(ans.toLowerCase())
+                );
+
+                if (isCorrect) {
+                    fill2Score++;
+                    detailsHtml += `<div class="answer-item">第${i+1}题：${tips}（你的答案：${userAnswer}，正确，得1分）</div>`;
+                } else {
+                    detailsHtml += `<div class="answer-item">第${i+1}题：${tips}（你的答案：${userAnswer}，不正确，不得分）</div>`;
+                }
+                document.getElementById(`fill2-${i+1}-ans`).textContent = `→ ${tips.split('（')[0]}`;
+            }
+
+            // 计算总分并显示
+            totalScore = fill1Score + fill2Score;
+            scoreEl.textContent = `你的总得分：${totalScore}/${totalQuestions} 分`;
+            answerDetails.innerHTML = detailsHtml;
+            result.style.display = 'block';
+
+            // 滚动到结果区域
+            result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    </script>
+</body>
+</html>
