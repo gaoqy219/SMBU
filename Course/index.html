@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程目录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px;
+            line-height: 1.8;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            margin: 30px 0 50px;
+            color: #2c3e50;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 15px;
+        }
+        .course-list {
+            list-style: none;
+        }
+        .course-item {
+            margin: 12px 0;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .course-item:hover {
+            background-color: #f0f7ff;
+            transform: translateX(5px);
+        }
+        .course-link {
+            color: #2980b9;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .course-link:hover {
+            color: #e74c3c;
+            text-decoration: underline;
+        }
+        .course-desc {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>课程目录</h1>
+    
+    <ul class="course-list">
+        <li class="course-item">
+            <a href="IntermediateReadingI/9-index.html" class="course-link">中级阅读</a>
+            <p class="course-desc">包含课文、互动习题及词汇练习（第九课）</p>
+        </li>
+        <li class="course-item">
+            <span class="course-link">初级综合</span>
+            <p class="course-desc">待更新</p>
+        </li>
+        <li class="course-item">
+            <span class="course-link">HSK4级强化</span>
+            <p class="course-desc">（待更新）</p>
+        </li>
+    </ul>
+</body>
+</html>
