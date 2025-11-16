@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>钱包的误会（含互动习题）</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            color: #333;
+            font-size: 16px; /* 基础字体大小 */
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .font-control {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .font-control button {
+            padding: 8px 16px;
+            margin: 0 8px;
+            border: 1px solid #e74c3c;
+            border-radius: 4px;
+            background: #fff;
+            color: #e74c3c;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+        .font-control button:hover {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .article {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .vocab {
+            color: #e74c3c;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        /* 习题样式 */
+        .exercise {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .exercise-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
+        .exercise-section:last-child {
+            border-bottom: none;
+        }
+        .exercise-title {
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .question {
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 3px solid #e74c3c;
+        }
+        /* 选择题样式 */
+        .option-group {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        .option {
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .option input {
+            margin-right: 8px;
+        }
+        /* 开放性问题样式 */
+        .open-question {
+            margin: 20px 0;
+        }
+        .open-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 100px;
+            font-size: 1em;
+            line-height: 1.6;
+            resize: vertical;
+        }
+        /* 提交按钮样式 */
+        .submit-btn {
+            display: block;
+            margin: 30px auto;
+            padding: 12px 24px;
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+        .submit-btn:hover {
+            background: #c0392b;
+        }
+        /* 结果显示样式 */
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            display: none;
+        }
+        .score {
+            text-align: center;
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-weight: bold;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .correct-answer {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .reference-answer {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fff;
+            border-radius: 4px;
+            border-left: 3px solid #3498db;
+        }
+        .answer-item {
+            margin-bottom: 15px;
+        }
+        /* 弹窗样式 */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            max-width: 550px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 25px;
+            z-index: 999;
+            display: none;
+        }
+        .popup h3 {
+            margin-bottom: 15px;
+            color: #e74c3c;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .popup p {
+            margin-bottom: 10px;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+        .popup .lang-label {
+            font-weight: bold;
+            color: #2c3e50;
+            display: inline-block;
+            width: 60px;
+        }
+        .popup .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.2s;
+        }
+        .popup .close:hover {
+            color: #e74c3c;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>钱包的误会</h1>
+    <div class="font-control">
+        <button id="font-small">- 缩小字体</button>
+        <button id="font-normal">默认字体</button>
+        <button id="font-large">放大字体 +</button>
+    </div>
+
+    <!-- 文章部分 -->
+    <div class="article" id="article">
+        从饭店出来已是十一点多钟，街道上人、车都少了，显得很<span class="vocab" data-word="冷清">冷清</span>（deserted）。
+        <br><br>
+        他感到很累。一天忙下来<span class="vocab" data-word="筋疲力尽">筋疲力尽</span>¹，他的双手都有点儿<span class="vocab" data-word="红肿">红肿</span>（hóng zhǒng）了。他想再干两个月，如果能攒下八千元钱，就可以<span class="vocab" data-word="维持">维持</span>一个学期的生活……
+        <br><br>
+        忽然，后面一个人撞了他一下。见鬼！这么宽的路还往人身上撞，眼睛长哪儿去啦？“对不起！”那个人急急忙忙向前走去。他不由一惊，马上摸摸装在<span class="vocab" data-word="裤兜">裤兜</span>（dōu）里的钱包。啊！没啦！好家伙！<span class="vocab" data-word="竟然">竟然</span>（unexpectedly）偷到他这个穷学生身上了。“站住！”他大喊了一声。那个人不理，加快脚步向前走去。他<span class="vocab" data-word="追赶">追赶</span>上去大喊：“钱包！钱包！”那人猛地跑开了，他连忙追过去。
+        <br><br>
+        他钱包里的钱不多，大约只有几十元钱和几枚硬币（coin）。可这是自己辛苦打工挣来的钱啊。<span class="vocab" data-word="打量">打量</span>前面这个家伙，他想，他可能是个专门在晚上偷东西的<span class="vocab" data-word="小偷">小偷</span>。他越想越来气，这个<span class="vocab" data-word="坏蛋">坏蛋</span>，他非抓住他不可！
+        <br><br>
+        “赶快站住，把钱包拿出来！”他大喊。他越喊，那个人就跑得越快。就在他要追上他的时候，那个人一看实在逃不过去，便扔了钱包跑了。
+        <br><br>
+        在<span class="vocab" data-word="昏暗">昏暗</span>（somber）的路边上，他捡起钱包，装进衣兜。为了防止意外，他不能再追了，得赶紧离开这个不安全的地方。于是，他一路小跑，回到了住处。
+        <br><br>
+        跑进屋子，他的心怦怦直跳。坐下来后，他这才打开钱包。咦？这哪里是我的钱包，这家伙到底<span class="vocab" data-word="调包">调包</span>（stealthily replace）了……可他翻开那被汗水<span class="vocab" data-word="浸湿">浸湿</span>（jìn）得湿乎乎的钱包，<span class="vocab" data-word="愣住">愣住</span>了：那里有两千多块钱、几枚硬币和一张<span class="vocab" data-word="工资单">工资单</span>（payroll）。原来他也是在一个店里打工的学生，刚刚拿到这月的工资。
+        <br><br>
+        这时他看看裤子，一下子想到早起后换了裤子，自己的钱包还在原来的裤兜里呢！
+    </div>
+
+    <!-- 习题部分 -->
+    <div class="exercise" id="exercise">
+        <!-- 一、根据文章内容选择正确答案 -->
+        <div class="exercise-section">
+            <h3 class="exercise-title">一、根据文章内容选择正确答案（从A、B、C、D中选最佳答案）</h3>
+            <div class="question-group" id="choice-group">
+                <div class="question">1. 文章主要讲的是什么？()</div>
+                <div class="option-group">
+                    <div class="option"><input type="radio" name="choice-1" value="A"> A. 一个学生抢钱包</div>
+                    <div class="option"><input type="radio" name="choice-1" value="B"> B. 一个学生丢了钱包</div>
+                    <div class="option"><input type="radio" name="choice-1" value="C"> C. 一个学生关于钱包的误会</div>
+                    <div class="option"><input type="radio" name="choice-1" value="D"> D. 一个学生生活中的错误</div>
+                    <span class="correct-answer" id="choice-1-ans"></span>
+                </div>
+
+                <div class="question">2. 根据文章内容，他的钱包：()</div>
+                <div class="option-group">
+                    <div class="option"><input type="radio" name="choice-2" value="A"> A. 被偷了</div>
+                    <div class="option"><input type="radio" name="choice-2" value="B"> B. 被抢了</div>
+                    <div class="option"><input type="radio" name="choice-2" value="C"> C. 没丢</div>
+                    <div class="option"><input type="radio" name="choice-2" value="D"> D. 被别人捡到</div>
+                    <span class="correct-answer" id="choice-2-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 二、开放性问题 -->
+        <div class="exercise-section">
+            <h3 class="exercise-title">二、根据文章内容，你觉得他后来会怎么处理这个钱包？</h3>
+            <div class="open-question">
+                <textarea class="open-input" id="open-question" placeholder="请写下你的想法..."></textarea>
+                <div class="reference-answer" id="reference-ans" style="display: none;">
+                    <strong>参考答案：</strong>他会先找到自己原来裤兜里的钱包，然后根据捡到的钱包里工资单上的信息，联系失主或者相关单位，把装有两千多块钱和工资单的钱包还给那位同样是打工学生的失主，因为他能理解打工挣钱的不易。
+                </div>
+            </div>
+        </div>
+
+        <button class="submit-btn" id="submit-btn">提交答案并查看结果</button>
+
+        <div class="result" id="result">
+            <div class="score" id="score"></div>
+            <div id="answer-details">
+                <!-- 正确答案详情动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 词汇弹窗 -->
+    <div class="overlay" id="vocab-overlay"></div>
+    <div class="popup" id="vocab-popup">
+        <div class="close" id="vocab-close">×</div>
+        <h3 id="vocabName"></h3>
+        <p><span class="lang-label">拼音：</span><span id="vocabPinyin"></span></p>
+        <p><span class="lang-label">中文解释：</span><span id="vocabCnExplain"></span></p>
+        <p><span class="lang-label">英文翻译：</span><span id="vocabEn"></span></p>
+        <p><span class="lang-label">俄文翻译：</span><span id="vocabRu"></span></p>
+    </div>
+
+    <script>
+        // 一、词汇数据字典（中、英、俄三语）
+        const vocabData = {
+            "冷清": { 
+                pinyin: "lěngqīng", 
+                cnExplain: "人少、不热闹，场面寂静", 
+                en: "deserted", 
+                ru: "пустой" 
+            },
+            "筋疲力尽": { 
+                pinyin: "jīn pí lì jìn", 
+                cnExplain: "非常疲劳，一点力气也没有了", 
+                en: "completely exhausted", 
+                ru: "полностью измотан" 
+            },
+            "红肿": { 
+                pinyin: "hóngzhǒng", 
+                cnExplain: "又红又肿，通常因受伤或炎症导致", 
+                en: "red and swollen", 
+                ru: "красный и опухший" 
+            },
+            "维持": { 
+                pinyin: "wéichí", 
+                cnExplain: "保持，使继续存在", 
+                en: "maintain; sustain", 
+                ru: "поддерживать" 
+            },
+            "裤兜": { 
+                pinyin: "kùdōu", 
+                cnExplain: "裤子上的口袋", 
+                en: "trouser pocket", 
+                ru: "карман в брюках" 
+            },
+            "竟然": { 
+                pinyin: "jìngrán", 
+                cnExplain: "表示出乎意料", 
+                en: "unexpectedly", 
+                ru: "неожиданно" 
+            },
+            "追赶": { 
+                pinyin: "zhuīgǎn", 
+                cnExplain: "加快速度赶上前去", 
+                en: "chase; pursue", 
+                ru: "гнать" 
+            },
+            "打量": { 
+                pinyin: "dǎliang", 
+                cnExplain: "仔细地看，观察", 
+                en: "look sb. up and down; observe", 
+                ru: "взглядывать" 
+            },
+            "小偷": { 
+                pinyin: "xiǎotōu", 
+                cnExplain: "偷窃他人财物的人", 
+                en: "thief", 
+                ru: "вор" 
+            },
+            "坏蛋": { 
+                pinyin: "huàidàn", 
+                cnExplain: "坏人，品行恶劣的人", 
+                en: "bad guy; villain", 
+                ru: "злодей" 
+            },
+            "昏暗": { 
+                pinyin: "hūnàn", 
+                cnExplain: "光线不足，阴暗", 
+                en: "somber; dim", 
+                ru: "тусклый" 
+            },
+            "调包": { 
+                pinyin: "diàobāo", 
+                cnExplain: "暗中用假的换真的，或用别的换原来的", 
+                en: "stealthily replace", 
+                ru: "тайно заменять" 
+            },
+            "浸湿": { 
+                pinyin: "jìnshī", 
+                cnExplain: "被液体泡湿", 
+                en: "soak; drench", 
+                ru: "засыпать" 
+            },
+            "愣住": { 
+                pinyin: "lèngzhù", 
+                cnExplain: "因惊讶或疑惑而呆住", 
+                en: "be stunned; freeze", 
+                ru: "остановиться в недоумении" 
+            },
+            "工资单": { 
+                pinyin: "gōngzī dān", 
+                cnExplain: "记录工资发放情况的单据", 
+                en: "payroll", 
+                ru: "зарплатный лист" 
+            }
+        };
+
+        // 二、字体大小控制（确保正常生效）
+        const body = document.body;
+        const fontSmall = document.getElementById('font-small');
+        const fontNormal = document.getElementById('font-normal');
+        const fontLarge = document.getElementById('font-large');
+        let currentFontSize = 16;
+
+        function updateFontSize() {
+            body.style.fontSize = `${currentFontSize}px`;
+        }
+
+        fontLarge.addEventListener('click', () => {
+            if (currentFontSize < 24) {
+                currentFontSize += 2;
+                updateFontSize();
+            }
+        });
+
+        fontSmall.addEventListener('click', () => {
+            if (currentFontSize > 12) {
+                currentFontSize -= 2;
+                updateFontSize();
+            }
+        });
+
+        fontNormal.addEventListener('click', () => {
+            currentFontSize = 16;
+            updateFontSize();
+        });
+
+        // 初始化字体
+        updateFontSize();
+
+        // 三、词汇弹窗控制
+        const vocabElements = document.querySelectorAll('.vocab');
+        const vocabPopup = document.getElementById('vocab-popup');
+        const vocabOverlay = document.getElementById('vocab-overlay');
+        const vocabClose = document.getElementById('vocab-close');
+        const vocabName = document.getElementById('vocabName');
+        const vocabPinyin = document.getElementById('vocabPinyin');
+        const vocabCnExplain = document.getElementById('vocabCnExplain');
+        const vocabEn = document.getElementById('vocabEn');
+        const vocabRu = document.getElementById('vocabRu');
+
+        vocabElements.forEach(element => {
+            element.addEventListener('click', function() {
+                const word = this.getAttribute('data-word');
+                const data = vocabData[word];
+                if (data) {
+                    vocabName.textContent = word;
+                    vocabPinyin.textContent = data.pinyin;
+                    vocabCnExplain.textContent = data.cnExplain;
+                    vocabEn.textContent = data.en;
+                    vocabRu.textContent = data.ru;
+                    vocabPopup.style.display = 'block';
+                    vocabOverlay.style.display = 'block';
+                }
+            });
+        });
+
+        function closePopup() {
+            vocabPopup.style.display = 'none';
+            vocabOverlay.style.display = 'none';
+        }
+
+        vocabClose.addEventListener('click', closePopup);
+        vocabOverlay.addEventListener('click', closePopup);
+
+        // 四、习题互动逻辑（确保提交正常，第二题不评判）
+        const correctAnswers = {
+            choice: ['C', 'C'] // 第一题正确答案
+        };
+
+        const submitBtn = document.getElementById('submit-btn');
+        const result = document.getElementById('result');
+        const scoreEl = document.getElementById('score');
+        const answerDetails = document.getElementById('answer-details');
+        const referenceAns = document.getElementById('reference-ans');
+
+        submitBtn.addEventListener('click', () => {
+            let totalScore = 0;
+            const totalQuestions = 2; // 仅第一题2题计分
+            let detailsHtml = '';
+
+            // （1）处理选择题
+            let choiceScore = 0;
+            detailsHtml += '<h4 style="margin:15px 0;">一、选择题 正确答案：</h4>';
+            for (let i = 0; i < 2; i++) {
+                const selected = document.querySelector(`input[name="choice-${i+1}"]:checked`);
+                const userAnswer = selected ? selected.value : null;
+                const correct = correctAnswers.choice[i];
+
+                detailsHtml += `<div class="answer-item">第${i+1}题：正确答案为「${correct}」`;
+                if (userAnswer === correct) {
+                    choiceScore++;
+                    detailsHtml += `（你的答案：${userAnswer}，正确，得1分）</div>`;
+                } else if (userAnswer === null) {
+                    detailsHtml += `（未作答，不得分）</div>`;
+                } else {
+                    detailsHtml += `（你的答案：${userAnswer}，不正确，不得分）</div>`;
+                }
+                document.getElementById(`choice-${i+1}-ans`).textContent = `→ 正确答案：${correct}`;
+            }
+
+            // （2）处理开放性问题（显示参考答案，不评判）
+            detailsHtml += '<h4 style="margin:15px 0;">二、开放性问题 参考答案：</h4>';
+            detailsHtml += `<div class="reference-answer">${referenceAns.innerHTML}</div>`;
+            referenceAns.style.display = 'block';
+
+            // 计算总分
+            totalScore = choiceScore;
+            scoreEl.textContent = `你的选择题得分：${totalScore}/${totalQuestions} 分`;
+            answerDetails.innerHTML = detailsHtml;
+            result.style.display = 'block';
+
+            // 滚动到结果区域
+            result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    </script>
+</body>
+</html>
