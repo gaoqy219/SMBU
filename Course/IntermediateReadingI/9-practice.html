@@ -520,16 +520,16 @@
         
         // 1. 处理第一大题：拖拽匹配（中文词汇拖拽到英文解释）
         const chineseVocab = [
-            { id: 1, text: "1. 律师" },
-            { id: 2, text: "2. 杰出" },
-            { id: 3, text: "3. 心愿" },
-            { id: 4, text: "4. 地道" },
-            { id: 5, text: "5. 冷清" },
-            { id: 6, text: "6. 筋疲力尽" },
-            { id: 7, text: "7. 承受" },
-            { id: 8, text: "8. 尝试" },
-            { id: 9, text: "9. 国家级" },
-            { id: 10, text: "10. 旅游景区" }
+            { id: 1, text: "律师" },
+            { id: 2, text: "杰出" },
+            { id: 3, text: "心愿" },
+            { id: 4, text: "地道" },
+            { id: 5, text: "冷清" },
+            { id: 6, text: "筋疲力尽" },
+            { id: 7, text: "承受" },
+            { id: 8, text: "尝试" },
+            { id: 9, text: "国家级" },
+            { id: 10, text: "旅游景区" }
         ];
         
         // 存储用户匹配结果
@@ -689,37 +689,43 @@
             }
         };
         
-        // 提交按钮逻辑
+        // 提交按钮逻辑（核心修复部分）
         document.getElementById('submit-btn').addEventListener('click', function() {
             let totalScore = 0;
             let totalQuestions = 0;
             let detailsHTML = '';
             
-            // 1. 检查词义拖拽匹配题
+            // 1. 检查词义拖拽匹配题（修复：将数字i转为字符串作为键）
             detailsHTML += '<h3>一、词义匹配题结果</h3>';
-            
             for (let i = 1; i <= 10; i++) {
                 totalQuestions++;
-                const userAnswer = userMatches[i] || '未作答';
-                const correctAnswer = correctAnswers.matching[i];
+                const vocabKey = i.toString(); // 转为字符串键，匹配userMatches的存储格式
+                const userAnswer = userMatches[vocabKey] || '未作答';
+                const correctAnswer = correctAnswers.matching[vocabKey];
                 const isCorrect = userAnswer === correctAnswer;
                 
                 // 获取中文词汇和英文解释文本（用于结果显示）
                 const vocabText = chineseVocab.find(v => v.id == i).text;
-                const answerText = document.querySelector(`.drop-zone[data-answer="${correctAnswer}"]`).firstChild.textContent.trim();
+                const correctZone = document.querySelector(`.drop-zone[data-answer="${correctAnswer}"]`);
+                const correctAnswerText = correctZone ? correctZone.firstChild.textContent.trim() : '';
                 
                 if (isCorrect) {
                     totalScore++;
-                    detailsHTML += `<p class="correct">${vocabText} - 正确，匹配: ${answerText}</p>`;
+                    detailsHTML += `<p class="correct">${vocabText} - 正确，匹配: ${correctAnswerText}</p>`;
                 } else {
-                    detailsHTML += `<p class="incorrect">${vocabText} - 错误，你的匹配: ${userAnswer ? document.querySelector(`.drop-zone[data-answer="${userAnswer}"]`).firstChild.textContent.trim() : '未作答'}，正确匹配: ${answerText}</p>`;
+                    // 处理未作答或匹配错误的情况
+                    let userAnswerText = '未作答';
+                    if (userAnswer !== '未作答') {
+                        const userZone = document.querySelector(`.drop-zone[data-answer="${userAnswer}"]`);
+                        userAnswerText = userZone ? userZone.firstChild.textContent.trim() : '无效匹配';
+                    }
+                    detailsHTML += `<p class="incorrect">${vocabText} - 错误，你的匹配: ${userAnswerText}，正确匹配: ${correctAnswerText}</p>`;
                 }
             }
             
             // 2. 检查句子填空题
             detailsHTML += '<h3>二、句子填空题结果</h3>';
             const sentenceBlanks = document.querySelectorAll('.sentence-blank');
-            
             sentenceBlanks.forEach(blank => {
                 totalQuestions++;
                 const questionNum = blank.getAttribute('data-question');
@@ -738,7 +744,6 @@
             // 3. 检查短文填空题
             detailsHTML += '<h3>三、短文填空题结果</h3>';
             const passageBlanks = document.querySelectorAll('.passage-blank');
-            
             passageBlanks.forEach(blank => {
                 totalQuestions++;
                 const questionNum = blank.getAttribute('data-question');
