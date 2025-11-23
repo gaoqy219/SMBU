@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>词汇测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            background-color: #f5f5f5;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .question {
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .question h3 {
+            margin-top: 0;
+            color: #444;
+        }
+        .options {
+            margin: 15px 0;
+        }
+        .option {
+            display: block;
+            margin: 8px 0;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        /* 选中状态样式 */
+        .option.selected {
+            background-color: #e6f7ff;
+            border-color: #1890ff;
+        }
+        .option:hover {
+            background-color: #f0f8ff;
+            border-color: #999;
+        }
+        .option.correct {
+            background-color: #dff0d8;
+            border-color: #3c763d;
+        }
+        .option.incorrect {
+            background-color: #f2dede;
+            border-color: #a94442;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .score {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            text-align: center;
+        }
+        .feedback {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+        }
+        /* 改为英文类名，解决JS识别问题 */
+        .matching-question {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        .matching-group {
+            width: 45%;
+        }
+        .matching-item {
+            padding: 8px;
+            margin: 5px 0;
+            background-color: #e9e9e9;
+            border-radius: 4px;
+            cursor: move;
+            transition: background 0.3s;
+        }
+        .matching-item:hover {
+            background-color: #e0e0e0;
+        }
+        .matching-area {
+            min-height: 200px;
+            border: 2px dashed #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #fafafa;
+        }
+        .matched {
+            background-color: #d5f5e3;
+            border-color: #2ecc71;
+        }
+        /* 拖拽中样式 */
+        .dragging {
+            opacity: 0.5;
+        }
+        .question-section {
+            margin-bottom: 30px;
+        }
+        .question-section h2 {
+            color: #4CAF50;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>词汇测试</h1>
+        <div id="questions-container"></div>
+        <div style="text-align: center; margin-top: 30px;">
+            <button id="submit-btn">提交答案</button>
+            <button id="refresh-btn">重新出题</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // 从5个网页中整理的弹窗生词数据
+        const vocabData = {
+            "逗人爱": {
+                pinyin: "dòu rén ài",
+                cnExplain: "让人喜欢，惹人喜爱",
+                en: "lovely, endearing",
+                ru: "милый, очаровательный"
+            },
+            "满月": {
+                pinyin: "mǎn yuè",
+                cnExplain: "婴儿出生后满一个月；月亮变圆的状态",
+                en: "one month old (for baby); full moon",
+                ru: "месяц от рождения; полная луна"
+            },
+            "淘气": {
+                pinyin: "táo qì",
+                cnExplain: "顽皮，不听话",
+                en: "naughty, mischievous",
+                ru: "проворный, озорной"
+            },
+            "鸡毛": {
+                pinyin: "jī máo",
+                cnExplain: "鸡的羽毛",
+                en: "chicken feather",
+                ru: "куриное перо"
+            },
+            "线团": {
+                pinyin: "xiàn tuán",
+                cnExplain: "缠绕成一团的线",
+                en: "ball of thread",
+                ru: " клубок ниток"
+            },
+            "没完没了": {
+                pinyin: "méi wán méi liǎo",
+                cnExplain: "没有完结，持续不断",
+                en: "endless, without end",
+                ru: "бесконечный, не имеющий конца"
+            },
+            "跟头": {
+                pinyin: "gēn tou",
+                cnExplain: "身体向下弯曲然后翻转的动作",
+                en: "somersault, flip",
+                ru: "перекат, подкат"
+            },
+            "哭": {
+                pinyin: "kū",
+                cnExplain: "因悲伤或激动而流泪",
+                en: "cry, weep",
+                ru: "плакать"
+            },
+            "胆子": {
+                pinyin: "dǎn zi",
+                cnExplain: "勇气，胆量",
+                en: "courage, boldness",
+                ru: "храбрость, смелость"
+            },
+            "花盆": {
+                pinyin: "huā pén",
+                cnExplain: "用来种植花草的容器",
+                en: "flowerpot",
+                ru: "цветочный горшок"
+            },
+            "花枝": {
+                pinyin: "huā zhī",
+                cnExplain: "开着花的枝条",
+                en: "flowering branch",
+                ru: "цветущая ветка"
+            },
+            "秋千": {
+                pinyin: "qiū qiān",
+                cnExplain: "一种游乐设施，挂在架子上的座椅，可以前后摆动",
+                en: "swing",
+                ru: "качели"
+            },
+            "搞坏": {
+                pinyin: "gǎo huài",
+                cnExplain: "使损坏，弄坏",
+                en: "break, ruin",
+                ru: "сломать, испортить"
+            },
+            "天真": {
+                pinyin: "tiān zhēn",
+                cnExplain: "心地单纯，性情直率",
+                en: "innocent, naive",
+                ru: "невинный, наивный"
+            },
+            "生气": {
+                pinyin: "shēng qì",
+                cnExplain: "因不合心意而不愉快",
+                en: "angry, annoyed",
+                ru: "злый, раздраженный"
+            },
+            "流利": {
+                pinyin: "liú lì",
+                cnExplain: "说话、做事顺畅没有阻碍",
+                en: "fluent; smooth",
+                ru: "плавный; свободный"
+            },
+            "表演": {
+                pinyin: "biǎo yǎn",
+                cnExplain: "通过动作、语言等展示技艺或情节",
+                en: "perform; show",
+                ru: "выступать; показывать"
+            },
+            "观众": {
+                pinyin: "guān zhòng",
+                cnExplain: "观看表演、比赛等的人",
+                en: "audience; spectator",
+                ru: "зрители; зрители"
+            },
+            "洋笑星": {
+                pinyin: "yáng xiào xīng",
+                cnExplain: "外国的喜剧演员（因汉语流利能让观众发笑而得名）",
+                en: "foreign comedian",
+                ru: "иностранный комик"
+            },
+            "研究": {
+                pinyin: "yán jiū",
+                cnExplain: "探求事物的真相、性质、规律等",
+                en: "study; research",
+                ru: "изучать; исследовать"
+            },
+            "生动": {
+                pinyin: "shēng dòng",
+                cnExplain: "具有活力，能使人感动的",
+                en: "vivid, lively",
+                ru: "живой, яркий"
+            },
+            "杂志": {
+                pinyin: "zá zhì",
+                cnExplain: "定期出版的刊物",
+                en: "magazine",
+                ru: "журнал"
+            },
+            "运动": {
+                pinyin: "yùn dòng",
+                cnExplain: "物体位置不断变化的现象；体育活动",
+                en: "movement; sports",
+                ru: "движение; спорт"
+            },
+            "阅读": {
+                pinyin: "yuè dú",
+                cnExplain: "看（书报等）并领会其内容",
+                en: "read",
+                ru: "читать"
+            },
+            "简洁": {
+                pinyin: "jiǎn jié",
+                cnExplain: "（说话、行文等）简明扼要，没有多余的内容",
+                en: "concise, succinct",
+                ru: "краткий, лаконичный"
+            },
+            "深刻": {
+                pinyin: "shēn kè",
+                cnExplain: "达到事情或问题的本质的",
+                en: "profound, deep",
+                ru: "глубокий, значимый"
+            },
+            "印象": {
+                pinyin: "yìn xiàng",
+                cnExplain: "客观事物在人的头脑里留下的迹象",
+                en: "impression",
+                ru: "впечатление"
+            },
+            "古怪": {
+                pinyin: "gǔ guài",
+                cnExplain: "跟一般情况很不相同，使人觉得诧异的；稀奇罕见的",
+                en: "eccentric; strange",
+                ru: "эксцентричный; странный"
+            },
+            "乖": {
+                pinyin: "guāi",
+                cnExplain: "（小孩）听话；不淘气",
+                en: "well-behaved; obedient",
+                ru: "послушный; не озорной"
+            },
+            "贪": {
+                pinyin: "tān",
+                cnExplain: "对某种事物的欲望老不满足；求多",
+                en: "greedy; crave",
+                ru: "жадный; жаждать"
+            },
+            "蹭": {
+                pinyin: "cèng",
+                cnExplain: "摩擦",
+                en: "rub against",
+                ru: "трогать; протирать"
+            },
+            "变化多端": {
+                pinyin: "biàn huà duō duān",
+                cnExplain: "形容变化极多，也指变化很大",
+                en: "varied and manifold; ever-changing",
+                ru: "разнообразный; постоянно меняющийся"
+            },
+            "天性": {
+                pinyin: "tiān xìng",
+                cnExplain: "人先天具有的品质或性情",
+                en: "innate nature; instinct",
+                ru: "врождённая натура; инстинкт"
+            },
+            "休息": {
+                pinyin: "xiū xi",
+                cnExplain: "暂时停止工作、学习或活动，以消除疲劳、恢复体力和脑力",
+                en: "rest",
+                ru: "отдых"
+            }
+        };
+
+        // 优化选词填空的句子模板，绑定适配的词汇（确保有正确答案）
+        const sentenceTemplates = [
+            { sentence: "这只小猫非常______，大家都很喜欢它。", words: ["逗人爱", "天真", "古怪", "乖"] },
+            { sentence: "他的中文说得很______，完全听不出是外国人。", words: ["流利", "生动", "简洁", "深刻"] },
+            { sentence: "孩子们在公园里玩______，笑声不断。", words: ["秋千", "跟头", "运动", "表演"] },
+            { sentence: "这个孩子太______了，总是把家里的东西弄乱。", words: ["淘气", "贪", "古怪", "天真"] },
+            { sentence: "他的脾气有点______，常常让人捉摸不透。", words: ["古怪", "深刻", "生动", "简洁"] },
+            { sentence: "小猫玩起______来，总是玩个______。", words: ["线团", "鸡毛", "没完没了", "变化多端"] },
+            { sentence: "她因为弄丢了玩具，坐在地上______了起来。", words: ["哭", "生气", "休息", "表演"] },
+            { sentence: "小明的______很小，连打雷都害怕。", words: ["胆子", "天性", "印象", "观众"] }
+        ];
+
+        // 生成随机测试题
+        function generateQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+            document.getElementById('result').style.display = 'none';
+            
+            // 随机选择10个词汇（用于整体测试）
+            const vocabList = Object.keys(vocabData);
+            const shuffledVocab = [...vocabList].sort(() => Math.random() - 0.5);
+            const selectedVocab = shuffledVocab.slice(0, 10);
+            
+            // 一、生成选词填空题 (3题)
+            const fillQuestions = document.createElement('div');
+            fillQuestions.className = 'question-section';
+            fillQuestions.innerHTML = '<h2>一、选词填空</h2>';
+            
+            // 随机选3个句子模板
+            const shuffledTemplates = [...sentenceTemplates].sort(() => Math.random() - 0.5).slice(0, 3);
+            shuffledTemplates.forEach((template, index) => {
+                const { sentence, words } = template;
+                // 随机选一个正确答案（从模板绑定的词汇中选）
+                const correctWord = words[Math.floor(Math.random() * words.length)];
+                // 生成干扰选项：从总词汇中选，确保包含正确答案且不重复
+                const options = [correctWord];
+                while (options.length < 4) {
+                    const randomOption = vocabList[Math.floor(Math.random() * vocabList.length)];
+                    if (!options.includes(randomOption) && randomOption.length > 1) {
+                        options.push(randomOption);
+                    }
+                }
+                // 打乱选项顺序
+                options.sort(() => Math.random() - 0.5);
+                
+                // 创建题目DOM
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `<h3>1.${index + 1} ${sentence}</h3>`;
+                
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+                
+                options.forEach(option => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option';
+                    optionDiv.dataset.correct = option === correctWord;
+                    optionDiv.textContent = option;
+                    // 点击选中逻辑：添加/移除selected类
+                    optionDiv.addEventListener('click', function() {
+                        // 清除同题其他选项的选中状态
+                        this.parentElement.querySelectorAll('.option').forEach(sib => {
+                            sib.classList.remove('selected');
+                        });
+                        this.classList.add('selected');
+                    });
+                    optionsDiv.appendChild(optionDiv);
+                });
+                
+                questionDiv.appendChild(optionsDiv);
+                fillQuestions.appendChild(questionDiv);
+            });
+            container.appendChild(fillQuestions);
+            
+            // 二、生成词义解释题 (3题)
+            const explainVocab = selectedVocab.slice(0, 3); // 从选中的10个词汇中选3个
+            const explainQuestions = document.createElement('div');
+            explainQuestions.className = 'question-section';
+            explainQuestions.innerHTML = '<h2>二、词义解释</h2>';
+            
+            explainVocab.forEach((word, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `<h3>2.${index + 1} “${word}”的意思是什么？</h3>`;
+                
+                // 生成选项：1个正确解释，3个干扰解释
+                const options = [vocabData[word].cnExplain];
+                while (options.length < 4) {
+                    const randomWord = vocabList[Math.floor(Math.random() * vocabList.length)];
+                    const randomExplain = vocabData[randomWord].cnExplain;
+                    if (!options.includes(randomExplain)) {
+                        options.push(randomExplain);
+                    }
+                }
+                // 打乱选项顺序
+                options.sort(() => Math.random() - 0.5);
+                
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+                
+                options.forEach(option => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option';
+                    optionDiv.dataset.correct = option === vocabData[word].cnExplain;
+                    optionDiv.textContent = option;
+                    // 点击选中逻辑
+                    optionDiv.addEventListener('click', function() {
+                        this.parentElement.querySelectorAll('.option').forEach(sib => {
+                            sib.classList.remove('selected');
+                        });
+                        this.classList.add('selected');
+                    });
+                    optionsDiv.appendChild(optionDiv);
+                });
+                
+                questionDiv.appendChild(optionsDiv);
+                explainQuestions.appendChild(questionDiv);
+            });
+            container.appendChild(explainQuestions);
+            
+            // 三、生成词-拼音连线题 (4题)
+            const pinyinVocab = selectedVocab.slice(3, 7); // 选4个词汇做连线
+            const pinyinQuestion = document.createElement('div');
+            pinyinQuestion.className = 'question-section';
+            pinyinQuestion.innerHTML = '<h2>三、连线（词语与拼音匹配）</h2>';
+            
+            const matchingDiv = document.createElement('div');
+            matchingDiv.className = 'matching-question'; // 改为英文类名
+            
+            // 词语组
+            const wordsDiv = document.createElement('div');
+            wordsDiv.className = 'matching-group';
+            wordsDiv.innerHTML = '<h3>词语</h3>';
+            const wordsContainer = document.createElement('div');
+            wordsContainer.className = 'matching-area';
+            
+            pinyinVocab.forEach(word => {
+                const wordDiv = document.createElement('div');
+                wordDiv.className = 'matching-item';
+                wordDiv.draggable = true;
+                wordDiv.dataset.word = word;
+                wordDiv.textContent = word;
+                
+                // 拖拽事件
+                wordDiv.addEventListener('dragstart', function(e) {
+                    e.dataTransfer.setData('text/plain', this.dataset.word);
+                    setTimeout(() => this.classList.add('dragging'), 0);
+                });
+                wordDiv.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                });
+                
+                wordsContainer.appendChild(wordDiv);
+            });
+            wordsDiv.appendChild(wordsContainer);
+            
+            // 拼音组
+            const pinyinsDiv = document.createElement('div');
+            pinyinsDiv.className = 'matching-group';
+            pinyinsDiv.innerHTML = '<h3>拼音</h3>';
+            const pinyinsContainer = document.createElement('div');
+            pinyinsContainer.className = 'matching-area';
+            
+            // 打乱拼音顺序
+            const shuffledPinyinVocab = [...pinyinVocab].sort(() => Math.random() - 0.5);
+            shuffledPinyinVocab.forEach(word => {
+                const pinyinDiv = document.createElement('div');
+                pinyinDiv.className = 'matching-item';
+                pinyinDiv.dataset.pinyin = vocabData[word].pinyin;
+                pinyinDiv.dataset.matchingWord = word;
+                pinyinDiv.textContent = vocabData[word].pinyin;
+                
+                // 拖放区域事件
+                pinyinDiv.addEventListener('dragover', function(e) {
+                    e.preventDefault(); // 允许拖放
+                });
+                pinyinDiv.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    const draggedWord = e.dataTransfer.getData('text/plain');
+                    // 匹配正确则标记
+                    if (draggedWord === this.dataset.matchingWord) {
+                        this.classList.add('matched');
+                        const draggedElement = document.querySelector(`.matching-item[data-word="${draggedWord}"]`);
+                        if (draggedElement) {
+                            draggedElement.classList.add('matched');
+                            draggedElement.draggable = false; // 禁止重复拖拽
+                        }
+                    }
+                });
+                
+                pinyinsContainer.appendChild(pinyinDiv);
+            });
+            pinyinsDiv.appendChild(pinyinsContainer);
+            
+            matchingDiv.appendChild(wordsDiv);
+            matchingDiv.appendChild(pinyinsDiv);
+            pinyinQuestion.appendChild(matchingDiv);
+            container.appendChild(pinyinQuestion);
+        }
+
+        // 提交答案并评分
+        function submitAnswers() {
+            let score = 0;
+            const totalQuestions = 10; // 3填空 + 3解释 + 4连线
+            
+            // 1. 评分选词填空题
+            const fillOptions = document.querySelectorAll('.question-section:nth-child(1) .option.selected');
+            fillOptions.forEach(option => {
+                if (option.dataset.correct === 'true') {
+                    score++;
+                    option.classList.add('correct');
+                } else {
+                    option.classList.add('incorrect');
+                    // 显示正确答案
+                    const correctOption = option.parentElement.querySelector('.option[data-correct="true"]');
+                    correctOption.classList.add('correct');
+                }
+            });
+            
+            // 2. 评分词义解释题
+            const explainOptions = document.querySelectorAll('.question-section:nth-child(2) .option.selected');
+            explainOptions.forEach(option => {
+                if (option.dataset.correct === 'true') {
+                    score++;
+                    option.classList.add('correct');
+                } else {
+                    option.classList.add('incorrect');
+                    const correctOption = option.parentElement.querySelector('.option[data-correct="true"]');
+                    correctOption.classList.add('correct');
+                }
+            });
+            
+            // 3. 评分连线题（每对正确匹配得1分，共4题）
+            const matchedWords = document.querySelectorAll('.matching-item.matched[data-word]');
+            score += matchedWords.length; // 每个正确拖拽的词语计1分
+            
+            // 显示结果
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            let feedback = '';
+            if (score === totalQuestions) {
+                feedback = '太棒了，全部正确！🎉';
+            } else if (score >= 7) {
+                feedback = '不错，继续努力！👍';
+            } else if (score >= 4) {
+                feedback = '还可以，再复习一下哦！🤔';
+            } else {
+                feedback = '加油，多练习会更好！💪';
+            }
+            resultDiv.innerHTML = `
+                <div class="score">得分: ${score}/${totalQuestions}</div>
+                <div class="feedback">${feedback}</div>
+            `;
+        }
+
+        // 页面加载时生成题目
+        window.onload = generateQuestions;
+        
+        // 绑定按钮事件
+        document.getElementById('submit-btn').addEventListener('click', submitAnswers);
+        document.getElementById('refresh-btn').addEventListener('click', generateQuestions);
+    </script>
+</body>
+</html>
