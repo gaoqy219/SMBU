@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互动式阅读：德国人爱花</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            color: #333;
+            font-size: 16px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .font-control {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .font-control button {
+            padding: 6px 12px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .font-control button:hover {
+            background: #f5f5f5;
+            border-color: #3498db;
+            color: #3498db;
+        }
+        .article {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .vocab {
+            color: #3498db;
+            cursor: pointer;
+            text-decoration: underline;
+            position: relative;
+        }
+        .note {
+            font-size: 0.9em;
+            color: #666;
+            margin: 5px 0;
+            padding-left: 15px;
+            border-left: 2px solid #eee;
+        }
+        .exercise {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .exercise-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
+        .exercise-section:last-child {
+            border-bottom: none;
+        }
+        .exercise-title {
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .question {
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 3px solid #3498db;
+        }
+        .option-group {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+        .option {
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .complete-question {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .complete-sentence {
+            flex: 1;
+            min-width: 300px;
+            margin-right: 15px;
+        }
+        .complete-select {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 150px;
+            font-size: 1em;
+        }
+        .submit-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            display: none;
+        }
+        .score {
+            text-align: center;
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .correct-answer {
+            color: #27ae60;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .wrong-answer {
+            color: #e74c3c;
+            margin-left: 10px;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 500px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 20px;
+            z-index: 999;
+            display: none;
+        }
+        .popup h3 {
+            margin-bottom: 12px;
+            color: #3498db;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .popup p {
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        .popup .lang-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .popup .confusion-tip {
+            margin-top: 10px;
+            padding: 8px;
+            background: #f0f8ff;
+            border-left: 3px solid #3498db;
+            font-size: 0.9em;
+        }
+        .popup .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>德国人爱花</h1>
+    <div class="font-control">
+        <button id="font-small">- 缩小字体</button>
+        <button id="font-normal">默认字体</button>
+        <button id="font-large">放大字体 +</button>
+    </div>
+
+    <!-- 文章部分：移除图片，补充留学生易混淆词汇标记 -->
+    <div class="article" id="article">
+        爱美大概也算是人的<span class="vocab" data-word="天性">天性</span>吧。<span class="vocab" data-word="宇宙">宇宙</span>①间美的东西很多，花在其中占有<span class="vocab" data-word="重要">重要</span>的地位。爱花的<span class="vocab" data-word="民族">民族</span>也很多，德国在其中占有重要的地位。
+        <p class="note">①宇宙（yǔzhòu）：universe</p>
+        <br>
+        四五十年以前，我在德国<span class="vocab" data-word="留学">留学</span>的时候，曾多次对德国人爱花之<span class="vocab" data-word="情感">情感</span>感到<span class="vocab" data-word="吃惊">吃惊</span>。家家户户都在养花。他们的花不像在中国那样，养在屋子里，他们是把花都<span class="vocab" data-word="栽种">栽种</span>（plant）在<span class="vocab" data-word="临街">临街</span>（face the street）窗户的外面。花朵都<span class="vocab" data-word="朝外">朝外</span>开，在屋子里只能看到花的<span class="vocab" data-word="背面">背面</span>。我曾问过我的女<span class="vocab" data-word="房东">房东</span>：你这样养花是给别人看的吧！她一笑，说："正是这样！"
+        <br><br>
+        正是这样，也确实不错。走过任何一条街，抬头向上看，家家户户的窗子前，都是<span class="vocab" data-word="五颜六色">五颜六色</span>（multicoloured）的花。许多窗子连接在一起，成了一个花的<span class="vocab" data-word="海洋">海洋</span>，让我们看的人觉得好像走在两边开满了鲜花的<span class="vocab" data-word="乡村">乡村</span>（countryside）小路上。每一家都是这样，在屋子里的时候，自己的花是让别人看的；走在街上的时候，自己又看别人的花。人人为我，我为人人。这一种<span class="vocab" data-word="境界">境界</span>（state）是很令人<span class="vocab" data-word="思考">思考</span>的。
+        <br><br>
+        今天我又到了德国。刚一下火车，迎接我们的<span class="vocab" data-word="主人">主人</span>问我："你离开德国这样久，有什么<span class="vocab" data-word="变化">变化</span>没有？"我说："变化是有的，但是美丽并没有改变。"我说"美丽"指的东西很多，其中也包含着美丽的花。我走在街上，抬头一看，又是家家户户的窗口上都开满了鲜花。多么<span class="vocab" data-word="奇丽">奇丽</span>的<span class="vocab" data-word="景色">景色</span>（scenery）！多么<span class="vocab" data-word="奇特">奇特</span>的<span class="vocab" data-word="民族">民族</span>（nation）！我仿佛（fǎngfú）又回到了四五十年前，我做了一个花的梦，做了一个<span class="vocab" data-word="思乡">思乡</span>（homesick）的梦。
+        <br><br>
+        其实，不少国家都有爱花的<span class="vocab" data-word="传统">传统</span>，比如俄罗斯（Russia），因为冷，所以墙特别厚，<span class="vocab" data-word="窗台">窗台</span>（windowsill）就特别宽，家家都养花。土耳其（Turkey）人的家，到处都是花墙，用花<span class="vocab" data-word="装点">装点</span>（decorate）的<span class="vocab" data-word="门户">门户</span>，也不比德国差。中国人也养花，不光养在院子里，还有很多养在房间里。爱美之心，各民族都有啊。
+    </div>
+
+    <!-- 习题部分 -->
+    <div class="exercise" id="exercise">
+        <div class="exercise-section">
+            <h3 class="exercise-title">一、根据文章内容判断正误（正确画"√"，错误画"×"）</h3>
+            <div class="question-group" id="judge-group">
+                <div class="question">1. 德国人喜欢把花养在屋子里。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-1" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-1" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-1-ans"></span>
+                </div>
+
+                <div class="question">2. 德国人的花是朝外开的，给别人看的。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-2" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-2" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-2-ans"></span>
+                </div>
+
+                <div class="question">3. 作者认为"人人为我，我为人人"的境界值得思考。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-3" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-3" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-3-ans"></span>
+                </div>
+
+                <div class="question">4. 几十年后作者再到德国，发现鲜花景观没有变化。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-4" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-4" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-4-ans"></span>
+                </div>
+
+                <div class="question">5. 只有德国有爱花的传统。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-5" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-5" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-5-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-section">
+            <h3 class="exercise-title">二、根据文章内容选择正确答案（从A、B、C、D中选最佳答案）</h3>
+            <div class="question-group" id="choice-group">
+                <div class="question">1. 德国人把花种在哪里？(  )</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="choice-1" value="A"> A. 院子里</label>
+                    <label class="option"><input type="radio" name="choice-1" value="B"> B. 临街窗户外面</label>
+                    <label class="option"><input type="radio" name="choice-1" value="C"> C. 房间里</label>
+                    <label class="option"><input type="radio" name="choice-1" value="D"> D. 花墙上</label>
+                    <span class="correct-answer" id="choice-1-ans"></span>
+                </div>
+
+                <div class="question">2. 作者说"美丽并没有改变"指的是什么？(  )</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="choice-2" value="A"> A. 德国的建筑</label>
+                    <label class="option"><input type="radio" name="choice-2" value="B"> B. 德国的鲜花景观</label>
+                    <label class="option"><input type="radio" name="choice-2" value="C"> C. 德国的天气</label>
+                    <label class="option"><input type="radio" name="choice-2" value="D"> D. 德国的街道</label>
+                    <span class="correct-answer" id="choice-2-ans"></span>
+                </div>
+
+                <div class="question">3. 下列哪个国家没有提到爱花传统？(  )</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="choice-3" value="A"> A. 俄罗斯</label>
+                    <label class="option"><input type="radio" name="choice-3" value="B"> B. 土耳其</label>
+                    <label class="option"><input type="radio" name="choice-3" value="C"> C. 中国</label>
+                    <label class="option"><input type="radio" name="choice-3" value="D"> D. 法国</label>
+                    <span class="correct-answer" id="choice-3-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-section">
+            <h3 class="exercise-title">三、根据文章内容完成句子（从A、B、C、D中选最佳答案）</h3>
+            <div class="option-group" style="margin-bottom: 20px;">
+                <p>选项：</p>
+                <p>A. 五颜六色</p>
+                <p>B. 窗台</p>
+                <p>C. 装点</p>
+                <p>D. 奇丽</p>
+            </div>
+            <div class="question-group" id="complete-group">
+                <div class="complete-question">
+                    <div class="complete-sentence">1. 德国家家户户窗前都是______的花。</div>
+                    <select class="complete-select" name="complete-1">
+                        <option value="">--请选择--</option>
+                        <option value="A">A. 五颜六色</option>
+                        <option value="B">B. 窗台</option>
+                        <option value="C">C. 装点</option>
+                        <option value="D">D. 奇丽</option>
+                    </select>
+                    <span class="correct-answer" id="complete-1-ans"></span>
+                </div>
+
+                <div class="complete-question">
+                    <div class="complete-sentence">2. 俄罗斯因为冷，所以______特别宽，适合养花。</div>
+                    <select class="complete-select" name="complete-2">
+                        <option value="">--请选择--</option>
+                        <option value="A">A. 五颜六色</option>
+                        <option value="B">B. 窗台</option>
+                        <option value="C">C. 装点</option>
+                        <option value="D">D. 奇丽</option>
+                    </select>
+                    <span class="correct-answer" id="complete-2-ans"></span>
+                </div>
+
+                <div class="complete-question">
+                    <div class="complete-sentence">3. 土耳其人用花______门户，非常美丽。</div>
+                    <select class="complete-select" name="complete-3">
+                        <option value="">--请选择--</option>
+                        <option value="A">A. 五颜六色</option>
+                        <option value="B">B. 窗台</option>
+                        <option value="C">C. 装点</option>
+                        <option value="D">D. 奇丽</option>
+                    </select>
+                    <span class="correct-answer" id="complete-3-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <button class="submit-btn" id="submit-btn">提交答案并查看结果</button>
+
+        <div class="result" id="result">
+            <div class="score" id="score"></div>
+            <div id="answer-details">
+                <!-- 正确答案详情将在这里动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 词汇弹窗 -->
+    <div class="overlay" id="vocab-overlay"></div>
+    <div class="popup" id="vocab-popup">
+        <div class="close" id="vocab-close">×</div>
+        <h3 id="vocabName"></h3>
+        <p><span class="lang-label">拼音：</span><span id="vocabPinyin"></span></p>
+        <p><span class="lang-label">中文解释：</span><span id="vocabCnExplain"></span></p>
+        <p><span class="lang-label">英文翻译：</span><span id="vocabEn"></span></p>
+        <p><span class="lang-label">俄文翻译：</span><span id="vocabRu"></span></p>
+        <div class="confusion-tip" id="confusionTip"></div>
+    </div>
+
+    <script>
+        // 词汇数据字典：补充留学生易混淆词汇，新增【易混淆提示】字段
+        const vocabData = {
+            "天性": { 
+                pinyin: "tiānxìng", 
+                cnExplain: "人先天具有的品质或性情", 
+                en: "innate nature; instinct", 
+                ru: "врождённая натура; инстинкт",
+                confusion: "易混淆：天性（先天）vs 本性（原本的性质），例：爱美是人的天性，他的本性不坏。"
+            },
+            "宇宙": { 
+                pinyin: "yǔzhòu", 
+                cnExplain: "包括地球及其他一切天体的无限空间", 
+                en: "universe", 
+                ru: "вселенная",
+                confusion: "易混淆：宇宙（宏观空间）vs 世界（人类生活的范围），例：宇宙浩瀚，世界多彩。"
+            },
+            "重要": { 
+                pinyin: "zhòngyào", 
+                cnExplain: "具有重大意义、作用和影响的", 
+                en: "important; significant", 
+                ru: "важный; значительный",
+                confusion: "易混淆：重要（程度深）vs 主要（占主导），例：这是重要的事，主要责任人是他。"
+            },
+            "民族": { 
+                pinyin: "mínzú", 
+                cnExplain: "历史上形成的、处于不同社会发展阶段的各种人的共同体", 
+                en: "nation; nationality", 
+                ru: "народ; национальность",
+                confusion: "易混淆：民族（文化血缘群体）vs 国家（政治实体），例：中华民族包含56个民族，中国是一个国家。"
+            },
+            "留学": { 
+                pinyin: "liúxué", 
+                cnExplain: "到外国学习", 
+                en: "study abroad", 
+                ru: "учиться за границей",
+                confusion: "易混淆：留学（长期学习）vs 游学（短期游历学习），例：他去德国留学，暑假去欧洲游学。"
+            },
+            "情感": { 
+                pinyin: "qínggǎn", 
+                cnExplain: "对外界刺激的心理反应，如喜、怒、哀、乐等", 
+                en: "emotion; feeling", 
+                ru: "эмоция; чувство",
+                confusion: "易混淆：情感（内心体验）vs 感情（人际关系中的情意），例：她的情感很细腻，两人感情很好。"
+            },
+            "吃惊": { 
+                pinyin: "chījīng", 
+                cnExplain: "受惊；感到惊讶", 
+                en: "surprised; astonished", 
+                ru: "удивлённый; шокированный",
+                confusion: "易混淆：吃惊（意外）vs 惊讶（程度轻），例：我对他的做法很吃惊，他的到来让我有点惊讶。"
+            },
+            "栽种": { 
+                pinyin: "zāizhòng", 
+                cnExplain: "种植（花草树木等）", 
+                en: "plant; grow", 
+                ru: "сажать; выращивать",
+                confusion: "易混淆：栽种（具体动作）vs 种植（泛指行为），例：他在窗前栽种月季，这片土地种植小麦。"
+            },
+            "临街": { 
+                pinyin: "línjiē", 
+                cnExplain: "靠着街道；临近街道", 
+                en: "face the street; adjacent to the street", 
+                ru: "выходящий на улицу; прилегающий к улице",
+                confusion: "易混淆：临街（位置）vs 沿街（方向），例：这栋楼临街，沿街都是商铺。"
+            },
+            "朝外": { 
+                pinyin: "cháo wài", 
+                cnExplain: "朝向外面", 
+                en: "face outward", 
+                ru: "повернутый наружу",
+                confusion: "易混淆：朝外（方向）vs 向外（动作），例：花朵朝外开，他向外挥手。"
+            },
+            "背面": { 
+                pinyin: "bèimiàn", 
+                cnExplain: "物体的反面，与正面相对的一面", 
+                en: "back; reverse side", 
+                ru: "обратная сторона; задняя часть",
+                confusion: "易混淆：背面（物体）vs 背后（人/抽象），例：花的背面不好看，他的背后有人支持。"
+            },
+            "房东": { 
+                pinyin: "fángdōng", 
+                cnExplain: "出租或出借房屋的人", 
+                en: "landlord; landlady", 
+                ru: "хозяин дома; арендодатель",
+                confusion: "易混淆：房东（房屋所有者）vs 房主（产权人，可自住），例：我的房东人很好，这栋房子的房主是他父亲。"
+            },
+            "五颜六色": { 
+                pinyin: "wǔyán-liùsè", 
+                cnExplain: "形容色彩繁多艳丽", 
+                en: "of various colors; multicolored", 
+                ru: "разноцветный; разнообразно окрашенный",
+                confusion: "易混淆：五颜六色（色彩多）vs 五光十色（有光泽），例：花五颜六色，霓虹灯五光十色。"
+            },
+            "海洋": { 
+                pinyin: "hǎiyáng", 
+                cnExplain: "地球上广大连续的咸水水体的总称，此处为比喻义", 
+                en: "ocean; sea (metaphor: vast number)", 
+                ru: "океан; море (метафора: огромное количество)",
+                confusion: "易混淆：海洋（本义）vs 花海（比喻），例：海洋无边无际，窗前的花汇成花海。"
+            },
+            "乡村": { 
+                pinyin: "xiāngcūn", 
+                cnExplain: "主要从事农业、人口分布较城镇分散的地方", 
+                en: "countryside; village", 
+                ru: "деревня; сельская местность",
+                confusion: "易混淆：乡村（地域）vs 农村（生产方式），例：他住在乡村，农村的生活很淳朴。"
+            },
+            "境界": { 
+                pinyin: "jìngjiè", 
+                cnExplain: "人的思想觉悟和精神修养的程度", 
+                en: "state; realm", 
+                ru: "состояние; сфера",
+                confusion: "易混淆：境界（精神层面）vs 境地（处境），例：他的思想境界很高，他陷入了尴尬的境地。"
+            },
+            "思考": { 
+                pinyin: "sīkǎo", 
+                cnExplain: "进行比较深刻、周到的思维活动", 
+                en: "think; ponder", 
+                ru: "думать; размышлять",
+                confusion: "易混淆：思考（深入）vs 考虑（权衡），例：他在思考人生，我考虑要不要去。"
+            },
+            "主人": { 
+                pinyin: "zhǔrén", 
+                cnExplain: "接待客人的人", 
+                en: "host; master", 
+                ru: "хозяин; господин",
+                confusion: "易混淆：主人（接待方）vs 主人（所有者），例：主人热情招待我们，他是这栋房子的主人。"
+            },
+            "变化": { 
+                pinyin: "biànhuà", 
+                cnExplain: "事物在形态上或本质上产生新的状况", 
+                en: "change; variation", 
+                ru: "изменение; вариация",
+                confusion: "易混淆：变化（过程）vs 变动（动作），例：城市的变化很大，公司人事有变动。"
+            },
+            "奇丽": { 
+                pinyin: "qílì", 
+                cnExplain: "奇特而美丽", 
+                en: "uniquely beautiful; exotic and lovely", 
+                ru: "необычайно красивый; экзотически прекрасный",
+                confusion: "易混淆：奇丽（奇特+美丽）vs 绮丽（华美），例：景色奇丽，江南风光绮丽。"
+            },
+            "景色": { 
+                pinyin: "jǐngsè", 
+                cnExplain: "一定地域内由山水、花草、树木、建筑物以及某些自然现象形成的可供人观赏的景象", 
+                en: "scenery; landscape", 
+                ru: "пейзаж; вид",
+                confusion: "易混淆：景色（视觉）vs 风景（包含氛围），例：这里的景色很美，江南的风景如画。"
+            },
+            "奇特": { 
+                pinyin: "qítè", 
+                cnExplain: "跟寻常的不一样；奇怪而特别", 
+                en: "peculiar; unusual", 
+                ru: "странный; необычный",
+                confusion: "易混淆：奇特（特别）vs 奇怪（怪异），例：这个民族的习俗很奇特，他的行为很奇怪。"
+            },
+            "思乡": { 
+                pinyin: "sīxiāng", 
+                cnExplain: "想念家乡", 
+                en: "homesick; miss one's hometown", 
+                ru: "скучать по дому; тоска по родине",
+                confusion: "易混淆：思乡（情感）vs 乡愁（愁绪），例：他思乡心切，乡愁萦绕心头。"
+            },
+            "传统": { 
+                pinyin: "chuántǒng", 
+                cnExplain: "世代相传的具有特点的风俗、道德、思想、作风、艺术、制度等社会因素", 
+                en: "tradition; custom", 
+                ru: "традиция; обычай",
+                confusion: "易混淆：传统（传承的）vs 习俗（具体做法），例：爱花是民族传统，春节贴春联是习俗。"
+            },
+            "窗台": { 
+                pinyin: "chuāngtái", 
+                cnExplain: "窗户上的台子", 
+                en: "windowsill", 
+                ru: "подоконник",
+                confusion: "易混淆：窗台（窗户的台）vs 阳台（独立的平台），例：窗台摆着花，阳台种着菜。"
+            },
+            "装点": { 
+                pinyin: "zhuāngdiǎn", 
+                cnExplain: "装饰点缀", 
+                en: "decorate; adorn", 
+                ru: "украшать; декорировать",
+                confusion: "易混淆：装点（点缀）vs 装饰（全面修饰），例：用花装点门户，房间装饰得很温馨。"
+            },
+            "门户": { 
+                pinyin: "ménhù", 
+                cnExplain: "门和窗户，此处泛指房屋的出入口", 
+                en: "door and window; portal", 
+                ru: "дверь и окно; портал",
+                confusion: "易混淆：门户（建筑）vs 门第（家庭地位），例：花装点门户，他出身名门门第。"
+            }
+        };
+
+        // 字体大小控制
+        const body = document.body;
+        const fontSmall = document.getElementById('font-small');
+        const fontNormal = document.getElementById('font-normal');
+        const fontLarge = document.getElementById('font-large');
+        let currentFontSize = 16;
+
+        fontLarge.addEventListener('click', () => {
+            if (currentFontSize < 24) {
+                currentFontSize += 2;
+                body.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        fontSmall.addEventListener('click', () => {
+            if (currentFontSize > 12) {
+                currentFontSize -= 2;
+                body.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        fontNormal.addEventListener('click', () => {
+            currentFontSize = 16;
+            body.style.fontSize = '16px';
+        });
+
+        // 词汇弹窗控制：新增易混淆提示显示
+        const vocabElements = document.querySelectorAll('.vocab');
+        const vocabPopup = document.getElementById('vocab-popup');
+        const vocabOverlay = document.getElementById('vocab-overlay');
+        const vocabClose = document.getElementById('vocab-close');
+        const vocabName = document.getElementById('vocabName');
+        const vocabPinyin = document.getElementById('vocabPinyin');
+        const vocabCnExplain = document.getElementById('vocabCnExplain');
+        const vocabEn = document.getElementById('vocabEn');
+        const vocabRu = document.getElementById('vocabRu');
+        const confusionTip = document.getElementById('confusionTip');
+
+        vocabElements.forEach(element => {
+            element.addEventListener('click', function() {
+                const word = this.getAttribute('data-word');
+                const data = vocabData[word];
+                vocabName.textContent = word;
+                vocabPinyin.textContent = data.pinyin;
+                vocabCnExplain.textContent = data.cnExplain;
+                vocabEn.textContent = data.en;
+                vocabRu.textContent = data.ru;
+                confusionTip.textContent = data.confusion || ''; // 显示易混淆提示，无则为空
+                vocabPopup.style.display = 'block';
+                vocabOverlay.style.display = 'block';
+            });
+        });
+
+        vocabClose.addEventListener('click', () => {
+            vocabPopup.style.display = 'none';
+            vocabOverlay.style.display = 'none';
+        });
+
+        vocabOverlay.addEventListener('click', () => {
+            vocabPopup.style.display = 'none';
+            vocabOverlay.style.display = 'none';
+        });
+
+        // 习题互动逻辑
+        const correctAnswers = {
+            judge: [false, true, true, true, false],
+            choice: ['B', 'B', 'D'],
+            complete: ['A', 'B', 'C']
+        };
+
+        const submitBtn = document.getElementById('submit-btn');
+        const result = document.getElementById('result');
+        const scoreEl = document.getElementById('score');
+        const answerDetails = document.getElementById('answer-details');
+
+        submitBtn.addEventListener('click', () => {
+            let totalScore = 0;
+            const totalQuestions = 5 + 3 + 3;
+
+            // 处理判断题
+            let judgeScore = 0;
+            let judgeDetails = `<h4>一、判断题正确答案：</h4>`;
+            for (let i = 0; i < 5; i++) {
+                const questionNum = i + 1;
+                const selected = document.querySelector(`input[name="judge-${questionNum}"]:checked`);
+                const userAnswer = selected ? (selected.value === 'true') : null;
+                const correct = correctAnswers.judge[i];
+                const correctMark = correct ? '√' : '×';
+                
+                judgeDetails += `<p>第${questionNum}题：正确答案为「${correctMark}」`;
+                if (userAnswer === correct) {
+                    judgeScore++;
+                    judgeDetails += `（你的答案正确，得1分）</p>`;
+                } else if (userAnswer === null) {
+                    judgeDetails += `（未作答，不得分）</p>`;
+                } else {
+                    judgeDetails += `（你的答案错误，不得分）</p>`;
+                }
+                document.getElementById(`judge-${questionNum}-ans`).textContent = `（正确答案：${correctMark}）`;
+            }
+
+            // 处理选择题
+            let choiceScore = 0;
+            let choiceDetails = `<h4>二、选择题正确答案：</h4>`;
+            for (let i = 0; i < 3; i++) {
+                const questionNum = i + 1;
+                const selected = document.querySelector(`input[name="choice-${questionNum}"]:checked`);
+                const userAnswer = selected ? selected.value : null;
+                const correct = correctAnswers.choice[i];
+                
+                choiceDetails += `<p>第${questionNum}题：正确答案为「${correct}」`;
+                if (userAnswer === correct) {
+                    choiceScore++;
+                    choiceDetails += `（你的答案正确，得1分）</p>`;
+                } else if (userAnswer === null) {
+                    choiceDetails += `（未作答，不得分）</p>`;
+                } else {
+                    choiceDetails += `（你的答案错误，不得分）</p>`;
+                }
+                document.getElementById(`choice-${questionNum}-ans`).textContent = `（正确答案：${correct}）`;
+            }
+
+            // 处理完成句子题
+            let completeScore = 0;
+            let completeDetails = `<h4>三、完成句子题正确答案：</h4>`;
+            const optionTextMap = {
+                'A': '五颜六色',
+                'B': '窗台',
+                'C': '装点',
+                'D': '奇丽'
+            };
+
+            for (let i = 0; i < 3; i++) {
+                const questionNum = i + 1;
+                const selectEl = document.querySelector(`select[name="complete-${questionNum}"]`);
+                const userAnswer = selectEl.value || null;
+                const correct = correctAnswers.complete[i];
+                const correctText = optionTextMap[correct];
+                
+                completeDetails += `<p>第${questionNum}题：正确答案为「${correct}（${correctText}）」`;
+                if (userAnswer === correct) {
+                    completeScore++;
+                    completeDetails += `（你的答案正确，得1分）</p>`;
+                } else if (userAnswer === null) {
+                    completeDetails += `（未作答，不得分）</p>`;
+                } else {
+                    completeDetails += `（你的答案错误，不得分）</p>`;
+                }
+                document.getElementById(`complete-${questionNum}-ans`).textContent = `（正确答案：${correct}）`;
+            }
+
+            // 计算总分并显示结果
+            totalScore = judgeScore + choiceScore + completeScore;
+            scoreEl.textContent = `你的总得分：${totalScore}/${totalQuestions} 分`;
+            answerDetails.innerHTML = judgeDetails + choiceDetails + completeDetails;
+            result.style.display = 'block';
+            result.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

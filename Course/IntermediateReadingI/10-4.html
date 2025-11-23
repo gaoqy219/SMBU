@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>户外广告</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            color: #333;
+            font-size: 16px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .font-control {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .font-control button {
+            padding: 6px 12px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .font-control button:hover {
+            background: #f5f5f5;
+            border-color: #3498db;
+            color: #3498db;
+        }
+        .article {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .vocab {
+            color: #3498db;
+            cursor: pointer;
+            text-decoration: underline;
+            position: relative;
+        }
+        .note {
+            font-size: 0.9em;
+            color: #666;
+            margin: 5px 0;
+            padding-left: 15px;
+            border-left: 2px solid #eee;
+        }
+        .exercise {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .exercise-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
+        .exercise-section:last-child {
+            border-bottom: none;
+        }
+        .exercise-title {
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .question {
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 3px solid #3498db;
+        }
+        .option-group {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+        .option {
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .complete-question {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .complete-sentence {
+            flex: 1;
+            min-width: 300px;
+            margin-right: 15px;
+        }
+        .complete-select {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 150px;
+            font-size: 1em;
+        }
+        .submit-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            display: none;
+        }
+        .score {
+            text-align: center;
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .correct-answer {
+            color: #27ae60;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 500px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 20px;
+            z-index: 999;
+            display: none;
+        }
+        .popup h3 {
+            margin-bottom: 12px;
+            color: #3498db;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .popup p {
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        .popup .lang-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .popup .confusion-tip {
+            margin-top: 10px;
+            padding: 8px;
+            background: #f0f8ff;
+            border-left: 3px solid #3498db;
+            font-size: 0.9em;
+        }
+        .popup .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>户外广告</h1>
+    <div class="font-control">
+        <button id="font-small">- 缩小字体</button>
+        <button id="font-normal">默认字体</button>
+        <button id="font-large">放大字体 +</button>
+    </div>
+
+    <!-- 文章部分 -->
+    <div class="article" id="article">
+        <span class="vocab" data-word="户外广告">户外广告</span>是一种<span class="vocab" data-word="典型">典型</span>（typical）的城市广告<span class="vocab" data-word="形式">形式</span>。随着社会的高速<span class="vocab" data-word="发展">发展</span>，户外广告已不再仅仅是广告发展的一种形式，而是渐渐成为城市<span class="vocab" data-word="环境">环境</span>一个<span class="vocab" data-word="重要">重要</span>部分。
+        <br><br>
+        有了户外广告，我们的生活多了很多<span class="vocab" data-word="色彩">色彩</span>和<span class="vocab" data-word="乐趣">乐趣</span>（pleasure）。坐<span class="vocab" data-word="公共汽车">公共汽车</span>时不再<span class="vocab" data-word="无聊">无聊</span>，因为可以找个靠窗的位置<span class="vocab" data-word="欣赏">欣赏</span>②街道上的广告；在人行道上<span class="vocab" data-word="郁闷">郁闷</span>（depressed）地等待红绿灯时，可以看看人行道附近的各种<span class="vocab" data-word="公益广告">公益广告</span>③；公共汽车换上了新装，吃的、喝的、玩的、用的，什么都有，<span class="vocab" data-word="吸引">吸引</span>（attract）着人们的眼球。
+        <p class="note">② 欣赏（xīnshǎng）：appreciate</p>
+        <p class="note">③ 公益广告（gōngyì guǎnggào）：public service advertising</p>
+        <br>
+        21世纪，户外广告出现了更多的新型户外<span class="vocab" data-word="媒体">媒体</span>（media）——<span class="vocab" data-word="公共汽车站">公共汽车站</span>广告、<span class="vocab" data-word="地铁站">地铁站</span>广告、<span class="vocab" data-word="机场">机场</span>广告、<span class="vocab" data-word="电梯">电梯</span>广告、<span class="vocab" data-word="电话亭">电话亭</span>广告、<span class="vocab" data-word="立柱">立柱</span>（stand column）广告、<span class="vocab" data-word="楼顶">楼顶</span>广告、<span class="vocab" data-word="霓虹灯">霓虹灯</span>④广告、LED等。
+        <p class="note">④ 霓虹灯（níhóngdēng）：neon light，装饰夜景的彩色灯</p>
+        <br>
+        在户外广告中，<span class="vocab" data-word="图形">图形</span>（graph, figure）最能吸引人们的<span class="vocab" data-word="注意力">注意力</span>，所以图形<span class="vocab" data-word="设计">设计</span>在户外广告设计中尤其重要。图形可分广告图形与<span class="vocab" data-word="产品">产品</span>（product）图形两种。<span class="vocab" data-word="前者">前者</span>（the former）是指与广告<span class="vocab" data-word="主题">主题</span>有关系的图形（如：人物、动物、植物、环境等），<span class="vocab" data-word="后者">后者</span>是指要介绍的产品图形。
+        <br><br>
+        除了图形设计（design）以外，还要有<span class="vocab" data-word="生动">生动</span>的文字设计。户外广告的文字设计完全不同于报纸、<span class="vocab" data-word="杂志">杂志</span>等的广告文字设计，因为人们在<span class="vocab" data-word="运动">运动</span>状态中不可能有更多时间<span class="vocab" data-word="阅读">阅读</span>，所以户外广告文字应<span class="vocab" data-word="简洁">简洁</span>（concise），一般都是以一句话为主，再加上简短的几句说明，这样才能使户外广告给人留下<span class="vocab" data-word="深刻">深刻</span><span class="vocab" data-word="印象">印象</span>。
+    </div>
+
+    <!-- 习题部分 -->
+    <div class="exercise" id="exercise">
+        <div class="exercise-section">
+            <h3 class="exercise-title">一、根据文章内容判断正误（正确画"√"，错误画"×"）</h3>
+            <div class="question-group" id="judge-group">
+                <div class="question">1. 户外广告只是广告的一种形式，与城市环境无关。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-1" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-1" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-1-ans"></span>
+                </div>
+
+                <div class="question">2. 公益广告是户外广告的一种。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-2" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-2" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-2-ans"></span>
+                </div>
+
+                <div class="question">3. 霓虹灯广告属于新型户外媒体。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-3" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-3" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-3-ans"></span>
+                </div>
+
+                <div class="question">4. 户外广告的文字设计需要详细复杂，才能让人记住。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-4" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-4" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-4-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-section">
+            <h3 class="exercise-title">二、根据文章内容选择正确答案（从A、B、C、D中选最佳答案）</h3>
+            <div class="question-group" id="choice-group">
+                <div class="question">1. 下列哪项不属于新型户外媒体？(  )</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="choice-1" value="A"> A. 电梯广告</label>
+                    <label class="option"><input type="radio" name="choice-1" value="B"> B. 报纸广告</label>
+                    <label class="option"><input type="radio" name="choice-1" value="C"> C. 地铁站广告</label>
+                    <label class="option"><input type="radio" name="choice-1" value="D"> D. 电话亭广告</label>
+                    <span class="correct-answer" id="choice-1-ans"></span>
+                </div>
+
+                <div class="question">2. 户外广告中最能吸引人注意力的是什么？(  )</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="choice-2" value="A"> A. 价格</label>
+                    <label class="option"><input type="radio" name="choice-2" value="B"> B. 图形</label>
+                    <label class="option"><input type="radio" name="choice-2" value="C"> C. 品牌</label>
+                    <label class="option"><input type="radio" name="choice-2" value="D"> D. 地址</label>
+                    <span class="correct-answer" id="choice-2-ans"></span>
+                </div>
+
+                <div class="question">3. 为什么户外广告的文字需要简洁？(  )</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="choice-3" value="A"> A. 节省成本</label>
+                    <label class="option"><input type="radio" name="choice-3" value="B"> B. 设计方便</label>
+                    <label class="option"><input type="radio" name="choice-3" value="C"> C. 人们在运动中没时间细读</label>
+                    <label class="option"><input type="radio" name="choice-3" value="D"> D. 字数限制</label>
+                    <span class="correct-answer" id="choice-3-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-section">
+            <h3 class="exercise-title">三、根据文章内容完成句子（从A、B、C、D中选最佳答案）</h3>
+            <div class="option-group" style="margin-bottom: 20px;">
+                <p>选项：</p>
+                <p>A. 生动</p>
+                <p>B. 深刻印象</p>
+                <p>C. 注意力</p>
+                <p>D. 公共汽车</p>
+            </div>
+            <div class="question-group" id="complete-group">
+                <div class="complete-question">
+                    <div class="complete-sentence">1. 坐______时可以欣赏窗外的广告。</div>
+                    <select class="complete-select" name="complete-1">
+                        <option value="">--请选择--</option>
+                        <option value="A">A. 生动</option>
+                        <option value="B">B. 深刻印象</option>
+                        <option value="C">C. 注意力</option>
+                        <option value="D">D. 公共汽车</option>
+                    </select>
+                    <span class="correct-answer" id="complete-1-ans"></span>
+                </div>
+
+                <div class="complete-question">
+                    <div class="complete-sentence">2. 图形设计最能吸引人们的______。</div>
+                    <select class="complete-select" name="complete-2">
+                        <option value="">--请选择--</option>
+                        <option value="A">A. 生动</option>
+                        <option value="B">B. 深刻印象</option>
+                        <option value="C">C. 注意力</option>
+                        <option value="D">D. 公共汽车</option>
+                    </select>
+                    <span class="correct-answer" id="complete-2-ans"></span>
+                </div>
+
+                <div class="complete-question">
+                    <div class="complete-sentence">3. 简洁的文字能使广告给人留下______。</div>
+                    <select class="complete-select" name="complete-3">
+                        <option value="">--请选择--</option>
+                        <option value="A">A. 生动</option>
+                        <option value="B">B. 深刻印象</option>
+                        <option value="C">C. 注意力</option>
+                        <option value="D">D. 公共汽车</option>
+                    </select>
+                    <span class="correct-answer" id="complete-3-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <button class="submit-btn" id="submit-btn">提交答案并查看结果</button>
+
+        <div class="result" id="result">
+            <div class="score" id="score"></div>
+            <div id="answer-details">
+                <!-- 正确答案详情将在这里动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 词汇弹窗 -->
+    <div class="overlay" id="vocab-overlay"></div>
+    <div class="popup" id="vocab-popup">
+        <div class="close" id="vocab-close">×</div>
+        <h3 id="vocabName"></h3>
+        <p><span class="lang-label">拼音：</span><span id="vocabPinyin"></span></p>
+        <p><span class="lang-label">中文解释：</span><span id="vocabCnExplain"></span></p>
+        <p><span class="lang-label">英文翻译：</span><span id="vocabEn"></span></p>
+        <p><span class="lang-label">俄文翻译：</span><span id="vocabRu"></span></p>
+        <div class="confusion-tip" id="confusionTip"></div>
+    </div>
+
+    <script>
+        // 词汇数据字典：含留学生易混淆提示
+        const vocabData = {
+            "户外广告": { 
+                pinyin: "hùwài guǎnggào", 
+                cnExplain: "设置在室外公共场所的广告", 
+                en: "outdoor advertising", 
+                ru: "наружная реклама",
+                confusion: "易混淆：户外广告（室外）vs 室内广告（室内），例：街道上的是户外广告，商场里的是室内广告。"
+            },
+            "典型": { 
+                pinyin: "diǎnxíng", 
+                cnExplain: "具有代表性的人物或事件", 
+                en: "typical; representative", 
+                ru: "типичный; представительный",
+                confusion: "易混淆：典型（代表性）vs 普通（常见），例：这是典型的城市广告形式，普通广告则随处可见。"
+            },
+            "形式": { 
+                pinyin: "xíngshì", 
+                cnExplain: "事物的形状、结构等外在表现", 
+                en: "form; shape", 
+                ru: "форма; вид",
+                confusion: "易混淆：形式（外在）vs 内容（内在），例：广告的形式很多样，内容却很相似。"
+            },
+            "发展": { 
+                pinyin: "fāzhǎn", 
+                cnExplain: "事物由小到大、由简单到复杂的变化过程", 
+                en: "develop; growth", 
+                ru: "развиваться; рост",
+                confusion: "易混淆：发展（动态过程）vs 进步（向好变化），例：广告业在快速发展，技术也在不断进步。"
+            },
+            "环境": { 
+                pinyin: "huánjìng", 
+                cnExplain: "周围的地方和事物", 
+                en: "environment; surroundings", 
+                ru: "окружающая среда; обстановка",
+                confusion: "易混淆：环境（整体）vs 场景（具体），例：城市环境很优美，广告设置在不同场景中。"
+            },
+            "重要": { 
+                pinyin: "zhòngyào", 
+                cnExplain: "具有重大意义或影响的", 
+                en: "important; significant", 
+                ru: "важный; значимый",
+                confusion: "易混淆：重要（程度高）vs 主要（占主导），例：广告是城市环境的重要部分，主要功能是传递信息。"
+            },
+            "色彩": { 
+                pinyin: "sècǎi", 
+                cnExplain: "物体的颜色，也指丰富多样", 
+                en: "color; variety", 
+                ru: "цвет; разнообразие",
+                confusion: "易混淆：色彩（视觉）vs 色彩（比喻），例：广告有鲜艳的色彩，生活也因此增添色彩（乐趣）。"
+            },
+            "乐趣": { 
+                pinyin: "lèqù", 
+                cnExplain: "使人感到快乐的趣味", 
+                en: "pleasure; fun", 
+                ru: "удовольствие; радость",
+                confusion: "易混淆：乐趣（主动感受）vs 快乐（情绪状态），例：看广告有乐趣，让人感到快乐。"
+            },
+            "公共汽车": { 
+                pinyin: "gōnggòng qìchē", 
+                cnExplain: "供公众乘坐的大型汽车", 
+                en: "bus", 
+                ru: "автобус",
+                confusion: "易混淆：公共汽车（大型）vs 公交车（统称），例：我坐公共汽车上班，公交车包括地铁和巴士。"
+            },
+            "无聊": { 
+                pinyin: "wúliáo", 
+                cnExplain: "没有意思，使人厌烦", 
+                en: "boring; dull", 
+                ru: "скучный; нудный",
+                confusion: "易混淆：无聊（事物属性）vs 无聊（人的感受），例：等待很无聊，他感到很无聊。"
+            },
+            "欣赏": { 
+                pinyin: "xīnshǎng", 
+                cnExplain: "享受美好的事物，领略其中的趣味", 
+                en: "appreciate; enjoy", 
+                ru: "ценить; наслаждаться",
+                confusion: "易混淆：欣赏（品味）vs 观看（单纯看），例：他欣赏广告的设计，我只是随便观看。"
+            },
+            "郁闷": { 
+                pinyin: "yùmèn", 
+                cnExplain: "烦闷，不舒畅", 
+                en: "depressed; gloomy", 
+                ru: "угрюмый; подавленный",
+                confusion: "易混淆：郁闷（情绪）vs 烦恼（具体困扰），例：等待时他很郁闷，因为有很多烦恼。"
+            },
+            "公益广告": { 
+                pinyin: "gōngyì guǎnggào", 
+                cnExplain: "为公众利益服务的非商业性广告", 
+                en: "public service advertising", 
+                ru: "общественная реклама",
+                confusion: "易混淆：公益广告（非营利）vs 商业广告（盈利），例：公益广告宣传环保，商业广告推销产品。"
+            },
+            "吸引": { 
+                pinyin: "xīyǐn", 
+                cnExplain: "把事物或别人的注意力引到自己方面来", 
+                en: "attract; draw", 
+                ru: "влекать; привлекать",
+                confusion: "易混淆：吸引（主动）vs 引起（被动），例：广告吸引眼球，引起人们的兴趣。"
+            },
+            "媒体": { 
+                pinyin: "méitǐ", 
+                cnExplain: "传播信息的媒介，如报纸、电视、网络等", 
+                en: "media", 
+                ru: "средства массовой информации",
+                confusion: "易混淆：媒体（载体）vs 媒介（中间物），例：户外广告需要媒体传播，空气是声音的媒介。"
+            },
+            "公共汽车站": { 
+                pinyin: "gōnggòng qìchē zhàn", 
+                cnExplain: "公共汽车停靠的站点", 
+                en: "bus stop", 
+                ru: "автобусная остановка",
+                confusion: "易混淆：公共汽车站（站点）vs 公共汽车公司（运营机构），例：我在公共汽车站等车，公共汽车公司负责调度。"
+            },
+            "地铁站": { 
+                pinyin: "dìtiě zhàn", 
+                cnExplain: "地下铁道的停靠站点", 
+                en: "subway station; metro station", 
+                ru: "метростанция",
+                confusion: "易混淆：地铁站（站点）vs 地铁（交通工具），例：我在地铁站等地铁。"
+            },
+            "机场": { 
+                pinyin: "jīchǎng", 
+                cnExplain: "飞机起飞、降落、停放的场地及相关设施", 
+                en: "airport", 
+                ru: "аэропорт",
+                confusion: "易混淆：机场（场地）vs 航空公司（运营公司），例：飞机降落在机场，这家航空公司服务很好。"
+            },
+            "电梯": { 
+                pinyin: "diàntī", 
+                cnExplain: "建筑物中沿垂直方向运送人或物的设备", 
+                en: "elevator; lift", 
+                ru: "лифт",
+                confusion: "易混淆：电梯（垂直）vs 扶梯（倾斜），例：我坐电梯到十楼，商场里有自动扶梯。"
+            },
+            "电话亭": { 
+                pinyin: "diànhuà tíng", 
+                cnExplain: "供公众打电话的小亭子", 
+                en: "phone booth; telephone kiosk", 
+                ru: "телефонная будка",
+                confusion: "易混淆：电话亭（固定）vs 手机（移动），例：以前人们用电话亭打电话，现在都用手机。"
+            },
+            "立柱": { 
+                pinyin: "lìzhù", 
+                cnExplain: "直立的柱子，用于支撑或装饰", 
+                en: "column; pillar", 
+                ru: "столб; колонна",
+                confusion: "易混淆：立柱（垂直）vs 墙壁（平面），例：立柱上有广告，墙壁上也贴着海报。"
+            },
+            "楼顶": { 
+                pinyin: "lóudǐng", 
+                cnExplain: "楼房的顶部", 
+                en: "roof; top of a building", 
+                ru: "крыша здания; верхний этаж",
+                confusion: "易混淆：楼顶（顶部表面）vs 顶楼（最高楼层），例：楼顶有广告牌，顶楼住着一家人。"
+            },
+            "霓虹灯": { 
+                pinyin: "níhóngdēng", 
+                cnExplain: "一种气体放电灯，发出彩色光，常用于广告和装饰", 
+                en: "neon light", 
+                ru: "неоновая лампа",
+                confusion: "易混淆：霓虹灯（气体灯）vs LED灯（发光二极管），例：招牌用霓虹灯装饰，LED灯更节能。"
+            },
+            "图形": { 
+                pinyin: "túxíng", 
+                cnExplain: "由点、线、面构成的平面形象", 
+                en: "graph; figure", 
+                ru: "график; фигура",
+                confusion: "易混淆：图形（抽象）vs 图像（具体），例：广告用图形设计，照片是真实的图像。"
+            },
+            "注意力": { 
+                pinyin: "zhùyìlì", 
+                cnExplain: "集中于某一事物的心理活动", 
+                en: "attention", 
+                ru: "внимание",
+                confusion: "易混淆：注意力（心理）vs 目光（生理），例：广告吸引注意力，人们的目光都集中在上面。"
+            },
+            "设计": { 
+                pinyin: "shèjì", 
+                cnExplain: "在制作前预先拟定的方案和计划", 
+                en: "design; plan", 
+                ru: "дизайн; проект",
+                confusion: "易混淆：设计（过程）vs 制作（实施），例：他设计了广告，工厂负责制作。"
+            },
+            "产品": { 
+                pinyin: "chǎnpǐn", 
+                cnExplain: "生产出来的物品", 
+                en: "product", 
+                ru: "продукт",
+                confusion: "易混淆：产品（实物）vs 服务（非实物），例：这家公司生产电子产品，也提供维修服务。"
+            },
+            "前者": { 
+                pinyin: "qiánzhě", 
+                cnExplain: "前面提到的人或事物", 
+                en: "the former", 
+                ru: "первый из упомянутых",
+                confusion: "易混淆：前者（前面）vs 后者（后面），例：图形分两种，前者是广告图形，后者是产品图形。"
+            },
+            "主题": { 
+                pinyin: "zhǔtí", 
+                cnExplain: "文艺作品或活动的中心思想", 
+                en: "theme; subject", 
+                ru: "тема; предмет",
+                confusion: "易混淆：主题（核心思想）vs 标题（名称），例：广告的主题是环保，标题是“爱护地球”。"
+            },
+            "后者": { 
+                pinyin: "hòuzhě", 
+                cnExplain: "后面提到的人或事物", 
+                en: "the latter", 
+                ru: "второй из упомянутых",
+                confusion: "易混淆：后者（后面）vs 前者（前面），例：猫和狗，前者喜欢独处，后者更黏人。"
+            },
+            "生动": { 
+                pinyin: "shēngdòng", 
+                cnExplain: "具有活力，能使人感动的", 
+                en: "vivid; lively", 
+                ru: "живой; яркий",
+                confusion: "易混淆：生动（形象）vs 活泼（动态），例：文字描述很生动，活泼的画面更吸引人。"
+            },
+            "杂志": { 
+                pinyin: "zázhì", 
+                cnExplain: "定期出版的刊物，有固定名称，装订成册", 
+                en: "magazine", 
+                ru: "журнал",
+                confusion: "易混淆：杂志（期刊）vs 报纸（日报），例：杂志每月出版，报纸每天发行。"
+            },
+            "运动": { 
+                pinyin: "yùndòng", 
+                cnExplain: "物体位置不断变化的过程，此处指人处于移动状态", 
+                en: "move; exercise", 
+                ru: "двигаться; движение",
+                confusion: "易混淆：运动（移动）vs 运动（体育），例：人们在运动（移动）中看广告，平时要多做运动（体育）。"
+            },
+            "阅读": { 
+                pinyin: "yuèdú", 
+                cnExplain: "看文字并理解其意义", 
+                en: "read", 
+                ru: "читать",
+                confusion: "易混淆：阅读（理解性看）vs 看见（单纯视觉），例：他阅读广告内容，我只看见广告图片。"
+            },
+            "简洁": { 
+                pinyin: "jiǎnjié", 
+                cnExplain: "简明扼要，不繁琐", 
+                en: "concise; succinct", 
+                ru: "лаконичный; краткий",
+                confusion: "易混淆：简洁（精炼）vs 简单（不复杂），例：广告文字很简洁，内容却不简单。"
+            },
+            "深刻": { 
+                pinyin: "shēnkè", 
+                cnExplain: "达到事情或问题的本质的", 
+                en: "profound; deep", 
+                ru: "глубокий; проникновенный",
+                confusion: "易混淆：深刻（程度深）vs 深入（过程），例：广告给人深刻印象，他深入研究了广告效果。"
+            },
+            "印象": { 
+                pinyin: "yìnxiàng", 
+                cnExplain: "客观事物在人的头脑里留下的迹象", 
+                en: "impression", 
+                ru: "впечатление",
+                confusion: "易混淆：印象（主观感受）vs 形象（客观表现），例：广告给我好印象，产品形象也不错。"
+            }
+        };
+
+        // 字体大小控制
+        const body = document.body;
+        const fontSmall = document.getElementById('font-small');
+        const fontNormal = document.getElementById('font-normal');
+        const fontLarge = document.getElementById('font-large');
+        let currentFontSize = 16;
+
+        fontLarge.addEventListener('click', () => {
+            if (currentFontSize < 24) {
+                currentFontSize += 2;
+                body.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        fontSmall.addEventListener('click', () => {
+            if (currentFontSize > 12) {
+                currentFontSize -= 2;
+                body.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        fontNormal.addEventListener('click', () => {
+            currentFontSize = 16;
+            body.style.fontSize = '16px';
+        });
+
+        // 词汇弹窗控制
+        const vocabElements = document.querySelectorAll('.vocab');
+        const vocabPopup = document.getElementById('vocab-popup');
+        const vocabOverlay = document.getElementById('vocab-overlay');
+        const vocabClose = document.getElementById('vocab-close');
+        const vocabName = document.getElementById('vocabName');
+        const vocabPinyin = document.getElementById('vocabPinyin');
+        const vocabCnExplain = document.getElementById('vocabCnExplain');
+        const vocabEn = document.getElementById('vocabEn');
+        const vocabRu = document.getElementById('vocabRu');
+        const confusionTip = document.getElementById('confusionTip');
+
+        vocabElements.forEach(element => {
+            element.addEventListener('click', function() {
+                const word = this.getAttribute('data-word');
+                const data = vocabData[word];
+                vocabName.textContent = word;
+                vocabPinyin.textContent = data.pinyin;
+                vocabCnExplain.textContent = data.cnExplain;
+                vocabEn.textContent = data.en;
+                vocabRu.textContent = data.ru;
+                confusionTip.textContent = data.confusion || '';
+                vocabPopup.style.display = 'block';
+                vocabOverlay.style.display = 'block';
+            });
+        });
+
+        vocabClose.addEventListener('click', () => {
+            vocabPopup.style.display = 'none';
+            vocabOverlay.style.display = 'none';
+        });
+
+        vocabOverlay.addEventListener('click', () => {
+            vocabPopup.style.display = 'none';
+            vocabOverlay.style.display = 'none';
+        });
+
+        // 习题互动逻辑
+        const correctAnswers = {
+            judge: [false, true, true, false],
+            choice: ['B', 'B', 'C'],
+            complete: ['D', 'C', 'B']
+        };
+
+        const submitBtn = document.getElementById('submit-btn');
+        const result = document.getElementById('result');
+        const scoreEl = document.getElementById('score');
+        const answerDetails = document.getElementById('answer-details');
+
+        submitBtn.addEventListener('click', () => {
+            let totalScore = 0;
+            const totalQuestions = 4 + 3 + 3;
+
+            // 处理判断题
+            let judgeScore = 0;
+            let judgeDetails = `<h4>一、判断题正确答案：</h4>`;
+            for (let i = 0; i < 4; i++) {
+                const questionNum = i + 1;
+                const selected = document.querySelector(`input[name="judge-${questionNum}"]:checked`);
+                const userAnswer = selected ? (selected.value === 'true') : null;
+                const correct = correctAnswers.judge[i];
+                const correctMark = correct ? '√' : '×';
+                
+                judgeDetails += `<p>第${questionNum}题：正确答案为「${correctMark}」`;
+                if (userAnswer === correct) {
+                    judgeScore++;
+                    judgeDetails += `（你的答案正确，得1分）</p>`;
+                } else if (userAnswer === null) {
+                    judgeDetails += `（未作答，不得分）</p>`;
+                } else {
+                    judgeDetails += `（你的答案错误，不得分）</p>`;
+                }
+                document.getElementById(`judge-${questionNum}-ans`).textContent = `（正确答案：${correctMark}）`;
+            }
+
+            // 处理选择题
+            let choiceScore = 0;
+            let choiceDetails = `<h4>二、选择题正确答案：</h4>`;
+            for (let i = 0; i < 3; i++) {
+                const questionNum = i + 1;
+                const selected = document.querySelector(`input[name="choice-${questionNum}"]:checked`);
+                const userAnswer = selected ? selected.value : null;
+                const correct = correctAnswers.choice[i];
+                
+                choiceDetails += `<p>第${questionNum}题：正确答案为「${correct}」`;
+                if (userAnswer === correct) {
+                    choiceScore++;
+                    choiceDetails += `（你的答案正确，得1分）</p>`;
+                } else if (userAnswer === null) {
+                    choiceDetails += `（未作答，不得分）</p>`;
+                } else {
+                    choiceDetails += `（你的答案错误，不得分）</p>`;
+                }
+                document.getElementById(`choice-${questionNum}-ans`).textContent = `（正确答案：${correct}）`;
+            }
+
+            // 处理完成句子题
+            let completeScore = 0;
+            let completeDetails = `<h4>三、完成句子题正确答案：</h4>`;
+            const optionTextMap = {
+                'A': '生动',
+                'B': '深刻印象',
+                'C': '注意力',
+                'D': '公共汽车'
+            };
+
+            for (let i = 0; i < 3; i++) {
+                const questionNum = i + 1;
+                const selectEl = document.querySelector(`select[name="complete-${questionNum}"]`);
+                const userAnswer = selectEl.value || null;
+                const correct = correctAnswers.complete[i];
+                const correctText = optionTextMap[correct];
+                
+                completeDetails += `<p>第${questionNum}题：正确答案为「${correct}（${correctText}）」`;
+                if (userAnswer === correct) {
+                    completeScore++;
+                    completeDetails += `（你的答案正确，得1分）</p>`;
+                } else if (userAnswer === null) {
+                    completeDetails += `（未作答，不得分）</p>`;
+                } else {
+                    completeDetails += `（你的答案错误，不得分）</p>`;
+                }
+                document.getElementById(`complete-${questionNum}-ans`).textContent = `（正确答案：${correct}）`;
+            }
+
+            // 计算总分并显示结果
+            totalScore = judgeScore + choiceScore + completeScore;
+            scoreEl.textContent = `你的总得分：${totalScore}/${totalQuestions} 分`;
+            answerDetails.innerHTML = judgeDetails + choiceDetails + completeDetails;
+            result.style.display = 'block';
+            result.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

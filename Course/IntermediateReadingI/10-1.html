@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互动式阅读：我们家的大花猫</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            color: #333;
+            font-size: 16px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .font-control {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .font-control button {
+            padding: 6px 12px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .font-control button:hover {
+            background: #f5f5f5;
+            border-color: #3498db;
+            color: #3498db;
+        }
+        .article {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .vocab {
+            color: #3498db;
+            cursor: pointer;
+            text-decoration: underline;
+            position: relative;
+        }
+        .exercise {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .exercise-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
+        .exercise-section:last-child {
+            border-bottom: none;
+        }
+        .exercise-title {
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .question {
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 3px solid #3498db;
+        }
+        .option-group {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+        .option {
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .complete-question {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .complete-sentence {
+            flex: 1;
+            min-width: 300px;
+            margin-right: 15px;
+        }
+        .complete-select {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 150px;
+            font-size: 1em;
+        }
+        .submit-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            display: none;
+        }
+        .score {
+            text-align: center;
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .correct-answer {
+            color: #27ae60;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .wrong-answer {
+            color: #e74c3c;
+            margin-left: 10px;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 500px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 20px;
+            z-index: 999;
+            display: none;
+        }
+        .popup h3 {
+            margin-bottom: 12px;
+            color: #3498db;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .popup p {
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        .popup .lang-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .popup .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>我们家的大花猫</h1>
+    <div class="font-control">
+        <button id="font-small">- 缩小字体</button>
+        <button id="font-normal">默认字体</button>
+        <button id="font-large">放大字体 +</button>
+    </div>
+
+    <!-- 文章部分 -->
+    <div class="article" id="article">
+        [1]我们家的大花猫，性格实在<span class="vocab" data-word="古怪">古怪</span>（eccentric）。
+        <br><br>
+        [2]说它<span class="vocab" data-word="老实">老实</span>吧，它有时的确很<span class="vocab" data-word="乖">乖</span>。它会找个<span class="vocab" data-word="暖和">暖和</span>的地方，整天睡大觉，没有<span class="vocab" data-word="烦恼">烦恼</span>，什么事也不过问。可是，决定要出去<span class="vocab" data-word="玩玩">玩玩</span>，就会<span class="vocab" data-word="出走">出走</span>一天一夜，不管谁怎么叫它，它也不肯回来。
+        <br><br>
+        [3]说它<span class="vocab" data-word="贪">贪</span>玩吧，的确是啊，要不怎么会一天一夜不回家呢？可是它听到老鼠的一点儿<span class="vocab" data-word="响动">响动</span>，就一动不动地看着老鼠洞，一连就是几个<span class="vocab" data-word="钟头">钟头</span>，非把老鼠等出来不可！
+        <br><br>
+        [4]它要是高兴，能比谁都<span class="vocab" data-word="温柔可亲">温柔可亲</span>：用身子<span class="vocab" data-word="蹭">蹭</span>你的腿，把脖子伸出来让你给它抓痒（scratch an itch），或是在你写作的时候，跳上桌来在纸上踩印几朵小<span class="vocab" data-word="梅花">梅花</span>。它还会丰富多样地叫，长短不同，<span class="vocab" data-word="变化多端">变化多端</span>。在不叫的时候，它还会<span class="vocab" data-word="咕噜咕噜">咕噜咕噜</span>（gūlū）发出声音。这可都凭它的高兴。它要是不高兴啊，无论谁说多少<span class="vocab" data-word="好话">好话</span>，它一声也不出。
+        <br><br>
+        [5]它什么都怕，总想<span class="vocab" data-word="藏起来">藏起来</span>。可是它又<span class="vocab" data-word="勇猛">勇猛</span>，不要说对付小虫和老鼠，就是遇上蛇也敢<span class="vocab" data-word="斗一斗">斗一斗</span>（fight）。
+        <br><br>
+        [6]它小时候可<span class="vocab" data-word="逗人爱">逗人爱</span>哩！才来我们家时，刚好<span class="vocab" data-word="满月">满月</span>，腿脚还不会站，已经学会了<span class="vocab" data-word="淘气">淘气</span>。一根<span class="vocab" data-word="鸡毛">鸡毛</span>、一个<span class="vocab" data-word="线团">线团</span>，都是它的好玩具，玩个<span class="vocab" data-word="没完没了">没完没了</span>。一玩起来，不知要摔多少<span class="vocab" data-word="跟头">跟头</span>，但是倒了马上起来，再跑再倒，头撞在门上、桌腿上，撞疼了也不<span class="vocab" data-word="哭">哭</span>。后来，<span class="vocab" data-word="胆子">胆子</span>越来越大，就到院子去玩了，从这个<span class="vocab" data-word="花盆">花盆</span>跳到那个花盆，还抱着<span class="vocab" data-word="花枝">花枝</span>打<span class="vocab" data-word="秋千">秋千</span>（swing）。院中的花草都被它<span class="vocab" data-word="搞坏">搞坏</span>了。
+        <br><br>
+        [7]我从来不打它。看它那样<span class="vocab" data-word="天真">天真</span>（innocent）可爱，我喜欢还来不及，怎么会跟它<span class="vocab" data-word="生气">生气</span>呢？
+    </div>
+
+    <!-- 习题部分 -->
+    <div class="exercise" id="exercise">
+        <div class="exercise-section">
+            <h3 class="exercise-title">一、根据文章内容判断正误（正确画"√"，错误画"×"）</h3>
+            <div class="question-group" id="judge-group">
+                <div class="question">1. 大花猫的性格很普通，不古怪。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-1" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-1" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-1-ans"></span>
+                </div>
+
+                <div class="question">2. 大花猫高兴的时候会蹭人的腿。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-2" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-2" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-2-ans"></span>
+                </div>
+
+                <div class="question">3. 大花猫什么都怕，所以不敢对付蛇。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-3" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-3" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-3-ans"></span>
+                </div>
+
+                <div class="question">4. 大花猫刚来家里时已经满月，腿脚能站了。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-4" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-4" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-4-ans"></span>
+                </div>
+
+                <div class="question">5. “我”经常打大花猫，因为它搞坏了花草。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-5" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-5" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-5-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-section">
+            <h3 class="exercise-title">二、根据文章内容选择正确答案（从A、B、C、D中选最佳答案）</h3>
+            <div class="question-group" id="choice-group">
+                <div class="question">1. 大花猫贪玩的时候会？(  )</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="choice-1" value="A"> A. 睡大觉</label>
+                    <label class="option"><input type="radio" name="choice-1" value="B"> B. 出走一天一夜</label>
+                    <label class="option"><input type="radio" name="choice-1" value="C"> C. 抓老鼠</label>
+                    <label class="option"><input type="radio" name="choice-1" value="D"> D. 藏起来</label>
+                    <span class="correct-answer" id="choice-1-ans"></span>
+                </div>
+
+                <div class="question">2. 大花猫不高兴的时候会？(  )</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="choice-2" value="A"> A. 叫个不停</label>
+                    <label class="option"><input type="radio" name="choice-2" value="B"> B. 蹭人的腿</label>
+                    <label class="option"><input type="radio" name="choice-2" value="C"> C. 打秋千</label>
+                    <label class="option"><input type="radio" name="choice-2" value="D"> D. 一声不出</label>
+                    <span class="correct-answer" id="choice-2-ans"></span>
+                </div>
+
+                <div class="question">3. 大花猫的玩具不包括？(  )</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="choice-3" value="A"> A. 鸡毛</label>
+                    <label class="option"><input type="radio" name="choice-3" value="B"> B. 线团</label>
+                    <label class="option"><input type="radio" name="choice-3" value="C"> C. 花盆</label>
+                    <label class="option"><input type="radio" name="choice-3" value="D"> D. 花枝</label>
+                    <span class="correct-answer" id="choice-3-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-section">
+            <h3 class="exercise-title">三、根据文章内容完成句子（从A、B、C、D中选最佳答案）</h3>
+            <div class="option-group" style="margin-bottom: 20px;">
+                <p>选项：</p>
+                <p>A. 变化多端</p>
+                <p>B. 淘气</p>
+                <p>C. 勇猛</p>
+                <p>D. 蹭你的腿</p>
+            </div>
+            <div class="question-group" id="complete-group">
+                <div class="complete-question">
+                    <div class="complete-sentence">1. 大花猫高兴时会用身子______。</div>
+                    <select class="complete-select" name="complete-1">
+                        <option value="">--请选择--</option>
+                        <option value="A">A. 变化多端</option>
+                        <option value="B">B. 淘气</option>
+                        <option value="C">C. 勇猛</option>
+                        <option value="D">D. 蹭你的腿</option>
+                    </select>
+                    <span class="correct-answer" id="complete-1-ans"></span>
+                </div>
+
+                <div class="complete-question">
+                    <div class="complete-sentence">2. 大花猫的叫声长短不同，______。</div>
+                    <select class="complete-select" name="complete-2">
+                        <option value="">--请选择--</option>
+                        <option value="A">A. 变化多端</option>
+                        <option value="B">B. 淘气</option>
+                        <option value="C">C. 勇猛</option>
+                        <option value="D">D. 蹭你的腿</option>
+                    </select>
+                    <span class="correct-answer" id="complete-2-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <button class="submit-btn" id="submit-btn">提交答案并查看结果</button>
+
+        <div class="result" id="result">
+            <div class="score" id="score"></div>
+            <div id="answer-details">
+                <!-- 正确答案详情将在这里动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 词汇弹窗 -->
+    <div class="overlay" id="vocab-overlay"></div>
+    <div class="popup" id="vocab-popup">
+        <div class="close" id="vocab-close">×</div>
+        <h3 id="vocabName"></h3>
+        <p><span class="lang-label">拼音：</span><span id="vocabPinyin"></span></p>
+        <p><span class="lang-label">中文解释：</span><span id="vocabCnExplain"></span></p>
+        <p><span class="lang-label">英文翻译：</span><span id="vocabEn"></span></p>
+        <p><span class="lang-label">俄文翻译：</span><span id="vocabRu"></span></p>
+    </div>
+
+    <script>
+        // 词汇数据字典（HSK3级以上词汇）
+        const vocabData = {
+            "古怪": { 
+                pinyin: "gǔguài", 
+                cnExplain: "跟一般情况很不相同，使人觉得诧异的；稀奇罕见的", 
+                en: "eccentric; strange", 
+                ru: "эксцентричный; странный" 
+            },
+            "乖": { 
+                pinyin: "guāi", 
+                cnExplain: "（小孩）听话；不淘气", 
+                en: "well-behaved; obedient", 
+                ru: "послушный; не озорной" 
+            },
+            "贪": { 
+                pinyin: "tān", 
+                cnExplain: "对某种事物的欲望老不满足；求多", 
+                en: "greedy; crave", 
+                ru: "жадный; жаждать" 
+            },
+            "蹭": { 
+                pinyin: "cèng", 
+                cnExplain: "摩擦", 
+                en: "rub against", 
+                ru: "трогать; протирать" 
+            },
+            "变化多端": { 
+                pinyin: "biànhuà duōduān", 
+                cnExplain: "形容变化极多，也指变化很大", 
+                en: "varied and manifold; ever-changing", 
+                ru: "многообразный; постоянно меняющийся" 
+            },
+            "勇猛": { 
+                pinyin: "yǒngměng", 
+                cnExplain: "勇敢而有力量", 
+                en: "brave and fierce; valiant", 
+                ru: "храбрый и сильный; отважный" 
+            },
+            "满月": { 
+                pinyin: "mǎnyuè", 
+                cnExplain: "（婴儿）出生后满一个月", 
+                en: "one month old (for a baby)", 
+                ru: "месяц от рождения (для младенца)" 
+            },
+            "淘气": { 
+                pinyin: "táoqì", 
+                cnExplain: "（孩子）顽皮；调皮", 
+                en: "naughty; mischievous", 
+                ru: "озорной; игривый" 
+            },
+            "跟头": { 
+                pinyin: "gēntou", 
+                cnExplain: "身体向下弯曲而翻转的动作", 
+                en: "somersault; fall", 
+                ru: "перекат; падение" 
+            },
+            "秋千": { 
+                pinyin: "qiūqiān", 
+                cnExplain: "一种体育和娱乐用具", 
+                en: "swing", 
+                ru: "качели" 
+            },
+            "老实": { 
+                pinyin: "lǎoshi", 
+                cnExplain: "诚实；规规矩矩", 
+                en: "honest; well-behaved", 
+                ru: "честный; приличный" 
+            },
+            "暖和": { 
+                pinyin: "nuǎnhuo", 
+                cnExplain: "气候、环境等不冷也不太热", 
+                en: "warm", 
+                ru: "теплый" 
+            },
+            "烦恼": { 
+                pinyin: "fánnǎo", 
+                cnExplain: "烦闷苦恼", 
+                en: "worried; troubled", 
+                ru: "беспокойный; тревожный" 
+            },
+            "玩玩": { 
+                pinyin: "wánwan", 
+                cnExplain: "玩耍；进行娱乐活动", 
+                en: "play; have fun", 
+                ru: "играть; развлекаться" 
+            },
+            "出走": { 
+                pinyin: "chūzǒu", 
+                cnExplain: "离家出走；离开原来的地方", 
+                en: "leave; run away from home", 
+                ru: "уходить; бежать из дома" 
+            },
+            "响动": { 
+                pinyin: "xiǎngdòng", 
+                cnExplain: "动作的声音；动静", 
+                en: "sound; noise", 
+                ru: "звук; шум" 
+            },
+            "钟头": { 
+                pinyin: "zhōngtóu", 
+                cnExplain: "小时", 
+                en: "hour", 
+                ru: "час" 
+            },
+            "温柔可亲": { 
+                pinyin: "wēnróu kěqīn", 
+                cnExplain: "温和柔顺，使人愿意亲近", 
+                en: "gentle and amiable", 
+                ru: "нежный и дружелюбный" 
+            },
+            "梅花": { 
+                pinyin: "méihuā", 
+                cnExplain: "一种花，这里指猫的脚印像梅花", 
+                en: "plum blossom; (here) cat's paw prints like plum blossoms", 
+                ru: "сливовый цветок; (здесь) когтистые следы кошки, похожие на цветки сливы" 
+            },
+            "咕噜咕噜": { 
+                pinyin: "gūlū gūlū", 
+                cnExplain: "象声词，形容猫发出的声音", 
+                en: "onomatopoeia, describing the sound a cat makes", 
+                ru: "онома-топея, описывающая звук, издаваемый кошкой" 
+            },
+            "好话": { 
+                pinyin: "hǎohuà", 
+                cnExplain: "有益的话；赞扬的话", 
+                en: "kind words; praise", 
+                ru: "добрые слова; похвала" 
+            },
+            "藏起来": { 
+                pinyin: "cáng qǐlái", 
+                cnExplain: "躲避起来，不让人看见", 
+                en: "hide; conceal oneself", 
+                ru: "прятаться; скрываться" 
+            },
+            "斗一斗": { 
+                pinyin: "dòu yīdòu", 
+                cnExplain: "较量一下；打斗一番", 
+                en: "have a fight; contest with", 
+                ru: "побояться драки; соревноваться с" 
+            },
+            "逗人爱": { 
+                pinyin: "dòu rén ài", 
+                cnExplain: "让人喜欢；惹人喜爱", 
+                en: "lovely; adorable", 
+                ru: "милый; очаровательный" 
+            },
+            "鸡毛": { 
+                pinyin: "jīmáo", 
+                cnExplain: "鸡的羽毛", 
+                en: "chicken feather", 
+                ru: "куриное перо" 
+            },
+            "线团": { 
+                pinyin: "xiàntuán", 
+                cnExplain: "用线绕成的球状物", 
+                en: "ball of thread", 
+                ru: " клубок ниток" 
+            },
+            "没完没了": { 
+                pinyin: "méiwán méiliǎo", 
+                cnExplain: "没有完结；没有停止", 
+                en: "endless; without stopping", 
+                ru: "бесконечный; не прекращаясь" 
+            },
+            "哭": { 
+                pinyin: "kū", 
+                cnExplain: "因痛苦或激动而流泪", 
+                en: "cry; weep", 
+                ru: "плакать; рыдать" 
+            },
+            "胆子": { 
+                pinyin: "dǎnzi", 
+                cnExplain: "胆量；勇气", 
+                en: "courage; boldness", 
+                ru: "мужество; смелость" 
+            },
+            "花盆": { 
+                pinyin: "huāpén", 
+                cnExplain: "用来养花的盆子", 
+                en: "flowerpot", 
+                ru: "цветочный горшок" 
+            },
+            "花枝": { 
+                pinyin: "huāzhī", 
+                cnExplain: "开着花的枝条", 
+                en: "flowering branch", 
+                ru: "цветущая ветка" 
+            },
+            "搞坏": { 
+                pinyin: "gǎohuài", 
+                cnExplain: "损坏；破坏", 
+                en: "damage; ruin", 
+                ru: "повредить; разрушить" 
+            },
+            "生气": { 
+                pinyin: "shēngqì", 
+                cnExplain: "因不合心意而不愉快", 
+                en: "angry; get angry", 
+                ru: "злой; рассердиться" 
+            }
+        };
+
+        // 字体大小控制
+        const body = document.body;
+        const fontSmall = document.getElementById('font-small');
+        const fontNormal = document.getElementById('font-normal');
+        const fontLarge = document.getElementById('font-large');
+        let currentFontSize = 16;
+
+        fontLarge.addEventListener('click', () => {
+            if (currentFontSize < 24) {
+                currentFontSize += 2;
+                body.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        fontSmall.addEventListener('click', () => {
+            if (currentFontSize > 12) {
+                currentFontSize -= 2;
+                body.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        fontNormal.addEventListener('click', () => {
+            currentFontSize = 16;
+            body.style.fontSize = '16px';
+        });
+
+        // 词汇弹窗控制
+        const vocabElements = document.querySelectorAll('.vocab');
+        const vocabPopup = document.getElementById('vocab-popup');
+        const vocabOverlay = document.getElementById('vocab-overlay');
+        const vocabClose = document.getElementById('vocab-close');
+        const vocabName = document.getElementById('vocabName');
+        const vocabPinyin = document.getElementById('vocabPinyin');
+        const vocabCnExplain = document.getElementById('vocabCnExplain');
+        const vocabEn = document.getElementById('vocabEn');
+        const vocabRu = document.getElementById('vocabRu');
+
+        vocabElements.forEach(element => {
+            element.addEventListener('click', function() {
+                const word = this.getAttribute('data-word');
+                const data = vocabData[word];
+                vocabName.textContent = word;
+                vocabPinyin.textContent = data.pinyin;
+                vocabCnExplain.textContent = data.cnExplain;
+                vocabEn.textContent = data.en;
+                vocabRu.textContent = data.ru;
+                vocabPopup.style.display = 'block';
+                vocabOverlay.style.display = 'block';
+            });
+        });
+
+        vocabClose.addEventListener('click', () => {
+            vocabPopup.style.display = 'none';
+            vocabOverlay.style.display = 'none';
+        });
+
+        vocabOverlay.addEventListener('click', () => {
+            vocabPopup.style.display = 'none';
+            vocabOverlay.style.display = 'none';
+        });
+
+        // 习题互动逻辑
+        const correctAnswers = {
+            judge: [false, true, false, false, false],
+            choice: ['B', 'D', 'C'],
+            complete: ['D', 'A']
+        };
+
+        const submitBtn = document.getElementById('submit-btn');
+        const result = document.getElementById('result');
+        const scoreEl = document.getElementById('score');
+        const answerDetails = document.getElementById('answer-details');
+
+        submitBtn.addEventListener('click', () => {
+            let totalScore = 0;
+            const totalQuestions = 5 + 3 + 2;
+
+            // 处理判断题
+            let judgeScore = 0;
+            let judgeDetails = `<h4>一、判断题正确答案：</h4>`;
+            for (let i = 0; i < 5; i++) {
+                const questionNum = i + 1;
+                const selected = document.querySelector(`input[name="judge-${questionNum}"]:checked`);
+                const userAnswer = selected ? (selected.value === 'true') : null;
+                const correct = correctAnswers.judge[i];
+                const correctMark = correct ? '√' : '×';
+                
+                judgeDetails += `<p>第${questionNum}题：正确答案为「${correctMark}」`;
+                if (userAnswer === correct) {
+                    judgeScore++;
+                    judgeDetails += `（你的答案正确，得1分）</p>`;
+                } else if (userAnswer === null) {
+                    judgeDetails += `（未作答，不得分）</p>`;
+                } else {
+                    judgeDetails += `（你的答案错误，不得分）</p>`;
+                }
+                document.getElementById(`judge-${questionNum}-ans`).textContent = `（正确答案：${correctMark}）`;
+            }
+
+            // 处理选择题
+            let choiceScore = 0;
+            let choiceDetails = `<h4>二、选择题正确答案：</h4>`;
+            for (let i = 0; i < 3; i++) {
+                const questionNum = i + 1;
+                const selected = document.querySelector(`input[name="choice-${questionNum}"]:checked`);
+                const userAnswer = selected ? selected.value : null;
+                const correct = correctAnswers.choice[i];
+                
+                choiceDetails += `<p>第${questionNum}题：正确答案为「${correct}」`;
+                if (userAnswer === correct) {
+                    choiceScore++;
+                    choiceDetails += `（你的答案正确，得1分）</p>`;
+                } else if (userAnswer === null) {
+                    choiceDetails += `（未作答，不得分）</p>`;
+                } else {
+                    choiceDetails += `（你的答案错误，不得分）</p>`;
+                }
+                document.getElementById(`choice-${questionNum}-ans`).textContent = `（正确答案：${correct}）`;
+            }
+
+            // 处理完成句子题
+            let completeScore = 0;
+            let completeDetails = `<h4>三、完成句子题正确答案：</h4>`;
+            const optionTextMap = {
+                'A': '变化多端',
+                'B': '淘气',
+                'C': '勇猛',
+                'D': '蹭你的腿'
+            };
+
+            for (let i = 0; i < 2; i++) {
+                const questionNum = i + 1;
+                const selectEl = document.querySelector(`select[name="complete-${questionNum}"]`);
+                const userAnswer = selectEl.value || null;
+                const correct = correctAnswers.complete[i];
+                const correctText = optionTextMap[correct];
+                
+                completeDetails += `<p>第${questionNum}题：正确答案为「${correct}（${correctText}）」`;
+                if (userAnswer === correct) {
+                    completeScore++;
+                    completeDetails += `（你的答案正确，得1分）</p>`;
+                } else if (userAnswer === null) {
+                    completeDetails += `（未作答，不得分）</p>`;
+                } else {
+                    completeDetails += `（你的答案错误，不得分）</p>`;
+                }
+                document.getElementById(`complete-${questionNum}-ans`).textContent = `（正确答案：${correct}）`;
+            }
+
+            // 计算总分并显示结果
+            totalScore = judgeScore + choiceScore + completeScore;
+            scoreEl.textContent = `你的总得分：${totalScore}/${totalQuestions} 分`;
+            answerDetails.innerHTML = judgeDetails + choiceDetails + completeDetails;
+            result.style.display = 'block';
+            result.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互动式阅读：洋笑星大山</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            color: #333;
+            font-size: 16px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .font-control {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .font-control button {
+            padding: 6px 12px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .font-control button:hover {
+            background: #f5f5f5;
+            border-color: #3498db;
+            color: #3498db;
+        }
+        .article {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .vocab {
+            color: #3498db;
+            cursor: pointer;
+            text-decoration: underline;
+            position: relative;
+        }
+        .exercise {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .exercise-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
+        .exercise-section:last-child {
+            border-bottom: none;
+        }
+        .exercise-title {
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .question {
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 3px solid #3498db;
+        }
+        .option-group {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+        .option {
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .complete-question {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .complete-sentence {
+            flex: 1;
+            min-width: 300px;
+            margin-right: 15px;
+        }
+        .complete-select {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 150px;
+            font-size: 1em;
+        }
+        .submit-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            display: none;
+        }
+        .score {
+            text-align: center;
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .correct-answer {
+            color: #27ae60;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .wrong-answer {
+            color: #e74c3c;
+            margin-left: 10px;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 500px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 20px;
+            z-index: 999;
+            display: none;
+        }
+        .popup h3 {
+            margin-bottom: 12px;
+            color: #3498db;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .popup p {
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        .popup .lang-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .popup .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>洋笑星大山</h1>
+    <div class="font-control">
+        <button id="font-small">- 缩小字体</button>
+        <button id="font-normal">默认字体</button>
+        <button id="font-large">放大字体 +</button>
+    </div>
+
+    <!-- 文章部分 -->
+    <div class="article" id="article">
+        如今，会说中国话的外国人越来越多了，因为他们是外国人，却能用<span class="vocab" data-word="流利">流利</span>的汉语<span class="vocab" data-word="表演">表演</span>，让<span class="vocab" data-word="观众">观众</span>发笑，所以被人们称为“<span class="vocab" data-word="洋笑星">洋笑星</span>”，大山就是其中一个。
+        <br><br>
+        大山是加拿大人，是Mark Rowswell的中文名字。他1965年出生，1984年考上多伦多大学（University of Toronto），开始学习“中国<span class="vocab" data-word="研究">研究</span>”。
+        <br><br>
+        大山喜欢中国的<span class="vocab" data-word="相声">相声</span><span class="vocab" data-word="表演">表演</span>。他的相声<span class="vocab" data-word="结合">结合</span>了中西<span class="vocab" data-word="文化">文化</span>，给<span class="vocab" data-word="观众">观众</span>带来了很多欢乐。除了相声，他还做中外<span class="vocab" data-word="文化交流">文化交流</span>工作，用他的话说，是“给中国人介绍西方，让西方人了解中国”。
+        <br><br>
+        大山说，他的<span class="vocab" data-word="祖父">祖父</span>母，在上个<span class="vocab" data-word="世纪">世纪</span>的20年代来过中国。他的<span class="vocab" data-word="祖父">祖父</span>是一名医生，第一次世界大战（World War I）结束后，带着祖母与三个孩子来到中国，在北京协和医院（Peking Union Medical College Hospital）工作，半年后，又在河南工作了两年。大山说，自己来到中国后，经常会想起他们。两代人在两个不同的历史时期来到中国，他希望在中国的工作和<span class="vocab" data-word="经历">经历</span>能够让祖父母感到<span class="vocab" data-word="自豪">自豪</span>。
+        <br><br>
+        大山成为<span class="vocab" data-word="名人">名人</span>后，他的家庭和生活受到很多人的<span class="vocab" data-word="关注">关注</span>。大山的妻子叫甘霖（Gān Lín），重庆人，在北京出生长大。嫁给名人大山后，甘霖就当起“背后的女人”。为了<span class="vocab" data-word="避免">避免</span>（avoid）<span class="vocab" data-word="麻烦">麻烦</span>，两人在中国<span class="vocab" data-word="逛街">逛街</span>时，大山走在前面，甘霖跟在他身后两米远的地方，有一次竟然被看成是大山的<span class="vocab" data-word="粉丝">粉丝</span>（fan）！
+        <br><br>
+        谈到自己的家庭生活，大山说：“我们工作在北京，生活在加拿大。”因为孩子们在加拿大读书，大山一年中，有半年在加拿大。在家里，他和妻子有时说中文，有时说英文，他们希望，两个孩子对两种<span class="vocab" data-word="文化">文化</span>都熟悉，两边都是家。他自己也很难说清，孩子们<span class="vocab" data-word="究竟">究竟</span>是中国人还是加拿大人。
+        <br><br>
+        因此有一种说法：“大山虽然是外国人，但不是外人。”
+    </div>
+
+    <!-- 习题部分 -->
+    <div class="exercise" id="exercise">
+        <div class="exercise-section">
+            <h3 class="exercise-title">一、根据文章内容判断正误（正确画"√"，错误画"×"）</h3>
+            <div class="question-group" id="judge-group">
+                <div class="question">1. 大山是美国人。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-1" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-1" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-1-ans"></span>
+                </div>
+
+                <div class="question">2. 大山的祖父是一名医生。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-2" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-2" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-2-ans"></span>
+                </div>
+
+                <div class="question">3. 大山和妻子一直生活在北京。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-3" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-3" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-3-ans"></span>
+                </div>
+
+                <div class="question">4. 大山的相声结合了中西文化。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-4" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-4" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-4-ans"></span>
+                </div>
+
+                <div class="question">5. 大山的妻子甘霖是上海人。</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="judge-5" value="true"> √</label>
+                    <label class="option"><input type="radio" name="judge-5" value="false"> ×</label>
+                    <span class="correct-answer" id="judge-5-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-section">
+            <h3 class="exercise-title">二、根据文章内容选择正确答案（从A、B、C、D中选最佳答案）</h3>
+            <div class="question-group" id="choice-group">
+                <div class="question">1. 大山被称为“洋笑星”是因为？(  )</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="choice-1" value="A"> A. 他是外国人但汉语流利，能让观众发笑</label>
+                    <label class="option"><input type="radio" name="choice-1" value="B"> B. 他喜欢笑</label>
+                    <label class="option"><input type="radio" name="choice-1" value="C"> C. 他是专业喜剧演员</label>
+                    <label class="option"><input type="radio" name="choice-1" value="D"> D. 他来自海洋国家</label>
+                    <span class="correct-answer" id="choice-1-ans"></span>
+                </div>
+
+                <div class="question">2. 大山的祖父母什么时候来过中国？(  )</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="choice-2" value="A"> A. 上世纪30年代</label>
+                    <label class="option"><input type="radio" name="choice-2" value="B"> B. 上世纪20年代</label>
+                    <label class="option"><input type="radio" name="choice-2" value="C"> C. 第一次世界大战前</label>
+                    <label class="option"><input type="radio" name="choice-2" value="D"> D. 大山来中国之后</label>
+                    <span class="correct-answer" id="choice-2-ans"></span>
+                </div>
+
+                <div class="question">3. 大山的家庭生活是？(  )</div>
+                <div class="option-group">
+                    <label class="option"><input type="radio" name="choice-3" value="A"> A. 只在北京生活</label>
+                    <label class="option"><input type="radio" name="choice-3" value="B"> B. 只在加拿大生活</label>
+                    <label class="option"><input type="radio" name="choice-3" value="C"> C. 工作在北京，生活在加拿大</label>
+                    <label class="option"><input type="radio" name="choice-3" value="D"> D. 工作在加拿大，生活在北京</label>
+                    <span class="correct-answer" id="choice-3-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-section">
+            <h3 class="exercise-title">三、根据文章内容完成句子（从A、B、C、D中选最佳答案）</h3>
+            <div class="option-group" style="margin-bottom: 20px;">
+                <p>选项：</p>
+                <p>A. 中西文化</p>
+                <p>B. 文化交流</p>
+                <p>C. 自豪</p>
+                <p>D. 粉丝</p>
+            </div>
+            <div class="question-group" id="complete-group">
+                <div class="complete-question">
+                    <div class="complete-sentence">1. 大山的相声结合了______。</div>
+                    <select class="complete-select" name="complete-1">
+                        <option value="">--请选择--</option>
+                        <option value="A">A. 中西文化</option>
+                        <option value="B">B. 文化交流</option>
+                        <option value="C">C. 自豪</option>
+                        <option value="D">D. 粉丝</option>
+                    </select>
+                    <span class="correct-answer" id="complete-1-ans"></span>
+                </div>
+
+                <div class="complete-question">
+                    <div class="complete-sentence">2. 大山做______工作，介绍中西文化。</div>
+                    <select class="complete-select" name="complete-2">
+                        <option value="">--请选择--</option>
+                        <option value="A">A. 中西文化</option>
+                        <option value="B">B. 文化交流</option>
+                        <option value="C">C. 自豪</option>
+                        <option value="D">D. 粉丝</option>
+                    </select>
+                    <span class="correct-answer" id="complete-2-ans"></span>
+                </div>
+
+                <div class="complete-question">
+                    <div class="complete-sentence">3. 大山希望自己的经历让祖父母感到______。</div>
+                    <select class="complete-select" name="complete-3">
+                        <option value="">--请选择--</option>
+                        <option value="A">A. 中西文化</option>
+                        <option value="B">B. 文化交流</option>
+                        <option value="C">C. 自豪</option>
+                        <option value="D">D. 粉丝</option>
+                    </select>
+                    <span class="correct-answer" id="complete-3-ans"></span>
+                </div>
+            </div>
+        </div>
+
+        <button class="submit-btn" id="submit-btn">提交答案并查看结果</button>
+
+        <div class="result" id="result">
+            <div class="score" id="score"></div>
+            <div id="answer-details">
+                <!-- 正确答案详情将在这里动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 词汇弹窗 -->
+    <div class="overlay" id="vocab-overlay"></div>
+    <div class="popup" id="vocab-popup">
+        <div class="close" id="vocab-close">×</div>
+        <h3 id="vocabName"></h3>
+        <p><span class="lang-label">拼音：</span><span id="vocabPinyin"></span></p>
+        <p><span class="lang-label">中文解释：</span><span id="vocabCnExplain"></span></p>
+        <p><span class="lang-label">英文翻译：</span><span id="vocabEn"></span></p>
+        <p><span class="lang-label">俄文翻译：</span><span id="vocabRu"></span></p>
+    </div>
+
+    <script>
+        // 词汇数据字典（HSK3级以上词汇）
+        const vocabData = {
+            "流利": { 
+                pinyin: "liúlì", 
+                cnExplain: "说话、做事顺畅没有阻碍", 
+                en: "fluent; smooth", 
+                ru: "плавный; свободный" 
+            },
+            "表演": { 
+                pinyin: "biǎoyǎn", 
+                cnExplain: "通过动作、语言等展示技艺或情节", 
+                en: "perform; show", 
+                ru: "выступать; показывать" 
+            },
+            "观众": { 
+                pinyin: "guānzhòng", 
+                cnExplain: "观看表演、比赛等的人", 
+                en: "audience; spectator", 
+                ru: "зрители; зрители" 
+            },
+            "洋笑星": { 
+                pinyin: "yáng xiàoxīng", 
+                cnExplain: "外国的喜剧演员（因汉语流利能让观众发笑而得名）", 
+                en: "foreign comedian", 
+                ru: "иностранный комик" 
+            },
+            "研究": { 
+                pinyin: "yánjiū", 
+                cnExplain: "深入探索事物的性质、规律等", 
+                en: "research; study", 
+                ru: "исследование; изучение" 
+            },
+            "相声": { 
+                pinyin: "xiàngsheng", 
+                cnExplain: "中国传统曲艺形式，以说、学、逗、唱为特点", 
+                en: "crosstalk", 
+                ru: "кроссток (китайская юмористическая поэма)" 
+            },
+            "结合": { 
+                pinyin: "jiéhé", 
+                cnExplain: "把不同的事物合并、联系在一起", 
+                en: "combine; integrate", 
+                ru: "объединить; интегрировать" 
+            },
+            "文化": { 
+                pinyin: "wénhuà", 
+                cnExplain: "人类创造的精神财富和物质财富的总和", 
+                en: "culture", 
+                ru: "культура" 
+            },
+            "文化交流": { 
+                pinyin: "wénhuà jiāoliú", 
+                cnExplain: "不同国家、民族之间文化的相互传播与学习", 
+                en: "cultural exchange", 
+                ru: "культурный обмен" 
+            },
+            "祖父": { 
+                pinyin: "zǔfù", 
+                cnExplain: "父亲的父亲；爷爷", 
+                en: "grandfather", 
+                ru: "дедушка" 
+            },
+            "世纪": { 
+                pinyin: "shìjì", 
+                cnExplain: "计算年代的单位，一百年为一个世纪", 
+                en: "century", 
+                ru: "век" 
+            },
+            "经历": { 
+                pinyin: "jīnglì", 
+                cnExplain: "亲身遇到、做过的事情", 
+                en: "experience; go through", 
+                ru: "опыт; пережить" 
+            },
+            "自豪": { 
+                pinyin: "zìháo", 
+                cnExplain: "因为自己或与自己有关的人、事优秀而感到光荣", 
+                en: "proud; take pride in", 
+                ru: "гордый; гордиться" 
+            },
+            "名人": { 
+                pinyin: "míngrén", 
+                cnExplain: "有名气、被很多人知道的人", 
+                en: "celebrity; famous person", 
+                ru: "знаменитость; известная персона" 
+            },
+            "关注": { 
+                pinyin: "guānzhù", 
+                cnExplain: "关心重视", 
+                en: "pay attention to; focus on", 
+                ru: "обращать внимание; сосредоточиться на" 
+            },
+            "避免": { 
+                pinyin: "bìmiǎn", 
+                cnExplain: "设法防止某种情况发生", 
+                en: "avoid; prevent", 
+                ru: "избежать; предотвратить" 
+            },
+            "麻烦": { 
+                pinyin: "máfan", 
+                cnExplain: "繁琐难办的事；使人困扰的情况", 
+                en: "trouble; hassle", 
+                ru: "проблема; хлопот" 
+            },
+            "逛街": { 
+                pinyin: "guàngjiē", 
+                cnExplain: "在街道上闲逛、购物", 
+                en: "go shopping; stroll around the streets", 
+                ru: "гулять по улицам; ходить по магазинам" 
+            },
+            "粉丝": { 
+                pinyin: "fěnsī", 
+                cnExplain: "对某人或事物狂热喜爱的支持者", 
+                en: "fan", 
+                ru: "фанат" 
+            },
+            "究竟": { 
+                pinyin: "jiūjìng", 
+                cnExplain: "到底；用于问句表示追究", 
+                en: "actually; after all", 
+                ru: "на самом деле; в конце концов" 
+            }
+        };
+
+        // 字体大小控制
+        const body = document.body;
+        const fontSmall = document.getElementById('font-small');
+        const fontNormal = document.getElementById('font-normal');
+        const fontLarge = document.getElementById('font-large');
+        let currentFontSize = 16;
+
+        fontLarge.addEventListener('click', () => {
+            if (currentFontSize < 24) {
+                currentFontSize += 2;
+                body.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        fontSmall.addEventListener('click', () => {
+            if (currentFontSize > 12) {
+                currentFontSize -= 2;
+                body.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        fontNormal.addEventListener('click', () => {
+            currentFontSize = 16;
+            body.style.fontSize = '16px';
+        });
+
+        // 词汇弹窗控制
+        const vocabElements = document.querySelectorAll('.vocab');
+        const vocabPopup = document.getElementById('vocab-popup');
+        const vocabOverlay = document.getElementById('vocab-overlay');
+        const vocabClose = document.getElementById('vocab-close');
+        const vocabName = document.getElementById('vocabName');
+        const vocabPinyin = document.getElementById('vocabPinyin');
+        const vocabCnExplain = document.getElementById('vocabCnExplain');
+        const vocabEn = document.getElementById('vocabEn');
+        const vocabRu = document.getElementById('vocabRu');
+
+        vocabElements.forEach(element => {
+            element.addEventListener('click', function() {
+                const word = this.getAttribute('data-word');
+                const data = vocabData[word];
+                vocabName.textContent = word;
+                vocabPinyin.textContent = data.pinyin;
+                vocabCnExplain.textContent = data.cnExplain;
+                vocabEn.textContent = data.en;
+                vocabRu.textContent = data.ru;
+                vocabPopup.style.display = 'block';
+                vocabOverlay.style.display = 'block';
+            });
+        });
+
+        vocabClose.addEventListener('click', () => {
+            vocabPopup.style.display = 'none';
+            vocabOverlay.style.display = 'none';
+        });
+
+        vocabOverlay.addEventListener('click', () => {
+            vocabPopup.style.display = 'none';
+            vocabOverlay.style.display = 'none';
+        });
+
+        // 习题互动逻辑
+        const correctAnswers = {
+            judge: [false, true, false, true, false],
+            choice: ['A', 'B', 'C'],
+            complete: ['A', 'B', 'C']
+        };
+
+        const submitBtn = document.getElementById('submit-btn');
+        const result = document.getElementById('result');
+        const scoreEl = document.getElementById('score');
+        const answerDetails = document.getElementById('answer-details');
+
+        submitBtn.addEventListener('click', () => {
+            let totalScore = 0;
+            const totalQuestions = 5 + 3 + 3;
+
+            // 处理判断题
+            let judgeScore = 0;
+            let judgeDetails = `<h4>一、判断题正确答案：</h4>`;
+            for (let i = 0; i < 5; i++) {
+                const questionNum = i + 1;
+                const selected = document.querySelector(`input[name="judge-${questionNum}"]:checked`);
+                const userAnswer = selected ? (selected.value === 'true') : null;
+                const correct = correctAnswers.judge[i];
+                const correctMark = correct ? '√' : '×';
+                
+                judgeDetails += `<p>第${questionNum}题：正确答案为「${correctMark}」`;
+                if (userAnswer === correct) {
+                    judgeScore++;
+                    judgeDetails += `（你的答案正确，得1分）</p>`;
+                } else if (userAnswer === null) {
+                    judgeDetails += `（未作答，不得分）</p>`;
+                } else {
+                    judgeDetails += `（你的答案错误，不得分）</p>`;
+                }
+                document.getElementById(`judge-${questionNum}-ans`).textContent = `（正确答案：${correctMark}）`;
+            }
+
+            // 处理选择题
+            let choiceScore = 0;
+            let choiceDetails = `<h4>二、选择题正确答案：</h4>`;
+            for (let i = 0; i < 3; i++) {
+                const questionNum = i + 1;
+                const selected = document.querySelector(`input[name="choice-${questionNum}"]:checked`);
+                const userAnswer = selected ? selected.value : null;
+                const correct = correctAnswers.choice[i];
+                
+                choiceDetails += `<p>第${questionNum}题：正确答案为「${correct}」`;
+                if (userAnswer === correct) {
+                    choiceScore++;
+                    choiceDetails += `（你的答案正确，得1分）</p>`;
+                } else if (userAnswer === null) {
+                    choiceDetails += `（未作答，不得分）</p>`;
+                } else {
+                    choiceDetails += `（你的答案错误，不得分）</p>`;
+                }
+                document.getElementById(`choice-${questionNum}-ans`).textContent = `（正确答案：${correct}）`;
+            }
+
+            // 处理完成句子题
+            let completeScore = 0;
+            let completeDetails = `<h4>三、完成句子题正确答案：</h4>`;
+            const optionTextMap = {
+                'A': '中西文化',
+                'B': '文化交流',
+                'C': '自豪',
+                'D': '粉丝'
+            };
+
+            for (let i = 0; i < 3; i++) {
+                const questionNum = i + 1;
+                const selectEl = document.querySelector(`select[name="complete-${questionNum}"]`);
+                const userAnswer = selectEl.value || null;
+                const correct = correctAnswers.complete[i];
+                const correctText = optionTextMap[correct];
+                
+                completeDetails += `<p>第${questionNum}题：正确答案为「${correct}（${correctText}）」`;
+                if (userAnswer === correct) {
+                    completeScore++;
+                    completeDetails += `（你的答案正确，得1分）</p>`;
+                } else if (userAnswer === null) {
+                    completeDetails += `（未作答，不得分）</p>`;
+                } else {
+                    completeDetails += `（你的答案错误，不得分）</p>`;
+                }
+                document.getElementById(`complete-${questionNum}-ans`).textContent = `（正确答案：${correct}）`;
+            }
+
+            // 计算总分并显示结果
+            totalScore = judgeScore + choiceScore + completeScore;
+            scoreEl.textContent = `你的总得分：${totalScore}/${totalQuestions} 分`;
+            answerDetails.innerHTML = judgeDetails + choiceDetails + completeDetails;
+            result.style.display = 'block';
+            result.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

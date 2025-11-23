@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>冬春季节呼吸道传染病预防要点</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            color: #333;
+            font-size: 16px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .font-control {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .font-control button {
+            padding: 6px 12px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .font-control button:hover {
+            background: #f5f5f5;
+            border-color: #3498db;
+            color: #3498db;
+        }
+        .article {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .vocab {
+            color: #3498db;
+            cursor: pointer;
+            text-decoration: underline;
+            position: relative;
+        }
+        .note {
+            font-size: 0.9em;
+            color: #666;
+            margin: 5px 0;
+            padding-left: 15px;
+            border-left: 2px solid #eee;
+        }
+        .exercise {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .exercise-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
+        .exercise-section:last-child {
+            border-bottom: none;
+        }
+        .exercise-title {
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .fill-question {
+            margin-bottom: 20px;
+        }
+        .fill-prompt {
+            margin-bottom: 8px;
+            padding-left: 10px;
+            border-left: 3px solid #3498db;
+        }
+        .fill-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+            margin-bottom: 5px;
+        }
+        .fill-input.multi {
+            margin-right: 10px;
+            width: calc(50% - 10px);
+            display: inline-block;
+        }
+        @media (max-width: 600px) {
+            .fill-input.multi {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+        .submit-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            display: none;
+        }
+        .score {
+            text-align: center;
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .correct-answer {
+            color: #27ae60;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .wrong-answer {
+            color: #e74c3c;
+            margin-left: 10px;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 500px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 20px;
+            z-index: 999;
+            display: none;
+        }
+        .popup h3 {
+            margin-bottom: 12px;
+            color: #3498db;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .popup p {
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        .popup .lang-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .popup .confusion-tip {
+            margin-top: 10px;
+            padding: 8px;
+            background: #f0f8ff;
+            border-left: 3px solid #3498db;
+            font-size: 0.9em;
+        }
+        .popup .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>冬春季节呼吸道传染病预防要点</h1>
+    <div class="font-control">
+        <button id="font-small">- 缩小字体</button>
+        <button id="font-normal">默认字体</button>
+        <button id="font-large">放大字体 +</button>
+    </div>
+
+    <!-- 文章部分 -->
+    <div class="article" id="article">
+        冬春季节常见的<span class="vocab" data-word="呼吸道传染病">呼吸道传染病</span>有<span class="vocab" data-word="流感">流感</span>（flu）、<span class="vocab" data-word="肺结核">肺结核</span>（tuberculosis）等。
+        <br><br>
+        呼吸道传染病主要通过<span class="vocab" data-word="空气飞沫">空气飞沫</span>（flying particles of liquid）<span class="vocab" data-word="传播">传播</span>。如果在不<span class="vocab" data-word="通风">通风</span>的环境下长时间生活和学习，室内<span class="vocab" data-word="空气质量">空气质量</span>较差，就容易造成传染病的<span class="vocab" data-word="传播">传播</span>（spread）。
+        <br><br>
+        要<span class="vocab" data-word="预防">预防</span>呼吸道传染病，我们需要做到：
+        <br><br>
+        1. 在<span class="vocab" data-word="公共场所">公共场所</span><span class="vocab" data-word="打喷嚏">打喷嚏</span>①或<span class="vocab" data-word="咳嗽">咳嗽</span>时应用<span class="vocab" data-word="手绢">手绢</span>或者<span class="vocab" data-word="纸巾">纸巾</span>盖住口鼻，不要随地<span class="vocab" data-word="吐痰">吐痰</span>，不要随意扔掉使用过的纸巾。
+        <p class="note">① 打喷嚏（dǎ pēntì）：sneeze</p>
+        <br>
+        2. 经常<span class="vocab" data-word="洗手">洗手</span>，不用<span class="vocab" data-word="脏">脏</span>毛巾擦手。打喷嚏后应立即洗手或把手擦干净。
+        <br><br>
+        3. 避免与他人用同一个<span class="vocab" data-word="水杯">水杯</span>、<span class="vocab" data-word="餐具">餐具</span>、毛巾和<span class="vocab" data-word="牙刷">牙刷</span>等物品。
+        <br><br>
+        4. 注意<span class="vocab" data-word="环境卫生">环境卫生</span>和室内空气<span class="vocab" data-word="流通">流通</span>，如周围有传染病<span class="vocab" data-word="病人">病人</span>时，应增加开窗通风<span class="vocab" data-word="换气">换气</span>的次数，开窗时注意<span class="vocab" data-word="保暖">保暖</span>。
+        <br><br>
+        5. 多喝水，多吃<span class="vocab" data-word="蔬菜水果">蔬菜水果</span>，增强身体<span class="vocab" data-word="抵抗">抵抗</span>②能力。如果出现<span class="vocab" data-word="发热">发热</span>、咳嗽等<span class="vocab" data-word="症状">症状</span>，要及时去<span class="vocab" data-word="医院">医院</span>看病，注意<span class="vocab" data-word="营养">营养</span>和<span class="vocab" data-word="休息">休息</span>。
+        <p class="note">② 抵抗（dǐkàng）：resist</p>
+        <br>
+        （选自网络文章）
+    </div>
+
+    <!-- 习题部分：整合图片中的填空题 -->
+    <div class="exercise" id="exercise">
+        <div class="exercise-section">
+            <h3 class="exercise-title">根据文章内容填空</h3>
+            <div class="question-group" id="fill-group">
+                <div class="fill-question">
+                    <div class="fill-prompt">1. 冬春季节常见的呼吸道传染病有______、______等。</div>
+                    <input type="text" class="fill-input multi" id="fill-1-1" placeholder="请输入第一个答案">
+                    <input type="text" class="fill-input multi" id="fill-1-2" placeholder="请输入第二个答案">
+                    <div><span class="correct-answer" id="fill-1-ans"></span></div>
+                </div>
+
+                <div class="fill-question">
+                    <div class="fill-prompt">2. 呼吸道传染病主要经______传播。</div>
+                    <input type="text" class="fill-input" id="fill-2" placeholder="请输入答案">
+                    <div><span class="correct-answer" id="fill-2-ans"></span></div>
+                </div>
+
+                <div class="fill-question">
+                    <div class="fill-prompt">3. 在公共场所打喷嚏要______。</div>
+                    <input type="text" class="fill-input" id="fill-3" placeholder="请输入答案">
+                    <div><span class="correct-answer" id="fill-3-ans"></span></div>
+                </div>
+
+                <div class="fill-question">
+                    <div class="fill-prompt">4. 周围有传染病病人时，要增加______的次数，但要注意保暖。</div>
+                    <input type="text" class="fill-input" id="fill-4" placeholder="请输入答案">
+                    <div><span class="correct-answer" id="fill-4-ans"></span></div>
+                </div>
+            </div>
+        </div>
+
+        <button class="submit-btn" id="submit-btn">提交答案并查看结果</button>
+
+        <div class="result" id="result">
+            <div class="score" id="score"></div>
+            <div id="answer-details">
+                <!-- 正确答案详情将在这里动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 词汇弹窗 -->
+    <div class="overlay" id="vocab-overlay"></div>
+    <div class="popup" id="vocab-popup">
+        <div class="close" id="vocab-close">×</div>
+        <h3 id="vocabName"></h3>
+        <p><span class="lang-label">拼音：</span><span id="vocabPinyin"></span></p>
+        <p><span class="lang-label">中文解释：</span><span id="vocabCnExplain"></span></p>
+        <p><span class="lang-label">英文翻译：</span><span id="vocabEn"></span></p>
+        <p><span class="lang-label">俄文翻译：</span><span id="vocabRu"></span></p>
+        <div class="confusion-tip" id="confusionTip"></div>
+    </div>
+
+    <script>
+        // 词汇数据字典：含留学生易混淆提示
+        const vocabData = {
+            "呼吸道传染病": { 
+                pinyin: "hūxīdào chuánrǎnbìng", 
+                cnExplain: "通过呼吸道感染传播的疾病", 
+                en: "respiratory infectious disease", 
+                ru: " Респираторные инфекционные заболевания",
+                confusion: "易混淆：呼吸道（呼吸相关）vs 消化道（消化相关），例：流感是呼吸道传染病，霍乱是消化道传染病。"
+            },
+            "流感": { 
+                pinyin: "liúgǎn", 
+                cnExplain: "由流感病毒引起的急性呼吸道传染病", 
+                en: "influenza (flu)", 
+                ru: "грипп",
+                confusion: "易混淆：流感（病毒引起，症状重）vs 感冒（多为细菌引起，症状轻），例：流感需要及时治疗，普通感冒多喝水即可恢复。"
+            },
+            "肺结核": { 
+                pinyin: "fèijiéhé", 
+                cnExplain: "由结核分枝杆菌引起的肺部慢性传染病", 
+                en: "tuberculosis", 
+                ru: "туберкулёз",
+                confusion: "易混淆：肺结核（肺部）vs 肺炎（肺部炎症，非传染病），例：肺结核会传染，普通肺炎不会传染。"
+            },
+            "空气飞沫": { 
+                pinyin: "kōngqì fēimò", 
+                cnExplain: "空气中的微小液体颗粒，可传播病原体", 
+                en: "airborne droplets", 
+                ru: "воздушно-капельная передача",
+                confusion: "易混淆：飞沫（液体颗粒）vs 空气（气体），例：疾病通过空气飞沫传播，不是单纯通过空气传播。"
+            },
+            "传播": { 
+                pinyin: "chuánbō", 
+                cnExplain: "病原体从一个生物体转移到另一个生物体", 
+                en: "spread; transmit", 
+                ru: "распространение; передача",
+                confusion: "易混淆：传播（疾病扩散）vs 传染（个体感染），例：病毒通过飞沫传播，容易传染给他人。"
+            },
+            "通风": { 
+                pinyin: "tōngfēng", 
+                cnExplain: "使空气流通", 
+                en: "ventilate; air circulation", 
+                ru: "вентиляция; проветривание",
+                confusion: "易混淆：通风（空气流动）vs 透气（材料属性），例：房间需要经常通风，这种布料很透气。"
+            },
+            "空气质量": { 
+                pinyin: "kōngqì zhìliàng", 
+                cnExplain: "空气的清洁程度和健康影响", 
+                en: "air quality", 
+                ru: "качество воздуха",
+                confusion: "易混淆：质量（好坏程度）vs 数量（多少），例：室内空气质量差，空气数量是充足的。"
+            },
+            "预防": { 
+                pinyin: "yùfáng", 
+                cnExplain: "事先防备", 
+                en: "prevent; precaution", 
+                ru: "предотвращение; профилактика",
+                confusion: "易混淆：预防（事前）vs 治疗（事后），例：勤洗手可以预防疾病，生病后要及时治疗。"
+            },
+            "公共场所": { 
+                pinyin: "gōnggòng chǎngsuǒ", 
+                cnExplain: "供公众使用的场所", 
+                en: "public place", 
+                ru: "общественное место",
+                confusion: "易混淆：公共场所（公开）vs 私人场所（私密），例：公园是公共场所，家里是私人场所。"
+            },
+            "打喷嚏": { 
+                pinyin: "dǎ pēntì", 
+                cnExplain: "鼻黏膜受刺激而引起的反射动作", 
+                en: "sneeze", 
+                ru: "чихать",
+                confusion: "易混淆：打喷嚏（鼻子）vs 咳嗽（喉咙），例：打喷嚏时要捂嘴，咳嗽时也要注意遮挡。"
+            },
+            "咳嗽": { 
+                pinyin: "késòu", 
+                cnExplain: "喉部或气管的黏膜受刺激时迅速吸气，随即强烈地呼气", 
+                en: "cough", 
+                ru: "кашель",
+                confusion: "易混淆：咳嗽（症状）vs 感冒（疾病），例：咳嗽是感冒的常见症状。"
+            },
+            "手绢": { 
+                pinyin: "shǒujuàn", 
+                cnExplain: "随身携带的方形小块织物，用来擦汗或擦鼻涕等", 
+                en: "handkerchief", 
+                ru: "халат",
+                confusion: "易混淆：手绢（织物）vs 纸巾（纸质），例：用手绢或纸巾都可以擦嘴，手绢可以重复使用。"
+            },
+            "纸巾": { 
+                pinyin: "zhǐjīn", 
+                cnExplain: "一种纸质卫生用品，用于擦拭", 
+                en: "tissue", 
+                ru: "бумажные салфетки",
+                confusion: "易混淆：纸巾（一次性）vs 毛巾（可重复），例：公共场所常用纸巾，家里常用毛巾。"
+            },
+            "吐痰": { 
+                pinyin: "tǔtán", 
+                cnExplain: "把痰吐出来", 
+                en: "spit", 
+                ru: "плеваться",
+                confusion: "易混淆：吐痰（不卫生行为）vs 呕吐（生理反应），例：禁止随地吐痰，他因为晕车而呕吐。"
+            },
+            "洗手": { 
+                pinyin: "xǐshǒu", 
+                cnExplain: "用水和肥皂等清洁手部", 
+                en: "wash hands", 
+                ru: "мыть руки",
+                confusion: "易混淆：洗手（清洁）vs 擦手（擦干），例：洗完手后要用干净毛巾擦手。"
+            },
+            "脏": { 
+                pinyin: "zāng", 
+                cnExplain: "有尘土、汗渍、污垢等", 
+                en: "dirty; filthy", 
+                ru: "грязный",
+                confusion: "易混淆：脏（不洁净）vs 乱（不整齐），例：这条毛巾很脏，房间里东西摆放很乱。"
+            },
+            "水杯": { 
+                pinyin: "shuǐbēi", 
+                cnExplain: "用来喝水的杯子", 
+                en: "water cup", 
+                ru: "стакан для воды",
+                confusion: "易混淆：水杯（喝水用）vs 酒杯（喝酒用），例：他用自己的水杯喝水，不用别人的。"
+            },
+            "餐具": { 
+                pinyin: "cānjù", 
+                cnExplain: "吃饭用的器具，如碗、筷、刀、叉等", 
+                en: "tableware; dinnerware", 
+                ru: "посуда",
+                confusion: "易混淆：餐具（吃饭用）vs 厨具（做饭用），例：餐具要每天清洗，厨具有锅、铲等。"
+            },
+            "牙刷": { 
+                pinyin: "yáshuā", 
+                cnExplain: "刷牙用的刷子", 
+                en: "toothbrush", 
+                ru: "зубная щётка",
+                confusion: "易混淆：牙刷（刷牙工具）vs 牙膏（清洁用品），例：每天用牙刷和牙膏刷牙。"
+            },
+            "环境卫生": { 
+                pinyin: "huánjìng wèishēng", 
+                cnExplain: "周围环境的清洁卫生状况", 
+                en: "environmental hygiene", 
+                ru: "экологическая гигиена",
+                confusion: "易混淆：环境卫生（外部）vs 个人卫生（自身），例：要保持环境卫生，也要注意个人卫生。"
+            },
+            "流通": { 
+                pinyin: "liútōng", 
+                cnExplain: "流动，畅通", 
+                en: "circulate; flow", 
+                ru: "циркулировать; течь",
+                confusion: "易混淆：流通（空气/液体）vs 流动（人员/资金），例：空气要流通，人员可以自由流动。"
+            },
+            "病人": { 
+                pinyin: "bìngrén", 
+                cnExplain: "生病的人", 
+                en: "patient; sick person", 
+                ru: "больной",
+                confusion: "易混淆：病人（患病者）vs 医生（治疗者），例：医生在给病人看病。"
+            },
+            "换气": { 
+                pinyin: "huànqì", 
+                cnExplain: "更换空气，使空气新鲜", 
+                en: "air exchange; ventilate", 
+                ru: "проветривание; замена воздуха",
+                confusion: "易混淆：换气（空气替换）vs 呼吸（生理动作），例：开窗换气很重要，人需要呼吸氧气。"
+            },
+            "保暖": { 
+                pinyin: "bǎonuǎn", 
+                cnExplain: "保持温暖", 
+                en: "keep warm", 
+                ru: "сохранять тепло",
+                confusion: "易混淆：保暖（主动保持）vs 温暖（状态），例：天冷要注意保暖，房间里很温暖。"
+            },
+            "蔬菜水果": { 
+                pinyin: "shūcài shuǐguǒ", 
+                cnExplain: "蔬菜和水果的统称", 
+                en: "vegetables and fruits", 
+                ru: "овощи и фрукты",
+                confusion: "易混淆：蔬菜（植物的可食部分）vs 水果（植物的果实），例：白菜是蔬菜，苹果是水果。"
+            },
+            "抵抗": { 
+                pinyin: "dǐkàng", 
+                cnExplain: "抵挡，抗拒", 
+                en: "resist; withstand", 
+                ru: "сопротивляться; выдерживать",
+                confusion: "易混淆：抵抗（对抗）vs 预防（提前防备），例：身体能抵抗病毒，疫苗可以预防感染。"
+            },
+            "发热": { 
+                pinyin: "fārè", 
+                cnExplain: "体温升高，发烧", 
+                en: "have a fever; feverish", 
+                ru: "жар; лихорадка",
+                confusion: "易混淆：发热（症状）vs 发烧（口语，同发热），例：他有些发热，可能是发烧了。"
+            },
+            "症状": { 
+                pinyin: "zhèngzhuàng", 
+                cnExplain: "机体因患病而表现出来的异常状态", 
+                en: "symptom", 
+                ru: "симптом",
+                confusion: "易混淆：症状（表现）vs 疾病（本质），例：咳嗽是感冒的症状。"
+            },
+            "医院": { 
+                pinyin: "yīyuàn", 
+                cnExplain: "治疗和护理病人的机构", 
+                en: "hospital", 
+                ru: "больница",
+                confusion: "易混淆：医院（综合治疗）vs 诊所（简单诊治），例：重病要去医院，小病可以去诊所。"
+            },
+            "营养": { 
+                pinyin: "yíngyǎng", 
+                cnExplain: "机体从外界摄取需要的物质来维持生长发育等生命活动的作用", 
+                en: "nutrition", 
+                ru: "питание",
+                confusion: "易混淆：营养（名词）vs 有营养（形容词），例：蔬菜有营养，要保证饮食的营养均衡。"
+            },
+            "休息": { 
+                pinyin: "xiūxi", 
+                cnExplain: "暂时停止工作、学习或活动，以消除疲劳、恢复体力和脑力", 
+                en: "rest", 
+                ru: "отдых",
+                confusion: "易混淆：休息（暂停活动）vs 睡觉（休息的一种方式），例：累了需要休息，睡觉是很好的休息方式。"
+            }
+        };
+
+        // 字体大小控制
+        const body = document.body;
+        const fontSmall = document.getElementById('font-small');
+        const fontNormal = document.getElementById('font-normal');
+        const fontLarge = document.getElementById('font-large');
+        let currentFontSize = 16;
+
+        fontLarge.addEventListener('click', () => {
+            if (currentFontSize < 24) {
+                currentFontSize += 2;
+                body.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        fontSmall.addEventListener('click', () => {
+            if (currentFontSize > 12) {
+                currentFontSize -= 2;
+                body.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        fontNormal.addEventListener('click', () => {
+            currentFontSize = 16;
+            body.style.fontSize = '16px';
+        });
+
+        // 词汇弹窗控制
+        const vocabElements = document.querySelectorAll('.vocab');
+        const vocabPopup = document.getElementById('vocab-popup');
+        const vocabOverlay = document.getElementById('vocab-overlay');
+        const vocabClose = document.getElementById('vocab-close');
+        const vocabName = document.getElementById('vocabName');
+        const vocabPinyin = document.getElementById('vocabPinyin');
+        const vocabCnExplain = document.getElementById('vocabCnExplain');
+        const vocabEn = document.getElementById('vocabEn');
+        const vocabRu = document.getElementById('vocabRu');
+        const confusionTip = document.getElementById('confusionTip');
+
+        vocabElements.forEach(element => {
+            element.addEventListener('click', function() {
+                const word = this.getAttribute('data-word');
+                const data = vocabData[word];
+                vocabName.textContent = word;
+                vocabPinyin.textContent = data.pinyin;
+                vocabCnExplain.textContent = data.cnExplain;
+                vocabEn.textContent = data.en;
+                vocabRu.textContent = data.ru;
+                confusionTip.textContent = data.confusion || '';
+                vocabPopup.style.display = 'block';
+                vocabOverlay.style.display = 'block';
+            });
+        });
+
+        vocabClose.addEventListener('click', () => {
+            vocabPopup.style.display = 'none';
+            vocabOverlay.style.display = 'none';
+        });
+
+        vocabOverlay.addEventListener('click', () => {
+            vocabPopup.style.display = 'none';
+            vocabOverlay.style.display = 'none';
+        });
+
+        // 习题互动逻辑：填空题判分
+        const correctAnswers = {
+            fill: [
+                ["流感", "肺结核"],  // 第1题两个空
+                "空气飞沫",           // 第2题
+                "用手绢或者纸巾盖住口鼻",  // 第3题
+                "开窗通风换气"        // 第4题
+            ]
+        };
+
+        const submitBtn = document.getElementById('submit-btn');
+        const result = document.getElementById('result');
+        const scoreEl = document.getElementById('score');
+        const answerDetails = document.getElementById('answer-details');
+
+        submitBtn.addEventListener('click', () => {
+            let totalScore = 0;
+            const totalQuestions = 4;  // 4道填空题
+
+            // 处理填空题
+            let fillScore = 0;
+            let fillDetails = `<h4>填空题正确答案：</h4>`;
+            
+            // 第1题（两个空）
+            const fill1_1 = document.getElementById('fill-1-1').value.trim();
+            const fill1_2 = document.getElementById('fill-1-2').value.trim();
+            const correct1 = correctAnswers.fill[0];
+            const is1Correct = (fill1_1 === correct1[0] && fill1_2 === correct1[1]) || 
+                              (fill1_1 === correct1[1] && fill1_2 === correct1[0]);
+            if (is1Correct) {
+                fillScore += 1;
+                fillDetails += `<p>第1题：正确答案为「${correct1[0]}、${correct1[1]}」（你的答案正确，得1分）</p>`;
+            } else {
+                fillDetails += `<p>第1题：正确答案为「${correct1[0]}、${correct1[1]}」（你的答案错误，不得分）</p>`;
+            }
+            document.getElementById('fill-1-ans').textContent = `（正确答案：${correct1[0]}、${correct1[1]}）`;
+
+            // 第2题
+            const fill2 = document.getElementById('fill-2').value.trim();
+            const correct2 = correctAnswers.fill[1];
+            if (fill2 === correct2) {
+                fillScore += 1;
+                fillDetails += `<p>第2题：正确答案为「${correct2}」（你的答案正确，得1分）</p>`;
+            } else {
+                fillDetails += `<p>第2题：正确答案为「${correct2}」（你的答案错误，不得分）</p>`;
+            }
+            document.getElementById('fill-2-ans').textContent = `（正确答案：${correct2}）`;
+
+            // 第3题
+            const fill3 = document.getElementById('fill-3').value.trim();
+            const correct3 = correctAnswers.fill[2];
+            if (fill3 === correct3) {
+                fillScore += 1;
+                fillDetails += `<p>第3题：正确答案为「${correct3}」（你的答案正确，得1分）</p>`;
+            } else {
+                fillDetails += `<p>第3题：正确答案为「${correct3}」（你的答案错误，不得分）</p>`;
+            }
+            document.getElementById('fill-3-ans').textContent = `（正确答案：${correct3}）`;
+
+            // 第4题
+            const fill4 = document.getElementById('fill-4').value.trim();
+            const correct4 = correctAnswers.fill[3];
+            if (fill4 === correct4) {
+                fillScore += 1;
+                fillDetails += `<p>第4题：正确答案为「${correct4}」（你的答案正确，得1分）</p>`;
+            } else {
+                fillDetails += `<p>第4题：正确答案为「${correct4}」（你的答案错误，不得分）</p>`;
+            }
+            document.getElementById('fill-4-ans').textContent = `（正确答案：${correct4}）`;
+
+            // 计算总分并显示结果
+            totalScore = fillScore;
+            scoreEl.textContent = `你的总得分：${totalScore}/${totalQuestions} 分`;
+            answerDetails.innerHTML = fillDetails;
+            result.style.display = 'block';
+            result.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
