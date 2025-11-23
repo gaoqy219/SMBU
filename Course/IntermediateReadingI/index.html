@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中级阅读1 互动式阅读练习</title>
+    <style>
+        /* 全局样式重置与基础设置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "Arial Narrow", sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* 页面容器 */
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        /* 标题样式 */
+        h1 {
+            color: #2d3748;
+            font-size: 28px;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #4299e1;
+            padding-bottom: 15px;
+            display: inline-block;
+        }
+
+        /* 课程列表样式 */
+        .lesson-list {
+            list-style: none;
+            gap: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 课程项样式 */
+        .lesson-item {
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .lesson-item a {
+            display: block;
+            padding: 20px;
+            background-color: #4299e1;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        /* 鼠标悬浮效果 */
+        .lesson-item a:hover {
+            background-color: #3182ce;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(66, 153, 225, 0.3);
+        }
+
+        /* 响应式适配（手机端） */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 22px;
+                margin-bottom: 30px;
+            }
+
+            .lesson-item a {
+                font-size: 18px;
+                padding: 16px;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>中级阅读1 互动式阅读练习</h1>
+        <ul class="lesson-list">
+            <li class="lesson-item">
+                <a href="9-index.html">第九课</a>
+            </li>
+            <li class="lesson-item">
+                <a href="10-index.html">第十课</a>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>
