@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章三 一位演讲家的故事</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
+        }
+        body {
+            padding: 20px;
+            line-height: 1.8;
+            position: relative;
+        }
+        .title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .text-area {
+            font-size: 18px;
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .new-word {
+            color: #c00;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 999;
+        }
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #999;
+        }
+        .exercise-area {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .exercise-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        .judge-item, .fill-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .judge-option {
+            margin: 0 8px;
+        }
+        select {
+            padding: 4px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-left: 8px;
+            min-width: 100px;
+        }
+        button {
+            padding: 8px 16px;
+            background: #0088cc;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #006699;
+        }
+        .score-feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #d9534f;
+        }
+        .correct {
+            color: #5cb85c;
+        }
+        .wrong {
+            color: #d9534f;
+        }
+        .answer-tips {
+            margin-top: 15px;
+            color: #666;
+            display: none;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        .answer-detail {
+            margin-top: 8px;
+            font-size: 14px;
+        }
+        /* 倒计时窗口样式：右下角+透明背景 */
+        .countdown-window {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 150px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #f0ad4e;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+            text-align: center;
+            z-index: 998;
+        }
+        .countdown-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #f0ad4e;
+            margin-bottom: 10px;
+        }
+        .countdown-time {
+            font-size: 20px;
+            font-weight: bold;
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+    <!-- 倒计时窗口 -->
+    <div class="countdown-window">
+        <div class="countdown-title">阅读倒计时</div>
+        <div class="countdown-time" id="countdownTime">08:00</div>
+    </div>
+
+    <h1 class="title">文章三 一位演讲家的故事</h1>
+
+    <!-- 课文阅读区（补充生词标注） -->
+    <div class="text-area" id="textArea">
+        台湾大学<span class="new-word" data-word="哲学">哲学</span>系（Philosophy Department）教授傅佩荣，是美国耶鲁大学（Yale University）的哲学博士。他除了在教学著书上很有<span class="new-word" data-word="成就">成就</span>外，还是一位杰出的<span class="new-word" data-word="演讲家">演讲家</span>，每年有几百场人生哲学<span class="new-word" data-word="演讲">演讲</span>（speech）。<br>
+        我见过傅教授。他<span class="new-word" data-word="风度">风度</span>极好，知识丰富。最难懂的道理，经过他的解释后，都会变得<span class="new-word" data-word="通俗易懂">通俗易懂</span>。演讲时，傅教授从不看文稿，<span class="new-word" data-word="仿佛">仿佛</span>是聊天一样，但是思路清楚，没有一句<span class="new-word" data-word="多余">多余</span>的话。我常常想，这样了不起的<span class="new-word" data-word="口才">口才</span>（eloquence），是<span class="new-word" data-word="天生">天生</span>的，还是<span class="new-word" data-word="后天">后天</span>（acquired）练成的呢？<br>
+        没想到这个问题傅教授自己提出来了。一次演讲中，他<span class="new-word" data-word="谦虚">谦虚</span>（modestly）地说：“有人问我，傅教授，你的口才还可以啊，也许大家都没有想到，我小时候有很严重的<span class="new-word" data-word="口吃">口吃</span>（stammer）。”<br>
+        原来，傅教授小时候因为<span class="new-word" data-word="模仿">模仿</span>（mimic）别人口吃，自己也得了严重（severe）的口吃。8岁到17岁，他在公开<span class="new-word" data-word="场合">场合</span>没有讲过一句话。他最怕在课堂上回答问题，一回答问题，课堂上就会<span class="new-word" data-word="笑成一片">笑成一片</span>，连老师也忍不住<span class="new-word" data-word="发笑">发笑</span>。<br>
+        直到18岁，他才进行了<span class="new-word" data-word="正规">正规</span>（regular）的纠正与训练。在一次小学同学的聚会中，有同学问他，你还记得不记得小时候我们对你的<span class="new-word" data-word="嘲笑">嘲笑</span>（deride）？<br>
+        他回答，其实，我很感谢<span class="new-word" data-word="命运">命运</span>给我的这个<span class="new-word" data-word="十字架">十字架</span>（cross）。因为口吃，他无法与人交流，交不到朋友，只好在学习上<span class="new-word" data-word="格外">格外</span>努力。<br>
+        从小到大，他的成绩非常好，每次都是第一名。从初中到在美国读博士，他都是靠<span class="new-word" data-word="奖学金">奖学金</span>生活。<br>
+        因为口吃，他比别人更<span class="new-word" data-word="深刻">深刻</span>地感受到语言的重要。当终于可以<span class="new-word" data-word="流畅">流畅</span>地（smoothly）说话时，他<span class="new-word" data-word="格外">格外</span>珍惜（cherish）自己说话的机会，希望自己所说的每一句话，别人都愿意听，都听得懂。<br>
+        是口吃，让他取得以后的<span class="new-word" data-word="成就">成就</span>，成为著名的演说家。
+    </div>
+
+    <!-- 练习题区 -->
+    <div class="exercise-area">
+        <h2 class="exercise-title">一、判断正误</h2>
+        <div class="judge-item">1. 傅佩荣教授只有教学著书的成就。
+            <label class="judge-option"><input type="radio" name="judge1" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge1" value="×"> ×</label>
+        </div>
+        <div class="judge-item">2. 傅教授小时候有严重的口吃。
+            <label class="judge-option"><input type="radio" name="judge2" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge2" value="×"> ×</label>
+        </div>
+        <div class="judge-item">3. 傅教授18岁前在公开场合讲过很多话。
+            <label class="judge-option"><input type="radio" name="judge3" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge3" value="×"> ×</label>
+        </div>
+        <div class="judge-item">4. 傅教授靠奖学金完成了学业。
+            <label class="judge-option"><input type="radio" name="judge4" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge4" value="×"> ×</label>
+        </div>
+        <div class="judge-item">5. 傅教授认为口吃是命运给他的不好的礼物。
+            <label class="judge-option"><input type="radio" name="judge5" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge5" value="×"> ×</label>
+        </div>
+
+        <h2 class="exercise-title">二、选词填空</h2>
+        <div class="fill-item">1. 傅教授的______极好，很有魅力。
+            <select id="fill1" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">2. 傅教授了不起的______是后天练成的。
+            <select id="fill2" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">3. 很多能力不是______的，而是后天训练的结果。
+            <select id="fill3" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">4. 小时候同学们对傅教授的______让他很难过。
+            <select id="fill4" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">5. 因为口吃，傅教授在学习上______努力。
+            <select id="fill5" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+
+        <button id="submitBtn">提交答案</button>
+        <div class="score-feedback" id="scoreFeedback"></div>
+        <div class="answer-tips" id="answerTips">
+            <p><strong>正确答案参考：</strong></p>
+            <p>一、判断正误：1.× 2.√ 3.× 4.√ 5.×</p>
+            <p>二、选词填空：1.风度 2.口才 3.天生 4.嘲笑 5.格外</p>
+            <p class="answer-detail" id="answerDetail"></p>
+            <p>现在可以再次点击课文里的生词，查看完整释义和翻译啦！</p>
+        </div>
+    </div>
+
+    <!-- 生词弹窗 -->
+    <div class="popup" id="wordPopup">
+        <span class="popup-close" id="popupClose">×</span>
+        <div id="popupContent"></div>
+    </div>
+
+    <script>
+        // 1. 倒计时功能实现（8分钟=480秒）
+        function initCountdown() {
+            let totalSeconds = 8 * 60; 
+            const countdownTime = document.getElementById('countdownTime');
+            
+            const timer = setInterval(() => {
+                totalSeconds--;
+                const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+                const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+                countdownTime.textContent = `${minutes}:${seconds}`;
+
+                if (totalSeconds <= 0) {
+                    clearInterval(timer);
+                    countdownTime.textContent = "时间到！";
+                    alert("阅读练习时间已结束，请提交答案~");
+                }
+            }, 1000);
+        }
+
+        // 2. 生词数据（补充新增生词）
+        const wordData = {
+            "风度": {
+                guess: "风（气质）+度（姿态）",
+                explain: "释义：美好的举止姿态。<br>英语：demeanor<br>俄语：внешний вид и манеры"
+            },
+            "口才": {
+                guess: "口（说话）+才（才能）",
+                explain: "释义：说话的才能。<br>英语：eloquence<br>俄语：красноречие"
+            },
+            "后天": {
+                guess: "后（后来）+天（时间）",
+                explain: "释义：出生以后的时间（和“天生”相对）。<br>英语：acquired<br>俄语：приобретенный"
+            },
+            "谦虚": {
+                guess: "谦（谦让）+虚（虚心）",
+                explain: "释义：虚心，不骄傲。<br>英语：modest<br>俄语：скромный"
+            },
+            "口吃": {
+                guess: "口（嘴巴）+吃（说话不顺畅）",
+                explain: "释义：说话时字音重复或停顿的毛病。<br>英语：stammer<br>俄语：заикание"
+            },
+            "模仿": {
+                guess: "模（仿照）+仿（效仿）",
+                explain: "释义：照着别人的样子做。<br>英语：mimic<br>俄语：подражать"
+            },
+            "正规": {
+                guess: "正（标准）+规（规则）",
+                explain: "释义：符合正式的标准和规则。<br>英语：regular<br>俄语：официальный"
+            },
+            "嘲笑": {
+                guess: "嘲（讥笑）+笑（笑话）",
+                explain: "释义：用言辞笑话别人的缺点。<br>英语：deride<br>俄语：насмехаться"
+            },
+            "十字架": {
+                guess: "十（形状）+字（字形）+架（架子）",
+                explain: "释义：这里比喻“难以承受的苦难”。<br>英语：cross（metaphor for suffering）<br>俄语：крест（метафора страдания）"
+            },
+            "格外": {
+                guess: "格（特别）+外（超出）",
+                explain: "释义：超过一般的；特别。<br>英语：especially<br>俄语：особенно"
+            },
+            "奖学金": {
+                guess: "奖（奖励）+学（学习）+金（金钱）",
+                explain: "释义：奖励学习优秀者的钱。<br>英语：scholarship<br>俄语：стипендия"
+            },
+            "流畅": {
+                guess: "流（顺畅）+畅（畅通）",
+                explain: "释义：说话、做事很顺畅，没有阻碍。<br>英语：smoothly<br>俄语：плавно"
+            },
+            "珍惜": {
+                guess: "珍（珍贵）+惜（爱惜）",
+                explain: "释义：重视并爱惜。<br>英语：cherish<br>俄语：ценить"
+            },
+            // 补充的生词
+            "演讲": {
+                guess: "演（表演）+讲（讲话）",
+                explain: "释义：公开讲述观点或内容的活动。<br>英语：speech<br>俄语：речь"
+            },
+            "演讲家": {
+                guess: "演（表演）+讲（讲话）+家（从事某类事的人）",
+                explain: "释义：擅长公开演讲的人。<br>英语：speaker<br>俄语：докладчик"
+            },
+            "哲学": {
+                guess: "哲（智慧）+学（学科）",
+                explain: "释义：研究智慧、思想与世界规律的学科。<br>英语：philosophy<br>俄语：философия"
+            },
+            "通俗易懂": {
+                guess: "通（通顺）+俗（通俗）+易（容易）+懂（明白）",
+                explain: "释义：内容简单明白，普通人都能理解。<br>英语：easy to understand<br>俄语：простой и понятный"
+            },
+            "仿佛": {
+                guess: "仿（仿照）+佛（好像）",
+                explain: "释义：好像、似乎，类似某种状态。<br>英语：as if<br>俄语：как будто"
+            },
+            "多余": {
+                guess: "多（过多）+余（剩余）",
+                explain: "释义：不必要的、超出实际需要的。<br>英语：unnecessary<br>俄语：лишний"
+            },
+            "天生": {
+                guess: "天（生来）+生（具有）",
+                explain: "释义：生来就具备的（不是后天学的）。<br>英语：innate<br>俄语：прирожденный"
+            },
+            "场合": {
+                guess: "场（场地）+合（特定情境）",
+                explain: "释义：特定的时间、地点和情境。<br>英语：occasion<br>俄语：случай"
+            },
+            "笑成一片": {
+                guess: "笑（大笑）+成（变成）+一（整个）+片（一片区域）",
+                explain: "释义：很多人同时大笑，场面热闹。<br>英语：burst into laughter together<br>俄语：разорвать смехом вместе"
+            },
+            "发笑": {
+                guess: "发（发出）+笑（笑声）",
+                explain: "释义：忍不住发出笑声。<br>英语：laugh<br>俄语：смеяться"
+            },
+            "命运": {
+                guess: "命（生命）+运（运势）",
+                explain: "释义：人生中被认为由某种力量决定的遭遇和走向。<br>英语：fate<br>俄语：судьба"
+            },
+            "深刻": {
+                guess: "深（深入）+刻（刻印）",
+                explain: "释义：程度深，能留下明显印象。<br>英语：profound<br>俄语：глубокий"
+            },
+            "成就": {
+                guess: "成（成功）+就（造就）",
+                explain: "释义：通过努力取得的成绩或事业上的收获。<br>英语：achievement<br>俄语：достижение"
+            }
+        };
+
+        // 3. 正确答案配置
+        const correctAnswers = {
+            judge: {
+                judge1: "×",
+                judge2: "√",
+                judge3: "×",
+                judge4: "√",
+                judge5: "×"
+            },
+            fill: {
+                fill1: "风度",
+                fill2: "口才",
+                fill3: "天生",
+                fill4: "嘲笑",
+                fill5: "格外"
+            }
+        };
+
+        // 4. 洗牌算法（随机打乱选项）
+        function shuffleArray(arr) {
+            const newArr = [...arr];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        // 5. 初始化下拉菜单
+        function initFillSelects() {
+            const fillOptions = ["风度", "口才", "天生", "嘲笑", "格外"];
+            const fillSelects = document.querySelectorAll('.fill-select');
+            fillSelects.forEach(select => {
+                const randomOptions = shuffleArray(fillOptions);
+                randomOptions.forEach(optionText => {
+                    const option = document.createElement('option');
+                    option.value = optionText;
+                    option.textContent = optionText;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        // 6. 判分逻辑
+        function checkAnswers() {
+            let correctCount = 0;
+            let totalCount = 10;
+            let detailHtml = "";
+
+            // 检查判断正误
+            for (let i = 1; i <= 5; i++) {
+                const radioName = `judge${i}`;
+                const selectedRadio = document.querySelector(`input[name="${radioName}"]:checked`);
+                const userAnswer = selectedRadio ? selectedRadio.value : "";
+                const correctAnswer = correctAnswers.judge[radioName];
+                
+                if (userAnswer === correctAnswer) {
+                    correctCount++;
+                    detailHtml += `判断第${i}题：<span class="correct">正确</span>（你的答案：${userAnswer}）<br>`;
+                } else {
+                    detailHtml += `判断第${i}题：<span class="wrong">错误</span>（你的答案：${userAnswer || "未选"}，正确答案：${correctAnswer}）<br>`;
+                }
+            }
+
+            // 检查选词填空
+            for (let i = 1; i <= 5; i++) {
+                const selectId = `fill${i}`;
+                const select = document.getElementById(selectId);
+                const userAnswer = select.value;
+                const correctAnswer = correctAnswers.fill[selectId];
+                
+                if (userAnswer === correctAnswer) {
+                    correctCount++;
+                    detailHtml += `填空第${i}题：<span class="correct">正确</span>（你的答案：${userAnswer}）<br>`;
+                } else {
+                    detailHtml += `填空第${i}题：<span class="wrong">错误</span>（你的答案：${userAnswer || "未选"}，正确答案：${correctAnswer}）<br>`;
+                }
+            }
+
+            // 显示结果
+            const accuracy = ((correctCount / totalCount) * 100).toFixed(1);
+            document.getElementById('scoreFeedback').textContent = `你的得分：${correctCount}/${totalCount}，正确率：${accuracy}%`;
+            document.getElementById('answerDetail').innerHTML = detailHtml;
+            document.getElementById('answerTips').style.display = 'block';
+
+            return true;
+        }
+
+        // 7. 页面加载初始化
+        window.onload = function() {
+            initCountdown(); 
+            initFillSelects(); 
+
+            // 元素绑定
+            const newWords = document.querySelectorAll('.new-word');
+            const wordPopup = document.getElementById('wordPopup');
+            const popupContent = document.getElementById('popupContent');
+            const popupClose = document.getElementById('popupClose');
+            const submitBtn = document.getElementById('submitBtn');
+            let isAnswered = false;
+
+            // 生词弹窗交互
+            newWords.forEach(word => {
+                word.addEventListener('click', () => {
+                    const wordKey = word.dataset.word;
+                    popupContent.innerHTML = isAnswered 
+                        ? wordData[wordKey].explain
+                        : `<p>猜猜意思：${wordData[wordKey].guess}</p><p>做完练习题后可查看完整释义哦～</p>`;
+                    wordPopup.style.display = 'block';
+                });
+            });
+
+            // 关闭弹窗
+            popupClose.addEventListener('click', () => wordPopup.style.display = 'none');
+            window.addEventListener('click', (e) => {
+                if (e.target === wordPopup) wordPopup.style.display = 'none';
+            });
+
+            // 提交答案
+            submitBtn.addEventListener('click', () => {
+                isAnswered = checkAnswers();
+            });
+        };
+    </script>
+</body>
+</html>

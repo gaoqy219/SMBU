@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章五 外语文化节活动海报</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
+        }
+        body {
+            padding: 20px;
+            line-height: 1.8;
+            position: relative;
+        }
+        .title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .text-area {
+            font-size: 18px;
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .text-area h3 {
+            font-size: 20px;
+            margin: 15px 0 10px;
+            color: #555;
+            font-weight: bold;
+        }
+        .new-word {
+            color: #c00;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 999;
+        }
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #999;
+        }
+        .exercise-area {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .exercise-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        .judge-item, .fill-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .judge-option {
+            margin: 0 8px;
+        }
+        select {
+            padding: 4px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-left: 8px;
+            min-width: 100px;
+        }
+        button {
+            padding: 8px 16px;
+            background: #0088cc;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #006699;
+        }
+        .score-feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #d9534f;
+        }
+        .correct {
+            color: #5cb85c;
+        }
+        .wrong {
+            color: #d9534f;
+        }
+        .answer-tips {
+            margin-top: 15px;
+            color: #666;
+            display: none;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        .answer-detail {
+            margin-top: 8px;
+            font-size: 14px;
+        }
+        /* 倒计时窗口：右下角+透明背景 */
+        .countdown-window {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 150px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #f0ad4e;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+            text-align: center;
+            z-index: 998;
+        }
+        .countdown-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #f0ad4e;
+            margin-bottom: 10px;
+        }
+        .countdown-time {
+            font-size: 20px;
+            font-weight: bold;
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+    <!-- 倒计时窗口 -->
+    <div class="countdown-window">
+        <div class="countdown-title">阅读倒计时</div>
+        <div class="countdown-time" id="countdownTime">08:00</div>
+    </div>
+
+    <h1 class="title">文章五 外语文化节活动海报</h1>
+
+    <!-- 课文阅读区（保持原通知格式） -->
+    <div class="text-area" id="textArea">
+        为了<span class="new-word" data-word="培养">培养</span>我校学生学习外语的兴趣、提升语言能力、<span class="new-word" data-word="增强">增强</span>学生<span class="new-word" data-word="国际化">国际化</span><span class="new-word" data-word="意识">意识</span>，<span class="new-word" data-word="引导">引导</span>我校学生关注各国的文化、社会和习俗，同时<span class="new-word" data-word="促使">促使</span>学生将课内学习外语与课外使用外语<span class="new-word" data-word="有机结合">有机结合</span>，教务处与外国语学院将于10月21日至28日举办大型活动——“外语文化节”。
+
+        <h3>主 题：增强国际意识 提升语言能力</h3>
+        <h3>主办单位：教务处、外国语学院</h3>
+        <h3><span class="new-word" data-word="协办">协办</span>单位：校办、校团委</h3>
+        <h3><span class="new-word" data-word="承办">承办</span>单位：外国语学院团委、青协</h3>
+        <h3>比赛<span class="new-word" data-word="评委">评委</span>：外国语学院中外教师</h3>
+        <h3>参与对象：全校本科生</h3>
+        <h3>文化节<span class="new-word" data-word="安排">安排</span>：</h3>
+        <p>1. 10月21日（周三）—10月28日（周三）</p>
+        <p>2. <span class="new-word" data-word="开幕式">开幕式</span>：10月21日<br>
+           各项活动：10月21日—28日<br>
+           <span class="new-word" data-word="闭幕式">闭幕式</span>：10月28日</p>
+
+        <h3>文化节活动：</h3>
+        <p>1. <span class="new-word" data-word="名师讲座">名师讲座</span><br>
+           来自海内外的名家名师，每天为您带来一场高水平的讲座！</p>
+
+        <p>2. <span class="new-word" data-word="名校文化">名校文化</span><br>
+           了解出国留学的最新<span class="new-word" data-word="动向">动向</span>，感受<span class="new-word" data-word="异域">异域</span>文化风情，领略国际名校<span class="new-word" data-word="风采">风采</span>，体会国外名校文化。</p>
+
+        <p>3. 各类竞赛<br>
+           最棒的选手，最热情的观众，最活泼的第二课堂，最多样的比赛形式。外国语学院将组织五个语种的演讲、<span class="new-word" data-word="辩论">辩论</span>、朗诵、配音、书法、歌唱、舞蹈等比赛，欢迎大家积极参与！</p>
+
+        <p>4. <span class="new-word" data-word="电影展播">电影展播</span><br>
+           在精彩导读下看外国经典大片、世界各地风情片，体会不一样的精彩！每一天的精彩影片，<span class="new-word" data-word="敬请期待">敬请期待</span>！</p>
+
+        <p>具体活动时间、地点和报名方式将<span class="new-word" data-word="陆续">陆续</span>通过<span class="new-word" data-word="海报">海报</span>、<span class="new-word" data-word="传单">传单</span>以及网站主页、外院主页等形式公布，欢迎各位同学参加！</p>
+
+        <p style="text-align: right; margin-top: 20px;">教务处、外国语学院<br>2010年9月20日</p>
+    </div>
+
+    <!-- 练习题区 -->
+    <div class="exercise-area">
+        <h2 class="exercise-title">一、判断正误</h2>
+        <div class="judge-item">1. 外语文化节的主办单位只有教务处。
+            <label class="judge-option"><input type="radio" name="judge1" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge1" value="×"> ×</label>
+        </div>
+        <div class="judge-item">2. 文化节的开幕式时间是10月21日。
+            <label class="judge-option"><input type="radio" name="judge2" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge2" value="×"> ×</label>
+        </div>
+        <div class="judge-item">3. 名校文化活动是了解国内大学的情况。
+            <label class="judge-option"><input type="radio" name="judge3" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge3" value="×"> ×</label>
+        </div>
+        <div class="judge-item">4. 竞赛只包含演讲这一种形式。
+            <label class="judge-option"><input type="radio" name="judge4" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge4" value="×"> ×</label>
+        </div>
+        <div class="judge-item">5. 活动信息会通过海报的形式公布。
+            <label class="judge-option"><input type="radio" name="judge5" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge5" value="×"> ×</label>
+        </div>
+
+        <h2 class="exercise-title">二、选词填空</h2>
+        <div class="fill-item">1. 学校举办文化节是为了______学生的国际意识。
+            <select id="fill1" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">2. 校办是本次文化节的______单位之一。
+            <select id="fill2" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">3. 文化节的______将在10月21日举行。
+            <select id="fill3" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">4. 名校文化活动会介绍留学的最新______。
+            <select id="fill4" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">5. 精彩的电影展播______！
+            <select id="fill5" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+
+        <button id="submitBtn">提交答案</button>
+        <div class="score-feedback" id="scoreFeedback"></div>
+        <div class="answer-tips" id="answerTips">
+            <p><strong>正确答案参考：</strong></p>
+            <p>一、判断正误：1.× 2.√ 3.× 4.× 5.√</p>
+            <p>二、选词填空：1.增强 2.协办 3.开幕式 4.动向 5.敬请期待</p>
+            <p class="answer-detail" id="answerDetail"></p>
+            <p>现在可以再次点击课文里的生词，查看完整释义和翻译啦！</p>
+        </div>
+    </div>
+
+    <!-- 生词弹窗 -->
+    <div class="popup" id="wordPopup">
+        <span class="popup-close" id="popupClose">×</span>
+        <div id="popupContent"></div>
+    </div>
+
+    <script>
+        // 1. 倒计时功能（8分钟）
+        function initCountdown() {
+            let totalSeconds = 8 * 60;
+            const countdownTime = document.getElementById('countdownTime');
+            
+            const timer = setInterval(() => {
+                totalSeconds--;
+                const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+                const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+                countdownTime.textContent = `${minutes}:${seconds}`;
+
+                if (totalSeconds <= 0) {
+                    clearInterval(timer);
+                    countdownTime.textContent = "时间到！";
+                    alert("阅读练习时间已结束，请提交答案~");
+                }
+            }, 1000);
+        }
+
+        // 2. 生词数据
+        const wordData = {
+            "培养": {
+                guess: "培（培育）+养（养育）",
+                explain: "释义：通过教育、训练使成长发展。<br>英语：cultivate<br>俄语：воспитывать"
+            },
+            "增强": {
+                guess: "增（增加）+强（强大）",
+                explain: "释义：使变得更强。<br>英语：enhance<br>俄语：усилить"
+            },
+            "国际化": {
+                guess: "国（国家）+际（国际）+化（变成）",
+                explain: "释义：与国际接轨、融入国际的性质。<br>英语：internationalization<br>俄语：интернационализация"
+            },
+            "意识": {
+                guess: "意（想法）+识（认知）",
+                explain: "释义：对事物的认知和观念。<br>英语：awareness<br>俄语：осознание"
+            },
+            "引导": {
+                guess: "引（带领）+导（指导）",
+                explain: "释义：带领、指引方向。<br>英语：guide<br>俄语：руководить"
+            },
+            "促使": {
+                guess: "促（促进）+使（让）",
+                explain: "释义：推动、让某事发生。<br>英语：prompt<br>俄语：спровоцировать"
+            },
+            "有机结合": {
+                guess: "有（有）+机（关联）+结（结合）+合（合并）",
+                explain: "释义：相互关联地融合在一起。<br>英语：organic combination<br>俄语：органическое сочетание"
+            },
+            "协办": {
+                guess: "协（协助）+办（举办）",
+                explain: "释义：协助举办活动。<br>英语：co-organize<br>俄语：совместно организовывать"
+            },
+            "承办": {
+                guess: "承（承担）+办（办理）",
+                explain: "释义：承担举办活动的任务。<br>英语：undertake<br>俄语：осуществлять"
+            },
+            "评委": {
+                guess: "评（评价）+委（委员）",
+                explain: "释义：评选比赛的委员。<br>英语：judge<br>俄语：жюри"
+            },
+            "安排": {
+                guess: "安（安置）+排（排列）",
+                explain: "释义：对活动的时间、内容做规划。<br>英语：arrangement<br>俄语：организация"
+            },
+            "开幕式": {
+                guess: "开（开始）+幕（幕布）+式（仪式）",
+                explain: "释义：活动开始的仪式。<br>英语：opening ceremony<br>俄语：открытие"
+            },
+            "闭幕式": {
+                guess: "闭（结束）+幕（幕布）+式（仪式）",
+                explain: "释义：活动结束的仪式。<br>英语：closing ceremony<br>俄语：закрытие"
+            },
+            "名师讲座": {
+                guess: "名（有名）+师（老师）+讲（讲课）+座（座位）",
+                explain: "释义：知名老师的讲课活动。<br>英语：celebrity lecture<br>俄语：лекция известного преподавателя"
+            },
+            "名校文化": {
+                guess: "名（有名）+校（学校）+文（文化）+化（文化）",
+                explain: "释义：知名学校的文化相关活动。<br>英语：famous school culture<br>俄语：культура известных школ"
+            },
+            "动向": {
+                guess: "动（变动）+向（方向）",
+                explain: "释义：事情发展的方向、趋势。<br>英语：trend<br>俄语：тенденция"
+            },
+            "异域": {
+                guess: "异（不同）+域（地域）",
+                explain: "释义：不同的地区（多指国外）。<br>英语：foreign land<br>俄语：чужая земля"
+            },
+            "风采": {
+                guess: "风（风格）+采（神采）",
+                explain: "释义：人或事物的优秀风貌。<br>英语：elegance<br>俄语：внешний вид"
+            },
+            "辩论": {
+                guess: "辩（争辩）+论（讨论）",
+                explain: "释义：双方就观点争论的活动。<br>英语：debate<br>俄语：дебаты"
+            },
+            "电影展播": {
+                guess: "电（电影）+影（影片）+展（展示）+播（播放）",
+                explain: "释义：集中播放电影的活动。<br>英语：film screening<br>俄语：показ фильмов"
+            },
+            "敬请期待": {
+                guess: "敬（恭敬）+请（请）+期（期待）+待（等待）",
+                explain: "释义：礼貌地邀请对方等待（活动）。<br>英语：please look forward to<br>俄语：пожалуйста, ожидайте"
+            },
+            "陆续": {
+                guess: "陆（陆续）+续（继续）",
+                explain: "释义：有先有后、不断地。<br>英语：one after another<br>俄语：последовательно"
+            },
+            "海报": {
+                guess: "海（广泛）+报（告知）",
+                explain: "释义：用于宣传的大幅通知。<br>英语：poster<br>俄语：плакат"
+            },
+            "传单": {
+                guess: "传（传递）+单（单据）",
+                explain: "释义：用于宣传的小纸张。<br>英语：leaflet<br>俄语：листовка"
+            }
+        };
+
+        // 3. 正确答案配置
+        const correctAnswers = {
+            judge: {
+                judge1: "×",
+                judge2: "√",
+                judge3: "×",
+                judge4: "×",
+                judge5: "√"
+            },
+            fill: {
+                fill1: "增强",
+                fill2: "协办",
+                fill3: "开幕式",
+                fill4: "动向",
+                fill5: "敬请期待"
+            }
+        };
+
+        // 4. 洗牌算法（随机下拉选项）
+        function shuffleArray(arr) {
+            const newArr = [...arr];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        // 5. 初始化下拉菜单
+        function initFillSelects() {
+            const fillOptions = ["增强", "协办", "开幕式", "动向", "敬请期待"];
+            const fillSelects = document.querySelectorAll('.fill-select');
+            fillSelects.forEach(select => {
+                const randomOptions = shuffleArray(fillOptions);
+                randomOptions.forEach(optionText => {
+                    const option = document.createElement('option');
+                    option.value = optionText;
+                    option.textContent = optionText;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        // 6. 判分逻辑
+        function checkAnswers() {
+            let correctCount = 0;
+            let totalCount = 10;
+            let detailHtml = "";
+
+            // 检查判断正误
+            for (let i = 1; i <= 5; i++) {
+                const radioName = `judge${i}`;
+                const selectedRadio = document.querySelector(`input[name="${radioName}"]:checked`);
+                const userAnswer = selectedRadio ? selectedRadio.value : "";
+                const correctAnswer = correctAnswers.judge[radioName];
+                
+                if (userAnswer === correctAnswer) {
+                    correctCount++;
+                    detailHtml += `判断第${i}题：<span class="correct">正确</span>（你的答案：${userAnswer}）<br>`;
+                } else {
+                    detailHtml += `判断第${i}题：<span class="wrong">错误</span>（你的答案：${userAnswer || "未选"}，正确答案：${correctAnswer}）<br>`;
+                }
+            }
+
+            // 检查选词填空
+            for (let i = 1; i <= 5; i++) {
+                const selectId = `fill${i}`;
+                const select = document.getElementById(selectId);
+                const userAnswer = select.value;
+                const correctAnswer = correctAnswers.fill[selectId];
+                
+                if (userAnswer === correctAnswer) {
+                    correctCount++;
+                    detailHtml += `填空第${i}题：<span class="correct">正确</span>（你的答案：${userAnswer}）<br>`;
+                } else {
+                    detailHtml += `填空第${i}题：<span class="wrong">错误</span>（你的答案：${userAnswer || "未选"}，正确答案：${correctAnswer}）<br>`;
+                }
+            }
+
+            // 显示结果
+            const accuracy = ((correctCount / totalCount) * 100).toFixed(1);
+            document.getElementById('scoreFeedback').textContent = `你的得分：${correctCount}/${totalCount}，正确率：${accuracy}%`;
+            document.getElementById('answerDetail').innerHTML = detailHtml;
+            document.getElementById('answerTips').style.display = 'block';
+
+            return true;
+        }
+
+        // 7. 页面初始化
+        window.onload = function() {
+            initCountdown();
+            initFillSelects();
+
+            // 生词弹窗交互
+            const newWords = document.querySelectorAll('.new-word');
+            const wordPopup = document.getElementById('wordPopup');
+            const popupContent = document.getElementById('popupContent');
+            const popupClose = document.getElementById('popupClose');
+            const submitBtn = document.getElementById('submitBtn');
+            let isAnswered = false;
+
+            newWords.forEach(word => {
+                word.addEventListener('click', () => {
+                    const wordKey = word.dataset.word;
+                    popupContent.innerHTML = isAnswered 
+                        ? wordData[wordKey].explain
+                        : `<p>猜猜意思：${wordData[wordKey].guess}</p><p>做完练习题后可查看完整释义哦～</p>`;
+                    wordPopup.style.display = 'block';
+                });
+            });
+
+            // 关闭弹窗
+            popupClose.addEventListener('click', () => wordPopup.style.display = 'none');
+            window.addEventListener('click', (e) => {
+                if (e.target === wordPopup) wordPopup.style.display = 'none';
+            });
+
+            // 提交答案
+            submitBtn.addEventListener('click', () => {
+                isAnswered = checkAnswers();
+            });
+        };
+    </script>
+</body>
+</html>

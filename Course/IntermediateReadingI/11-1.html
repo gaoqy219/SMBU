@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章一 君子之交淡如水</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
+        }
+        body {
+            padding: 20px;
+            line-height: 1.8;
+        }
+        .title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .text-area {
+            font-size: 18px;
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .new-word {
+            color: #c00;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 999;
+        }
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #999;
+        }
+        .exercise-area {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .exercise-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        .judge-item, .fill-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .judge-option {
+            margin: 0 8px;
+        }
+        select {
+            padding: 4px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-left: 8px;
+            min-width: 100px;
+        }
+        button {
+            padding: 8px 16px;
+            background: #0088cc;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #006699;
+        }
+        .answer-tips {
+            margin-top: 15px;
+            color: #666;
+            display: none;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        .score-feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #d9534f;
+        }
+        .correct {
+            color: #5cb85c;
+        }
+        .wrong {
+            color: #d9534f;
+        }
+        .answer-detail {
+            margin-top: 8px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">文章一 君子之交淡如水</h1>
+
+    <!-- 课文阅读区 -->
+    <div class="text-area" id="textArea">
+        画家丰子恺（Feng Zikăi）一辈子不喜欢访问<span class="new-word" data-word="素不相识">素不相识</span>的<span class="new-word" data-word="名人">名人</span>。然而，<span class="new-word" data-word="抗日战争">抗日战争</span>胜利后，他从重庆<span class="new-word" data-word="返回">返回</span>上海，立即去访问了有名的<span class="new-word" data-word="京剧">京剧</span><span class="new-word" data-word="艺术家">艺术家</span>梅兰芳。<br>
+        对于梅兰芳来说，丰子恺的到来很<span class="new-word" data-word="突然">突然</span>。他曾听说丰子恺不仅是个画家，还是个音乐家，但他喜爱的是<span class="new-word" data-word="西洋">西洋</span>音乐，对京剧没有<span class="new-word" data-word="好感">好感</span>，为什么来访问我呢？梅兰芳心里不明白。<br>
+        一见面，丰子恺就解释：过去，有许多人<span class="new-word" data-word="反对">反对</span>京剧，要<span class="new-word" data-word="打倒">打倒</span>它，我读了他们的文章，觉得有理，从此也<span class="new-word" data-word="看不起">看不起</span>京剧。没想到<span class="new-word" data-word="留声机">留声机</span>（gramophone）上的京剧音乐<span class="new-word" data-word="吸引">吸引</span>了我，使我终于不买西洋音乐片子，以后<span class="new-word" data-word="专门">专门</span>买京剧<span class="new-word" data-word="唱片">唱片</span>（record），特别是您的唱片了。原来，当时人们反对的是京剧里<span class="new-word" data-word="过时">过时</span>的老内容，我<span class="new-word" data-word="爱好">爱好</span>的是京剧<span class="new-word" data-word="夸张">夸张</span>（exaggerative）的、<span class="new-word" data-word="明快">明快</span>的形式——音乐与<span class="new-word" data-word="扮演">扮演</span>。<br>
+        听到这话，梅兰芳感受到一种被人理解的快乐，他笑了。他把丰子恺热情迎进<span class="new-word" data-word="客厅">客厅</span>，问：“丰先生，何时见过我在<span class="new-word" data-word="舞台">舞台</span>上的<span class="new-word" data-word="演出">演出</span>呢？”“<span class="new-word" data-word="战前">战前</span>，我曾看过一次，那时我不爱京戏，<span class="new-word" data-word="印象">印象</span>早已不清楚了。后来爱看京戏了，您又<span class="new-word" data-word="告别">告别</span>舞台了。”丰子恺这么说。<br>
+        当他在<span class="new-word" data-word="战后">战后</span>重新回到上海，听说梅兰芳又出来演戏了，立即到中国大戏院，连着看了5场梅戏。现在他来拜访梅兰芳，是“要看看这个<span class="new-word" data-word="杰出">杰出</span>人物真实的样子”，这是他这一生第一次。<br>
+        梅兰芳虽然与丰子恺见面不多，但他的艺术以及<span class="new-word" data-word="人格">人格</span>，都给丰子恺留下了永远<span class="new-word" data-word="难忘">难忘</span>的印象。<br>
+        1961年<span class="new-word" data-word="中秋">中秋</span>，丰子恺在一份<span class="new-word" data-word="晚报">晚报</span>上，看到梅兰芳<span class="new-word" data-word="因病">因病</span><span class="new-word" data-word="去世">去世</span>的消息，他非常<span class="new-word" data-word="难过">难过</span>，写文章<span class="new-word" data-word="称赞">称赞</span>他是“一个<span class="new-word" data-word="才华出众">才华出众</span>的大艺术家”。
+    </div>
+
+    <!-- 练习题区 -->
+    <div class="exercise-area">
+        <h2 class="exercise-title">一、判断正误</h2>
+        <div class="judge-item">1. 丰子恺一直都很喜欢京剧。
+            <label class="judge-option"><input type="radio" name="judge1" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge1" value="×"> ×</label>
+        </div>
+        <div class="judge-item">2. 丰子恺战后回到上海，看了5场梅兰芳的戏。
+            <label class="judge-option"><input type="radio" name="judge2" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge2" value="×"> ×</label>
+        </div>
+        <div class="judge-item">3. 梅兰芳知道丰子恺来访的原因，所以不感到意外。
+            <label class="judge-option"><input type="radio" name="judge3" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge3" value="×"> ×</label>
+        </div>
+        <div class="judge-item">4. 丰子恺喜欢京剧的原因是喜欢它的音乐和表演形式。
+            <label class="judge-option"><input type="radio" name="judge4" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge4" value="×"> ×</label>
+        </div>
+        <div class="judge-item">5. 1961年，丰子恺看到了梅兰芳去世的消息，非常难过。
+            <label class="judge-option"><input type="radio" name="judge5" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge5" value="×"> ×</label>
+        </div>
+
+        <h2 class="exercise-title">二、选词填空</h2>
+        <div class="fill-item">1. 抗日战争胜利后，丰子恺从重庆
+            <select id="fill1" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+            上海。
+        </div>
+        <div class="fill-item">2. 留声机里的京剧音乐
+            <select id="fill2" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+            了丰子恺。
+        </div>
+        <div class="fill-item">3. 丰子恺
+            <select id="fill3" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+            买了很多梅兰芳的京剧唱片。
+        </div>
+        <div class="fill-item">4. 梅兰芳的艺术和人格给丰子恺留下了
+            <select id="fill4" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+            的印象。
+        </div>
+        <div class="fill-item">5. 丰子恺称赞梅兰芳是
+            <select id="fill5" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+            的大艺术家。
+        </div>
+
+        <button id="submitBtn">提交答案</button>
+        <div class="score-feedback" id="scoreFeedback"></div>
+        <div class="answer-tips" id="answerTips">
+            <p><strong>正确答案参考：</strong></p>
+            <p>一、判断正误：1.× 2.√ 3.× 4.√ 5.√</p>
+            <p>二、选词填空：1.返回 2.吸引 3.专门 4.难忘 5.杰出</p>
+            <p class="answer-detail" id="answerDetail"></p>
+            <p>现在可以再次点击课文里的生词，查看完整释义和翻译啦！</p>
+        </div>
+    </div>
+
+    <!-- 生词弹窗 -->
+    <div class="popup" id="wordPopup">
+        <span class="popup-close" id="popupClose">×</span>
+        <div id="popupContent"></div>
+    </div>
+
+    <script>
+        // 生词数据
+        const wordData = {
+            "素不相识": {
+                guess: "素（平素、向来）+不（否定）+相（互相）+识（认识）",
+                explain: "释义：向来彼此不认识。<br>英语：be strangers to each other<br>俄语：не знать друг друга вовсе"
+            },
+            "名人": {
+                guess: "名（有名的）+人（人）",
+                explain: "释义：有名气的人。<br>英语：famous person<br>俄语：знаменитая личность"
+            },
+            "抗日战争": {
+                guess: "抗（抵抗）+日（日本）+战（战争）+争（争斗）",
+                explain: "释义：中国抵抗日本侵略的战争。<br>英语：War of Resistance Against Japanese Aggression<br>俄语：Война сопротивления японской агрессии"
+            },
+            "返回": {
+                guess: "返（回来）+回（回到）",
+                explain: "释义：回到原来的地方。<br>英语：return<br>俄语：вернуться"
+            },
+            "京剧": {
+                guess: "京（北京）+剧（戏剧）",
+                explain: "释义：中国北京的传统戏剧形式。<br>英语：Peking Opera<br>俄语：пекинская опера"
+            },
+            "艺术家": {
+                guess: "艺（艺术）+术（技艺）+家（从事某类事的人）",
+                explain: "释义：从事艺术创作或表演的人。<br>英语：artist<br>俄语：художник"
+            },
+            "突然": {
+                guess: "突（忽然、冲破）+然（……的样子）",
+                explain: "释义：事情发生得快，出人意料。<br>英语：suddenly<br>俄语：внезапно"
+            },
+            "西洋": {
+                guess: "西（西方）+洋（海洋，代指欧美）",
+                explain: "释义：指欧美等西方国家。<br>英语：the West (Europe and America)<br>俄语：Запад (Европа и Америка)"
+            },
+            "好感": {
+                guess: "好（好的）+感（感觉）",
+                explain: "释义：对人或事有好的印象、喜欢的感觉。<br>英语：good impression<br>俄语：хорошее впечатление"
+            },
+            "反对": {
+                guess: "反（相反）+对（对着）",
+                explain: "释义：不赞成、不同意。<br>英语：oppose<br>俄语：противиться"
+            },
+            "打倒": {
+                guess: "打（击打）+倒（倒下）",
+                explain: "释义：推翻、使垮掉。<br>英语：overthrow<br>俄语：свергнуть"
+            },
+            "看不起": {
+                guess: "看（看待）+不（否定）+起（看得起）",
+                explain: "释义：轻视、不重视。<br>英语：look down upon<br>俄语：не ценить, презирать"
+            },
+            "留声机": {
+                guess: "留（留住）+声（声音）+机（机器）",
+                explain: "释义：能播放唱片声音的老式机器。<br>英语：gramophone<br>俄语：граммофон"
+            },
+            "吸引": {
+                guess: "吸（吸收）+引（引来）",
+                explain: "释义：把人或事物引到自己这边来。<br>英语：attract<br>俄语：притягивать"
+            },
+            "专门": {
+                guess: "专（专一）+门（门类）",
+                explain: "释义：特地、只针对某一件事。<br>英语：specially<br>俄语：специально"
+            },
+            "唱片": {
+                guess: "唱（唱歌、唱戏）+片（片状物品）",
+                explain: "释义：记录声音的片状载体。<br>英语：record<br>俄语：пластинка"
+            },
+            "过时": {
+                guess: "过（过去）+时（时间）",
+                explain: "释义：已经不流行、不符合当前的时代。<br>英语：out of date<br>俄语：устаревший"
+            },
+            "爱好": {
+                guess: "爱（喜欢）+好（喜好）",
+                explain: "释义：对某件事有浓厚的兴趣。<br>英语：hobby / be fond of<br>俄语：увлечение / любить"
+            },
+            "夸张": {
+                guess: "夸（夸大）+张（伸张）",
+                explain: "释义：把事物的特点放大描述。<br>英语：exaggerative<br>俄语：преувеличенный"
+            },
+            "明快": {
+                guess: "明（明朗）+快（轻快）",
+                explain: "释义：明朗轻快，不拖沓。<br>英语：lively and brisk<br>俄语：ясный и живой"
+            },
+            "扮演": {
+                guess: "扮（装扮）+演（表演）",
+                explain: "释义：装扮成角色进行表演。<br>英语：act (a role)<br>俄语：играть (роль)"
+            },
+            "客厅": {
+                guess: "客（客人）+厅（厅堂）",
+                explain: "释义：接待客人的房间。<br>英语：living room<br>俄语：гостиная"
+            },
+            "舞台": {
+                guess: "舞（跳舞、表演）+台（台子）",
+                explain: "释义：表演节目的台子。<br>英语：stage<br>俄语：сцена"
+            },
+            "演出": {
+                guess: "演（表演）+出（展示出来）",
+                explain: "释义：公开表演节目。<br>英语：performance<br>俄语：спектакль"
+            },
+            "战前": {
+                guess: "战（战争）+前（之前）",
+                explain: "释义：战争开始之前。<br>英语：before the war<br>俄语：до войны"
+            },
+            "印象": {
+                guess: "印（印记）+象（样子）",
+                explain: "释义：接触过的事物留在脑子里的形象。<br>英语：impression<br>俄语：впечатление"
+            },
+            "告别": {
+                guess: "告（告诉）+别（分别）",
+                explain: "释义：离开、与……分开。<br>英语：say goodbye to<br>俄语：прощаться с"
+            },
+            "战后": {
+                guess: "战（战争）+后（之后）",
+                explain: "释义：战争结束之后。<br>英语：after the war<br>俄语：после войны"
+            },
+            "杰出": {
+                guess: "杰（出众）+出（出来）",
+                explain: "释义：才能、成就特别出众。<br>英语：outstanding<br>俄语：выдающийся"
+            },
+            "人格": {
+                guess: "人（人）+格（品格）",
+                explain: "释义：人的道德品质、性格。<br>英语：personality<br>俄语：личность"
+            },
+            "难忘": {
+                guess: "难（难以）+忘（忘记）",
+                explain: "释义：很难忘记。<br>英语：unforgettable<br>俄语：незабываемый"
+            },
+            "中秋": {
+                guess: "中（中间）+秋（秋天）",
+                explain: "释义：秋天中间的重要节日，农历八月十五。<br>英语：Mid-Autumn Festival<br>俄语：Праздник середины осени"
+            },
+            "晚报": {
+                guess: "晚（晚上）+报（报纸）",
+                explain: "释义：傍晚发行的报纸。<br>英语：evening newspaper<br>俄语：вечерняя газета"
+            },
+            "因病": {
+                guess: "因（因为）+病（生病）",
+                explain: "释义：因为生病。<br>英语：because of illness<br>俄语：из-за болезни"
+            },
+            "去世": {
+                guess: "去（离开）+世（世界）",
+                explain: "释义：离开人世，死亡（委婉说法）。<br>英语：pass away<br>俄语：скончаться"
+            },
+            "难过": {
+                guess: "难（难受）+过（不好受）",
+                explain: "释义：心里不舒服、伤心。<br>英语：sad<br>俄语：печальный"
+            },
+            "称赞": {
+                guess: "称（称道）+赞（赞美）",
+                explain: "释义：夸奖、表扬。<br>英语：praise<br>俄语：хвалить"
+            },
+            "才华出众": {
+                guess: "才（才能）+华（才华）+出（超出）+众（众人）",
+                explain: "释义：才能比大多数人优秀。<br>英语：outstanding talent<br>俄语：выдающийся талант"
+            }
+        };
+
+        // 正确答案配置
+        const correctAnswers = {
+            judge: {
+                judge1: "×",
+                judge2: "√",
+                judge3: "×",
+                judge4: "√",
+                judge5: "√"
+            },
+            fill: {
+                fill1: "返回",
+                fill2: "吸引",
+                fill3: "专门",
+                fill4: "难忘",
+                fill5: "杰出"
+            }
+        };
+
+        // 洗牌算法：随机打乱数组（Fisher-Yates）
+        function shuffleArray(arr) {
+            const newArr = [...arr];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        // 初始化下拉菜单（随机选项）
+        function initFillSelects() {
+            const fillOptions = ["返回", "吸引", "专门", "难忘", "杰出"];
+            const fillSelects = document.querySelectorAll('.fill-select');
+            fillSelects.forEach(select => {
+                // 每次生成随机顺序的选项
+                const randomOptions = shuffleArray(fillOptions);
+                randomOptions.forEach(optionText => {
+                    const option = document.createElement('option');
+                    option.value = optionText;
+                    option.textContent = optionText;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        // 判分逻辑
+        function checkAnswers() {
+            let correctCount = 0;
+            let totalCount = 10; // 5道判断+5道填空
+            let detailHtml = "";
+
+            // 检查判断正误
+            for (let i = 1; i <= 5; i++) {
+                const radioName = `judge${i}`;
+                const selectedRadio = document.querySelector(`input[name="${radioName}"]:checked`);
+                const userAnswer = selectedRadio ? selectedRadio.value : "";
+                const correctAnswer = correctAnswers.judge[radioName];
+                
+                if (userAnswer === correctAnswer) {
+                    correctCount++;
+                    detailHtml += `判断第${i}题：<span class="correct">正确</span>（你的答案：${userAnswer}）<br>`;
+                } else {
+                    detailHtml += `判断第${i}题：<span class="wrong">错误</span>（你的答案：${userAnswer || "未选"}，正确答案：${correctAnswer}）<br>`;
+                }
+            }
+
+            // 检查选词填空
+            for (let i = 1; i <= 5; i++) {
+                const selectId = `fill${i}`;
+                const select = document.getElementById(selectId);
+                const userAnswer = select.value;
+                const correctAnswer = correctAnswers.fill[selectId];
+                
+                if (userAnswer === correctAnswer) {
+                    correctCount++;
+                    detailHtml += `填空第${i}题：<span class="correct">正确</span>（你的答案：${userAnswer}）<br>`;
+                } else {
+                    detailHtml += `填空第${i}题：<span class="wrong">错误</span>（你的答案：${userAnswer || "未选"}，正确答案：${correctAnswer}）<br>`;
+                }
+            }
+
+            // 计算正确率
+            const accuracy = ((correctCount / totalCount) * 100).toFixed(1);
+            // 显示分数反馈
+            const scoreFeedback = document.getElementById('scoreFeedback');
+            scoreFeedback.textContent = `你的得分：${correctCount}/${totalCount}，正确率：${accuracy}%`;
+            // 显示答题详情
+            document.getElementById('answerDetail').innerHTML = detailHtml;
+            // 显示答案提示
+            document.getElementById('answerTips').style.display = 'block';
+
+            return correctCount > 0; // 标记已答题
+        }
+
+        // 页面加载初始化
+        window.onload = function() {
+            initFillSelects(); // 初始化随机下拉选项
+
+            // 元素获取
+            const newWords = document.querySelectorAll('.new-word');
+            const wordPopup = document.getElementById('wordPopup');
+            const popupContent = document.getElementById('popupContent');
+            const popupClose = document.getElementById('popupClose');
+            const submitBtn = document.getElementById('submitBtn');
+            let isAnswered = false; // 是否提交过答案
+
+            // 生词点击事件
+            newWords.forEach(word => {
+                word.addEventListener('click', () => {
+                    const wordKey = word.dataset.word;
+                    if (isAnswered) {
+                        // 提交后显示完整释义
+                        popupContent.innerHTML = wordData[wordKey].explain;
+                    } else {
+                        // 提交前显示拆字引导
+                        popupContent.innerHTML = `<p>猜猜意思：${wordData[wordKey].guess}</p><p>做完练习题后可查看完整释义哦～</p>`;
+                    }
+                    wordPopup.style.display = 'block';
+                });
+            });
+
+            // 关闭弹窗
+            popupClose.addEventListener('click', () => {
+                wordPopup.style.display = 'none';
+            });
+            window.addEventListener('click', (e) => {
+                if (e.target === wordPopup) {
+                    wordPopup.style.display = 'none';
+                }
+            });
+
+            // 提交答案
+            submitBtn.addEventListener('click', () => {
+                isAnswered = checkAnswers(); // 判分并标记已答题
+            });
+        };
+    </script>
+</body>
+</html>

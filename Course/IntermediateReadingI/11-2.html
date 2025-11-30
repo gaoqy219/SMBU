@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章二 震惊世界的海啸</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
+        }
+        body {
+            padding: 20px;
+            line-height: 1.8;
+        }
+        .title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .text-area {
+            font-size: 18px;
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .new-word {
+            color: #c00;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 999;
+        }
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #999;
+        }
+        .exercise-area {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .exercise-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        .judge-item, .fill-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .judge-option {
+            margin: 0 8px;
+        }
+        select {
+            padding: 4px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-left: 8px;
+            min-width: 100px;
+        }
+        button {
+            padding: 8px 16px;
+            background: #0088cc;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #006699;
+        }
+        .score-feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #d9534f;
+        }
+        .correct {
+            color: #5cb85c;
+        }
+        .wrong {
+            color: #d9534f;
+        }
+        .answer-tips {
+            margin-top: 15px;
+            color: #666;
+            display: none;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        .answer-detail {
+            margin-top: 8px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">文章二 震惊世界的海啸</h1>
+
+    <!-- 课文阅读区 -->
+    <div class="text-area" id="textArea">
+        蓝色的大海，在一般人的心中，是平静和美丽的，它带给我们感动。但大海也有巨大的<span class="new-word" data-word="破坏力">破坏力</span>，在人们想不到的时候，<span class="new-word" data-word="杀人如麻">杀人如麻</span>。<br>
+        2004年12月26日，对于印度洋<span class="new-word" data-word="沿岸">沿岸</span>国家的人们来说，日子和往常一样平静，度假的旅游者享受着大海带给他们的快乐。就在这一天，在8900米深的海底，一场8.6级的大<span class="new-word" data-word="地震">地震</span>悄悄地（noiselessly）发生了，接着是印度洋大<span class="new-word" data-word="海啸">海啸</span>，<span class="new-word" data-word="转眼之间">转眼之间</span>，几十万人的生命消失，数百万人失去了家和亲人。<br>
+        在小池塘（pond）中投下一块石头，我们会看到<span class="new-word" data-word="波纹">波纹</span>（ripple），不断地向外<span class="new-word" data-word="扩散">扩散</span>（spread）。<br>
+        但在大海里，海啸的波纹是看不见的，它通过海水向外<span class="new-word" data-word="传播">传播</span>，前进的<span class="new-word" data-word="速度">速度</span>能达到每小时700公里，海水越深，前进的速度越快，在大洋最深的地方，它们比飞机的飞行速度还快。但是<span class="new-word" data-word="海浪">海浪</span>高度却只有1米2，海上的船<span class="new-word" data-word="根本">根本</span>感觉不到它的存在。<br>
+        当海啸<span class="new-word" data-word="上岸">上岸</span>时，由于在很短时间内大量海水一起到来，形成几十米的水墙，一切都被<span class="new-word" data-word="淹没">淹没</span>了，没有明显的<span class="new-word" data-word="预示">预示</span>（forebode）。当人们感觉到时，已经太晚了！<br>
+        虽然海洋不会<span class="new-word" data-word="永远">永远</span>平静而美丽，但人们仍然喜欢去大海边。现在，在2000-5000米深的太平洋底，已经有<span class="new-word" data-word="浮标">浮标</span><span class="new-word" data-word="埋藏">埋藏</span>在那里，它们被称为海啸卫士（guard）。因为人们知道，海啸还会再来。<br>
+        果然，2011年，日本大地震<span class="new-word" data-word="引发">引发</span>的大海啸，再一次<span class="new-word" data-word="震惊">震惊</span>了世界。
+    </div>
+
+    <!-- 练习题区 -->
+    <div class="exercise-area">
+        <h2 class="exercise-title">一、判断正误</h2>
+        <div class="judge-item">1. 大海只有平静美丽的一面，不会有破坏力。
+            <label class="judge-option"><input type="radio" name="judge1" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge1" value="×"> ×</label>
+        </div>
+        <div class="judge-item">2. 2004年印度洋海啸是由海底地震引起的。
+            <label class="judge-option"><input type="radio" name="judge2" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge2" value="×"> ×</label>
+        </div>
+        <div class="judge-item">3. 海啸的波纹在大海里可以清楚看到。
+            <label class="judge-option"><input type="radio" name="judge3" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge3" value="×"> ×</label>
+        </div>
+        <div class="judge-item">4. 海啸上岸时会形成很高的水墙。
+            <label class="judge-option"><input type="radio" name="judge4" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge4" value="×"> ×</label>
+        </div>
+        <div class="judge-item">5. 人们在太平洋底放浮标是为了装饰海底。
+            <label class="judge-option"><input type="radio" name="judge5" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge5" value="×"> ×</label>
+        </div>
+
+        <h2 class="exercise-title">二、选词填空</h2>
+        <div class="fill-item">1. 2004年的印度洋______是由海底地震引起的。
+            <select id="fill1" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">2. 小池塘里的波纹会不断向外______。
+            <select id="fill2" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">3. 海啸在大海里的前进______能达到每小时700公里。
+            <select id="fill3" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">4. 海啸上岸后，大量海水会______很多地方。
+            <select id="fill4" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">5. 日本大地震______了严重的大海啸。
+            <select id="fill5" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+
+        <button id="submitBtn">提交答案</button>
+        <div class="score-feedback" id="scoreFeedback"></div>
+        <div class="answer-tips" id="answerTips">
+            <p><strong>正确答案参考：</strong></p>
+            <p>一、判断正误：1.× 2.√ 3.× 4.√ 5.×</p>
+            <p>二、选词填空：1.海啸 2.扩散 3.速度 4.淹没 5.引发</p>
+            <p class="answer-detail" id="answerDetail"></p>
+            <p>现在可以再次点击课文里的生词，查看完整释义和翻译啦！</p>
+        </div>
+    </div>
+
+    <!-- 生词弹窗 -->
+    <div class="popup" id="wordPopup">
+        <span class="popup-close" id="popupClose">×</span>
+        <div id="popupContent"></div>
+    </div>
+
+    <script>
+        // 生词数据
+        const wordData = {
+            "破坏力": {
+                guess: "破（破坏）+坏（损坏）+力（力量）",
+                explain: "释义：能造成破坏的力量。<br>英语：destructive power<br>俄语：разрушительная сила"
+            },
+            "杀人如麻": {
+                guess: "杀（杀死）+人（人）+如（像）+麻（数量多的植物）",
+                explain: "释义：杀死的人非常多。<br>英语：kill people like cutting down hemp<br>俄语：убивать людей как сорняки"
+            },
+            "沿岸": {
+                guess: "沿（沿着）+岸（岸边）",
+                explain: "释义：靠近水边的岸边区域。<br>英语：coastal<br>俄语：прибрежный"
+            },
+            "地震": {
+                guess: "地（大地）+震（震动）",
+                explain: "释义：大地发生的剧烈震动，是自然灾害。<br>英语：earthquake<br>俄语：землетрясение"
+            },
+            "海啸": {
+                guess: "海（大海）+啸（呼啸的声音）",
+                explain: "释义：海底地震等引发的巨大海浪。<br>英语：tsunami<br>俄语：цунами"
+            },
+            "转眼之间": {
+                guess: "转（转动）+眼（眼睛）+之（的）+间（中间）",
+                explain: "释义：时间很短，像眨一下眼睛。<br>英语：in the blink of an eye<br>俄语：в мгновение ока"
+            },
+            "波纹": {
+                guess: "波（波浪）+纹（纹路）",
+                explain: "释义：水面晃动形成的波浪纹路。<br>英语：ripple<br>俄语：волна"
+            },
+            "扩散": {
+                guess: "扩（扩大）+散（散开）",
+                explain: "释义：向周围扩大、散开。<br>英语：spread<br>俄语：распространяться"
+            },
+            "传播": {
+                guess: "传（传递）+播（播撒）",
+                explain: "释义：把事物、信息等传递开。<br>英语：transmit<br>俄语：передавать"
+            },
+            "速度": {
+                guess: "速（快速）+度（程度）",
+                explain: "释义：物体运动的快慢程度。<br>英语：speed<br>俄语：скорость"
+            },
+            "海浪": {
+                guess: "海（大海）+浪（波浪）",
+                explain: "释义：大海里形成的波浪。<br>英语：sea wave<br>俄语：морская волна"
+            },
+            "根本": {
+                guess: "根（树根）+本（基础）",
+                explain: "释义：完全、彻底（表示程度）。<br>英语：completely<br>俄语：совершенно"
+            },
+            "上岸": {
+                guess: "上（向上）+岸（岸边）",
+                explain: "释义：从水里到岸边的陆地上。<br>英语：come ashore<br>俄语：войти на берег"
+            },
+            "淹没": {
+                guess: "淹（被水盖过）+没（覆盖）",
+                explain: "释义：被水等覆盖、遮住。<br>英语：submerge<br>俄语：затопить"
+            },
+            "预示": {
+                guess: "预（预先）+示（显示）",
+                explain: "释义：预先显示出某种迹象。<br>英语：forebode<br>俄语：предвещать"
+            },
+            "永远": {
+                guess: "永（长久）+远（遥远）",
+                explain: "释义：时间很长，一直持续。<br>英语：forever<br>俄语：навсегда"
+            },
+            "浮标": {
+                guess: "浮（漂浮）+标（标志）",
+                explain: "释义：漂浮在水面的标志，用于指示或监测。<br>英语：buoy<br>俄语：маяка"
+            },
+            "埋藏": {
+                guess: "埋（掩埋）+藏（隐藏）",
+                explain: "释义：埋在地下隐藏起来。<br>英语：bury<br>俄语：зарывать"
+            },
+            "引发": {
+                guess: "引（引起）+发（发生）",
+                explain: "释义：引起、触发某事发生。<br>英语：trigger<br>俄语：вызвать"
+            },
+            "震惊": {
+                guess: "震（震动）+惊（惊讶）",
+                explain: "释义：因意外情况而非常吃惊。<br>英语：shock<br>俄语：шокировать"
+            }
+        };
+
+        // 正确答案配置
+        const correctAnswers = {
+            judge: {
+                judge1: "×",
+                judge2: "√",
+                judge3: "×",
+                judge4: "√",
+                judge5: "×"
+            },
+            fill: {
+                fill1: "海啸",
+                fill2: "扩散",
+                fill3: "速度",
+                fill4: "淹没",
+                fill5: "引发"
+            }
+        };
+
+        // 洗牌算法：随机打乱数组（Fisher-Yates）
+        function shuffleArray(arr) {
+            const newArr = [...arr];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        // 初始化下拉菜单（随机选项）
+        function initFillSelects() {
+            const fillOptions = ["海啸", "扩散", "速度", "淹没", "引发"];
+            const fillSelects = document.querySelectorAll('.fill-select');
+            fillSelects.forEach(select => {
+                const randomOptions = shuffleArray(fillOptions);
+                randomOptions.forEach(optionText => {
+                    const option = document.createElement('option');
+                    option.value = optionText;
+                    option.textContent = optionText;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        // 判分逻辑
+        function checkAnswers() {
+            let correctCount = 0;
+            let totalCount = 10; // 5道判断+5道填空
+            let detailHtml = "";
+
+            // 检查判断正误
+            for (let i = 1; i <= 5; i++) {
+                const radioName = `judge${i}`;
+                const selectedRadio = document.querySelector(`input[name="${radioName}"]:checked`);
+                const userAnswer = selectedRadio ? selectedRadio.value : "";
+                const correctAnswer = correctAnswers.judge[radioName];
+                
+                if (userAnswer === correctAnswer) {
+                    correctCount++;
+                    detailHtml += `判断第${i}题：<span class="correct">正确</span>（你的答案：${userAnswer}）<br>`;
+                } else {
+                    detailHtml += `判断第${i}题：<span class="wrong">错误</span>（你的答案：${userAnswer || "未选"}，正确答案：${correctAnswer}）<br>`;
+                }
+            }
+
+            // 检查选词填空
+            for (let i = 1; i <= 5; i++) {
+                const selectId = `fill${i}`;
+                const select = document.getElementById(selectId);
+                const userAnswer = select.value;
+                const correctAnswer = correctAnswers.fill[selectId];
+                
+                if (userAnswer === correctAnswer) {
+                    correctCount++;
+                    detailHtml += `填空第${i}题：<span class="correct">正确</span>（你的答案：${userAnswer}）<br>`;
+                } else {
+                    detailHtml += `填空第${i}题：<span class="wrong">错误</span>（你的答案：${userAnswer || "未选"}，正确答案：${correctAnswer}）<br>`;
+                }
+            }
+
+            // 计算正确率
+            const accuracy = ((correctCount / totalCount) * 100).toFixed(1);
+            // 显示分数反馈
+            const scoreFeedback = document.getElementById('scoreFeedback');
+            scoreFeedback.textContent = `你的得分：${correctCount}/${totalCount}，正确率：${accuracy}%`;
+            // 显示答题详情
+            document.getElementById('answerDetail').innerHTML = detailHtml;
+            // 显示答案提示
+            document.getElementById('answerTips').style.display = 'block';
+
+            return correctCount > 0; // 标记已答题
+        }
+
+        // 页面加载初始化
+        window.onload = function() {
+            initFillSelects(); // 初始化随机下拉选项
+
+            // 元素获取
+            const newWords = document.querySelectorAll('.new-word');
+            const wordPopup = document.getElementById('wordPopup');
+            const popupContent = document.getElementById('popupContent');
+            const popupClose = document.getElementById('popupClose');
+            const submitBtn = document.getElementById('submitBtn');
+            let isAnswered = false; // 是否提交过答案
+
+            // 生词点击事件
+            newWords.forEach(word => {
+                word.addEventListener('click', () => {
+                    const wordKey = word.dataset.word;
+                    if (isAnswered) {
+                        // 提交后显示完整释义
+                        popupContent.innerHTML = wordData[wordKey].explain;
+                    } else {
+                        // 提交前显示拆字引导
+                        popupContent.innerHTML = `<p>猜猜意思：${wordData[wordKey].guess}</p><p>做完练习题后可查看完整释义哦～</p>`;
+                    }
+                    wordPopup.style.display = 'block';
+                });
+            });
+
+            // 关闭弹窗
+            popupClose.addEventListener('click', () => {
+                wordPopup.style.display = 'none';
+            });
+            window.addEventListener('click', (e) => {
+                if (e.target === wordPopup) {
+                    wordPopup.style.display = 'none';
+                }
+            });
+
+            // 提交答案
+            submitBtn.addEventListener('click', () => {
+                isAnswered = checkAnswers(); // 判分并标记已答题
+            });
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章四 如此报喜</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
+        }
+        body {
+            padding: 20px;
+            line-height: 1.8;
+            position: relative;
+        }
+        .title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .text-area {
+            font-size: 18px;
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .text-area h3 {
+            font-size: 20px;
+            margin: 15px 0 10px;
+            color: #555;
+        }
+        .new-word {
+            color: #c00;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 999;
+        }
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #999;
+        }
+        .exercise-area {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .exercise-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        .judge-item, .fill-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .judge-option {
+            margin: 0 8px;
+        }
+        select {
+            padding: 4px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-left: 8px;
+            min-width: 100px;
+        }
+        button {
+            padding: 8px 16px;
+            background: #0088cc;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #006699;
+        }
+        .score-feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #d9534f;
+        }
+        .correct {
+            color: #5cb85c;
+        }
+        .wrong {
+            color: #d9534f;
+        }
+        .answer-tips {
+            margin-top: 15px;
+            color: #666;
+            display: none;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        .answer-detail {
+            margin-top: 8px;
+            font-size: 14px;
+        }
+        /* 倒计时窗口：右下角+透明背景 */
+        .countdown-window {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 150px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #f0ad4e;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+            text-align: center;
+            z-index: 998;
+        }
+        .countdown-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #f0ad4e;
+            margin-bottom: 10px;
+        }
+        .countdown-time {
+            font-size: 20px;
+            font-weight: bold;
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+    <!-- 倒计时窗口 -->
+    <div class="countdown-window">
+        <div class="countdown-title">阅读倒计时</div>
+        <div class="countdown-time" id="countdownTime">08:00</div>
+    </div>
+
+    <h1 class="title">文章四 如此报喜</h1>
+
+    <!-- 课文阅读区 -->
+    <div class="text-area" id="textArea">
+        据香港《文汇报》消息，诺贝尔奖<span class="new-word" data-word="委员会">委员会</span>（Nobel Committee），为避免得奖者会通知自己的亲戚，并且，为了避免消息<span class="new-word" data-word="泄露">泄露</span>（disclose）出去，<span class="new-word" data-word="决定">决定</span>在公布得奖前几分钟才通知得奖人。但是要在这么短时间里通知特别困难，所以常常要使用<span class="new-word" data-word="五花八门">五花八门</span>（all kinds of）的方式。
+
+        <h3>夜半铃声</h3>
+        1998年，得到诺贝尔奖<span class="new-word" data-word="经济学">经济学</span>奖的是印度人沈恩，当时，他正在地球的另一端。<span class="new-word" data-word="半夜时分">半夜时分</span>，收到了委员会打来的电话，通知他，得到了本年度的经济学奖。接电话时，他心想：一定是发生了令人非常<span class="new-word" data-word="悲痛">悲痛</span>的事。<br>
+        美国的查尔费，也是同样的情况。2008年，一天深夜，他听到电话铃响，以为是邻居打来的<span class="new-word" data-word="恶作剧">恶作剧</span>（practical joke），跟他开玩笑的。当时，他已经上床睡下，所以没爬起来接听，早上起床上网，才知道自己得了化学奖。
+
+        <h3>机师相告</h3>
+        1991年，化学奖<span class="new-word" data-word="得主">得主</span>是瑞士人恩士特，他正在从莫斯科飞往纽约的<span class="new-word" data-word="客机">客机</span>上。当时，他正闭着眼睛休息，飞机上的<span class="new-word" data-word="机长">机长</span>亲自走到座位，告诉他得奖的消息。<br>
+        1998年，医学奖得主是美国人伊格纳洛。据他自己<span class="new-word" data-word="回忆">回忆</span>说，当时，他身在法国尼斯机场，正在排队办理登机<span class="new-word" data-word="手续">手续</span>，一名机场服务人员请他接一个“从美国打来的重要电话”，他接过电话后，同事通知他得奖，他还以为是恶作剧，“开什么玩笑，我正忙着呢！”
+
+        <h3>记者追车</h3>
+        1997年，获文学奖的意大利<span class="new-word" data-word="剧作家">剧作家</span>达利奥·福，正开车走在路上，电视节目记者开车追上来，追了很久，才赶上他。记者当时写了一个大大的字条，贴在车窗后面，上面写着：达利奥，你得了诺贝尔奖。达利奥·福<span class="new-word" data-word="简直">简直</span>不相信自己的眼睛。
+
+        <h3>人群围屋</h3>
+        德国的赛尔登，四年前获经济学奖。他当时购物后回家，看到屋外一大群人，包围了自己的房子，还以为家里被小偷偷了东西，后来有人走上来，<span class="new-word" data-word="祝贺">祝贺</span>他，说他获奖了。
+    </div>
+
+    <!-- 练习题区 -->
+    <div class="exercise-area">
+        <h2 class="exercise-title">一、判断正误</h2>
+        <div class="judge-item">1. 诺贝尔奖委员会会提前几天通知得奖者。
+            <label class="judge-option"><input type="radio" name="judge1" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge1" value="×"> ×</label>
+        </div>
+        <div class="judge-item">2. 沈恩接到获奖电话时，以为发生了悲痛的事。
+            <label class="judge-option"><input type="radio" name="judge2" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge2" value="×"> ×</label>
+        </div>
+        <div class="judge-item">3. 查尔费是在半夜接电话知道自己获奖的。
+            <label class="judge-option"><input type="radio" name="judge3" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge3" value="×"> ×</label>
+        </div>
+        <div class="judge-item">4. 恩士特是在客机上被机长告知获奖的。
+            <label class="judge-option"><input type="radio" name="judge4" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge4" value="×"> ×</label>
+        </div>
+        <div class="judge-item">5. 达利奥·福是被记者追车告知获奖的。
+            <label class="judge-option"><input type="radio" name="judge5" value="√"> √</label>
+            <label class="judge-option"><input type="radio" name="judge5" value="×"> ×</label>
+        </div>
+
+        <h2 class="exercise-title">二、选词填空</h2>
+        <div class="fill-item">1. 诺贝尔奖委员会______在公布前几分钟通知得奖者。
+            <select id="fill1" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">2. 委员会用______的方式通知得奖者。
+            <select id="fill2" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">3. 沈恩在______接到了获奖电话。
+            <select id="fill3" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">4. 查尔费以为电话是邻居的______。
+            <select id="fill4" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="fill-item">5. 伊格纳洛在机场办理登机______时接到了电话。
+            <select id="fill5" class="fill-select">
+                <option value="">请选择</option>
+            </select>
+        </div>
+
+        <button id="submitBtn">提交答案</button>
+        <div class="score-feedback" id="scoreFeedback"></div>
+        <div class="answer-tips" id="answerTips">
+            <p><strong>正确答案参考：</strong></p>
+            <p>一、判断正误：1.× 2.√ 3.× 4.√ 5.√</p>
+            <p>二、选词填空：1.决定 2.五花八门 3.半夜时分 4.恶作剧 5.手续</p>
+            <p class="answer-detail" id="answerDetail"></p>
+            <p>现在可以再次点击课文里的生词，查看完整释义和翻译啦！</p>
+        </div>
+    </div>
+
+    <!-- 生词弹窗 -->
+    <div class="popup" id="wordPopup">
+        <span class="popup-close" id="popupClose">×</span>
+        <div id="popupContent"></div>
+    </div>
+
+    <script>
+        // 1. 倒计时功能（8分钟）
+        function initCountdown() {
+            let totalSeconds = 8 * 60;
+            const countdownTime = document.getElementById('countdownTime');
+            
+            const timer = setInterval(() => {
+                totalSeconds--;
+                const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+                const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+                countdownTime.textContent = `${minutes}:${seconds}`;
+
+                if (totalSeconds <= 0) {
+                    clearInterval(timer);
+                    countdownTime.textContent = "时间到！";
+                    alert("阅读练习时间已结束，请提交答案~");
+                }
+            }, 1000);
+        }
+
+        // 2. 生词数据
+        const wordData = {
+            "委员会": {
+                guess: "委（委托）+员（成员）+会（组织）",
+                explain: "释义：由成员组成、负责特定事务的组织。<br>英语：committee<br>俄语：комитет"
+            },
+            "泄露": {
+                guess: "泄（泄漏）+露（暴露）",
+                explain: "释义：不该让人知道的消息被传出去。<br>英语：disclose<br>俄语：раскрывать"
+            },
+            "决定": {
+                guess: "决（决断）+定（确定）",
+                explain: "释义：做出主张、确定做法。<br>英语：decide<br>俄语：решить"
+            },
+            "五花八门": {
+                guess: "五（数字）+花（花样）+八（数字）+门（类别）",
+                explain: "释义：花样、种类非常多。<br>英语：all kinds of<br>俄语：разнообразный"
+            },
+            "经济学": {
+                guess: "经（经营）+济（接济）+学（学科）",
+                explain: "释义：研究经济规律的学科。<br>英语：economics<br>俄语：экономика"
+            },
+            "半夜时分": {
+                guess: "半（一半）+夜（夜晚）+时（时间）+分（时刻）",
+                explain: "释义：夜晚中间的时刻（大概深夜）。<br>英语：midnight<br>俄语：полуночь"
+            },
+            "悲痛": {
+                guess: "悲（悲伤）+痛（痛苦）",
+                explain: "释义：伤心痛苦。<br>英语：grieved<br>俄语：горестный"
+            },
+            "恶作剧": {
+                guess: "恶（不好的）+作（做）+剧（游戏）",
+                explain: "释义：故意捉弄人的玩笑。<br>英语：practical joke<br>俄语：шутка с козьим носом"
+            },
+            "得主": {
+                guess: "得（获得）+主（主体）",
+                explain: "释义：获得奖项的人。<br>英语：winner<br>俄语：победитель"
+            },
+            "客机": {
+                guess: "客（乘客）+机（飞机）",
+                explain: "释义：载运乘客的飞机。<br>英语：passenger plane<br>俄语：пассажирский самолёт"
+            },
+            "机长": {
+                guess: "机（飞机）+长（负责人）",
+                explain: "释义：飞机上的最高负责人。<br>英语：captain (of a plane)<br>俄语：капитан самолёта"
+            },
+            "回忆": {
+                guess: "回（回想）+忆（记忆）",
+                explain: "释义：回想过去的事。<br>英语：recall<br>俄语：вспоминать"
+            },
+            "手续": {
+                guess: "手（办理）+续（程序）",
+                explain: "释义：办理事务的程序。<br>英语：procedure<br>俄语：процедура"
+            },
+            "剧作家": {
+                guess: "剧（戏剧）+作（创作）+家（从事者）",
+                explain: "释义：创作戏剧的人。<br>英语：playwright<br>俄语：драматург"
+            },
+            "简直": {
+                guess: "简（简单）+直（直接）",
+                explain: "释义：表示情况接近到几乎等于（强调程度）。<br>英语：simply<br>俄语：просто"
+            },
+            "祝贺": {
+                guess: "祝（祝福）+贺（庆贺）",
+                explain: "释义：对别人的喜事表示庆祝。<br>英语：congratulate<br>俄语：поздравлять"
+            }
+        };
+
+        // 3. 正确答案配置
+        const correctAnswers = {
+            judge: {
+                judge1: "×",
+                judge2: "√",
+                judge3: "×",
+                judge4: "√",
+                judge5: "√"
+            },
+            fill: {
+                fill1: "决定",
+                fill2: "五花八门",
+                fill3: "半夜时分",
+                fill4: "恶作剧",
+                fill5: "手续"
+            }
+        };
+
+        // 4. 洗牌算法（随机下拉选项）
+        function shuffleArray(arr) {
+            const newArr = [...arr];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        // 5. 初始化下拉菜单
+        function initFillSelects() {
+            const fillOptions = ["决定", "五花八门", "半夜时分", "恶作剧", "手续"];
+            const fillSelects = document.querySelectorAll('.fill-select');
+            fillSelects.forEach(select => {
+                const randomOptions = shuffleArray(fillOptions);
+                randomOptions.forEach(optionText => {
+                    const option = document.createElement('option');
+                    option.value = optionText;
+                    option.textContent = optionText;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        // 6. 判分逻辑
+        function checkAnswers() {
+            let correctCount = 0;
+            let totalCount = 10;
+            let detailHtml = "";
+
+            // 检查判断正误
+            for (let i = 1; i <= 5; i++) {
+                const radioName = `judge${i}`;
+                const selectedRadio = document.querySelector(`input[name="${radioName}"]:checked`);
+                const userAnswer = selectedRadio ? selectedRadio.value : "";
+                const correctAnswer = correctAnswers.judge[radioName];
+                
+                if (userAnswer === correctAnswer) {
+                    correctCount++;
+                    detailHtml += `判断第${i}题：<span class="correct">正确</span>（你的答案：${userAnswer}）<br>`;
+                } else {
+                    detailHtml += `判断第${i}题：<span class="wrong">错误</span>（你的答案：${userAnswer || "未选"}，正确答案：${correctAnswer}）<br>`;
+                }
+            }
+
+            // 检查选词填空
+            for (let i = 1; i <= 5; i++) {
+                const selectId = `fill${i}`;
+                const select = document.getElementById(selectId);
+                const userAnswer = select.value;
+                const correctAnswer = correctAnswers.fill[selectId];
+                
+                if (userAnswer === correctAnswer) {
+                    correctCount++;
+                    detailHtml += `填空第${i}题：<span class="correct">正确</span>（你的答案：${userAnswer}）<br>`;
+                } else {
+                    detailHtml += `填空第${i}题：<span class="wrong">错误</span>（你的答案：${userAnswer || "未选"}，正确答案：${correctAnswer}）<br>`;
+                }
+            }
+
+            // 显示结果
+            const accuracy = ((correctCount / totalCount) * 100).toFixed(1);
+            document.getElementById('scoreFeedback').textContent = `你的得分：${correctCount}/${totalCount}，正确率：${accuracy}%`;
+            document.getElementById('answerDetail').innerHTML = detailHtml;
+            document.getElementById('answerTips').style.display = 'block';
+
+            return true;
+        }
+
+        // 7. 页面初始化
+        window.onload = function() {
+            initCountdown();
+            initFillSelects();
+
+            // 生词弹窗交互
+            const newWords = document.querySelectorAll('.new-word');
+            const wordPopup = document.getElementById('wordPopup');
+            const popupContent = document.getElementById('popupContent');
+            const popupClose = document.getElementById('popupClose');
+            const submitBtn = document.getElementById('submitBtn');
+            let isAnswered = false;
+
+            newWords.forEach(word => {
+                word.addEventListener('click', () => {
+                    const wordKey = word.dataset.word;
+                    popupContent.innerHTML = isAnswered 
+                        ? wordData[wordKey].explain
+                        : `<p>猜猜意思：${wordData[wordKey].guess}</p><p>做完练习题后可查看完整释义哦～</p>`;
+                    wordPopup.style.display = 'block';
+                });
+            });
+
+            // 关闭弹窗
+            popupClose.addEventListener('click', () => wordPopup.style.display = 'none');
+            window.addEventListener('click', (e) => {
+                if (e.target === wordPopup) wordPopup.style.display = 'none';
+            });
+
+            // 提交答案
+            submitBtn.addEventListener('click', () => {
+                isAnswered = checkAnswers();
+            });
+        };
+    </script>
+</body>
+</html>
