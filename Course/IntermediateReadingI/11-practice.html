@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生词练习 - 选词填空</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            border-bottom: 2px solid #0088cc;
+            padding-bottom: 10px;
+        }
+        .instructions {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .exercise-area {
+            margin-bottom: 30px;
+        }
+        .fill-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            position: relative;
+        }
+        .fill-item-number {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        select {
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin: 0 5px;
+            min-width: 120px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #0088cc;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 20px auto;
+        }
+        button:hover {
+            background: #006699;
+        }
+        .score-feedback {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #d9534f;
+        }
+        .correct {
+            color: #5cb85c;
+        }
+        .wrong {
+            color: #d9534f;
+        }
+        .answer-tips {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            display: none;
+        }
+        .answer-detail {
+            margin-top: 10px;
+        }
+        .explanation {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>生词练习 - 选词填空</h1>
+    
+    <div class="instructions">
+        <p><strong>练习说明：</strong></p>
+        <p>请从下拉菜单中选择最恰当的词语填入句子空白处，完成后点击"提交答案"按钮查看结果。</p>
+        <p>本练习随机抽取20道题，每道题只有一个正确答案。</p>
+    </div>
+
+    <div class="exercise-area" id="exerciseArea">
+        <!-- 题目将通过JavaScript动态生成 -->
+    </div>
+
+    <button id="submitBtn">提交答案</button>
+    <div class="score-feedback" id="scoreFeedback"></div>
+    <div class="answer-tips" id="answerTips">
+        <p><strong>答题结果：</strong></p>
+        <div class="answer-detail" id="answerDetail"></div>
+    </div>
+
+    <script>
+        // 1. 生词数据及解释（从11-1到11-5中整理）
+        const vocabularyData = {
+            "素不相识": {
+                explain: "释义：向来不认识。<br>英语：have never met before<br>俄语：никогда не встречавшиеся"
+            },
+            "破坏力": {
+                explain: "释义：能造成破坏的力量。<br>英语：destructive power<br>俄语：разрушительная сила"
+            },
+            "杀人如麻": {
+                explain: "释义：杀死的人非常多。<br>英语：kill people like cutting down hemp<br>俄语：убивать людей как сорняки"
+            },
+            "沿岸": {
+                explain: "释义：靠近水边的岸边区域。<br>英语：coastal<br>俄语：прибрежный"
+            },
+            "地震": {
+                explain: "释义：地球表面的震动。<br>英语：earthquake<br>俄语：землетрясение"
+            },
+            "风度": {
+                explain: "释义：美好的举止姿态。<br>英语：demeanor<br>俄语：внешний вид и манеры"
+            },
+            "口才": {
+                explain: "释义：说话的才能。<br>英语：eloquence<br>俄语：красноречие"
+            },
+            "后天": {
+                explain: "释义：出生以后的时间（和“天生”相对）。<br>英语：acquired<br>俄语：приобретенный"
+            },
+            "谦虚": {
+                explain: "释义：虚心，不自满。<br>英语：modest<br>俄语：скромный"
+            },
+            "委员会": {
+                explain: "释义：由成员组成、负责特定事务的组织。<br>英语：committee<br>俄语：комитет"
+            },
+            "泄露": {
+                explain: "释义：不该让人知道的消息被传出去。<br>英语：disclose<br>俄语：раскрывать"
+            },
+            "决定": {
+                explain: "释义：做出主张、确定做法。<br>英语：decide<br>俄语：решить"
+            },
+            "五花八门": {
+                explain: "释义：花样、种类非常多。<br>英语：all kinds of<br>俄语：разнообразный"
+            },
+            "经济学": {
+                explain: "释义：研究经济活动和经济关系的学科。<br>英语：economics<br>俄语：экономика"
+            },
+            "培养": {
+                explain: "释义：通过教育、训练使成长发展。<br>英语：cultivate<br>俄语：воспитывать"
+            },
+            "增强": {
+                explain: "释义：使变得更强。<br>英语：enhance<br>俄语：усилить"
+            },
+            "国际化": {
+                explain: "释义：与国际接轨、融入国际的性质。<br>英语：internationalization<br>俄语：интернационализация"
+            },
+            "意识": {
+                explain: "释义：对事物的认知和观念。<br>英语：awareness<br>俄语：осознание"
+            },
+            "引导": {
+                explain: "释义：带领、指导。<br>英语：guide<br>俄语：направлять"
+            }
+        };
+
+        // 2. 题库：为每个生词创建5个题目
+        const questionBank = [
+            // 素不相识
+            { word: "素不相识", sentence: "虽然他们________，但却一见如故。" },
+            { word: "素不相识", sentence: "他总是热心帮助________的人。" },
+            { word: "素不相识", sentence: "两个________的人因为共同的爱好成为了朋友。" },
+            { word: "素不相识", sentence: "警察帮助了一位________的迷路老人。" },
+            { word: "素不相识", sentence: "________的人们在灾难面前互相帮助。" },
+            
+            // 破坏力
+            { word: "破坏力", sentence: "地震的________非常大，许多房屋都倒塌了。" },
+            { word: "破坏力", sentence: "台风的________惊人，沿海地区损失严重。" },
+            { word: "破坏力", sentence: "洪水的________让许多人无家可归。" },
+            { word: "破坏力", sentence: "这种武器的________超出了人们的想象。" },
+            { word: "破坏力", sentence: "火山爆发的________可以影响整个地区。" },
+            
+            // 杀人如麻
+            { word: "杀人如麻", sentence: "这个________的罪犯终于被警察抓获了。" },
+            { word: "杀人如麻", sentence: "历史上那个暴君________，百姓生活在恐惧中。" },
+            { word: "杀人如麻", sentence: "这部电影描写了一个________的海盗。" },
+            { word: "杀人如麻", sentence: "传说中那个恶魔________，无恶不作。" },
+            { word: "杀人如麻", sentence: "战争让许多士兵变得________，失去了人性。" },
+            
+            // 沿岸
+            { word: "沿岸", sentence: "________地区居住着许多渔民。" },
+            { word: "沿岸", sentence: "我们沿着________公路欣赏海景。" },
+            { word: "沿岸", sentence: "________城市因港口而繁荣起来。" },
+            { word: "沿岸", sentence: "海啸对________村庄造成了巨大破坏。" },
+            { word: "沿岸", sentence: "这条河流________有许多美丽的公园。" },
+            
+            // 地震
+            { word: "地震", sentence: "________发生时，人们应该尽快撤离到安全地方。" },
+            { word: "地震", sentence: "________可能会引发山体滑坡和海啸。" },
+            { word: "地震", sentence: "这个地区经常发生小________。" },
+            { word: "地震", sentence: "________监测站可以提前预警。" },
+            { word: "地震", sentence: "房屋需要具备抵抗________的能力。" },
+            
+            // 风度
+            { word: "风度", sentence: "这位先生的________翩翩，很受人尊敬。" },
+            { word: "风度", sentence: "他即使在困境中也保持着良好的________。" },
+            { word: "风度", sentence: "这位演员不仅演技好，________也很优雅。" },
+            { word: "风度", sentence: "真正的________来自内心的修养。" },
+            { word: "风度", sentence: "他待人接物很有________，大家都喜欢他。" },
+            
+            // 口才
+            { word: "口才", sentence: "他的________很好，演讲非常精彩。" },
+            { word: "口才", sentence: "良好的________需要不断练习。" },
+            { word: "口才", sentence: "这位律师的________帮助他赢得了很多案件。" },
+            { word: "口才", sentence: "他凭借出色的________获得了辩论比赛冠军。" },
+            { word: "口才", sentence: "老师的________让课堂变得生动有趣。" },
+            
+            // 后天
+            { word: "后天", sentence: "很多能力不是天生的，而是________培养的。" },
+            { word: "后天", sentence: "________的努力比天赋更重要。" },
+            { word: "后天", sentence: "他的成功源于________的勤奋和坚持。" },
+            { word: "后天", sentence: "良好的习惯是________养成的。" },
+            { word: "后天", sentence: "这种疾病不是天生的，而是________形成的。" },
+            
+            // 谦虚
+            { word: "谦虚", sentence: "他虽然很有才华，但非常________。" },
+            { word: "谦虚", sentence: "________使人进步，骄傲使人落后。" },
+            { word: "谦虚", sentence: "她总是________地向别人学习。" },
+            { word: "谦虚", sentence: "这位教授非常________，一点架子都没有。" },
+            { word: "谦虚", sentence: "在取得成绩时保持________是一种智慧。" },
+            
+            // 委员会
+            { word: "委员会", sentence: "这个项目需要经过________的批准。" },
+            { word: "委员会", sentence: "学校成立了一个________来处理学生事务。" },
+            { word: "委员会", sentence: "________将讨论这个重要问题。" },
+            { word: "委员会", sentence: "他被选为________主席。" },
+            { word: "委员会", sentence: "这个________由五名专家组成。" },
+            
+            // 泄露
+            { word: "泄露", sentence: "这个秘密不能________出去。" },
+            { word: "泄露", sentence: "是谁________了这个消息？" },
+            { word: "泄露", sentence: "公司的机密被________给了竞争对手。" },
+            { word: "泄露", sentence: "他不小心________了自己的计划。" },
+            { word: "泄露", sentence: "防止信息________是很重要的。" },
+            
+            // 决定
+            { word: "决定", sentence: "经过讨论，我们________明天出发。" },
+            { word: "决定", sentence: "他________辞职，去追求自己的梦想。" },
+            { word: "决定", sentence: "这个________将影响我们的未来。" },
+            { word: "决定", sentence: "父母应该尊重孩子的________。" },
+            { word: "决定", sentence: "我们需要快速________下一步该做什么。" },
+            
+            // 五花八门
+            { word: "五花八门", sentence: "市场上的商品________，应有尽有。" },
+            { word: "五花八门", sentence: "他有________的爱好，生活很丰富。" },
+            { word: "五花八门", sentence: "节日期间，庆祝活动________。" },
+            { word: "五花八门", sentence: "网上的信息________，需要仔细辨别。" },
+            { word: "五花八门", sentence: "孩子们想出了________的游戏。" },
+            
+            // 经济学
+            { word: "经济学", sentence: "他在大学学习________专业。" },
+            { word: "经济学", sentence: "________研究资源的分配问题。" },
+            { word: "经济学", sentence: "这位教授是________领域的专家。" },
+            { word: "经济学", sentence: "了解基本的________知识对生活很有帮助。" },
+            { word: "经济学", sentence: "这是一本关于国际________的著作。" },
+            
+            // 培养
+            { word: "培养", sentence: "学校应该________学生的创新能力。" },
+            { word: "培养", sentence: "父母要________孩子良好的习惯。" },
+            { word: "培养", sentence: "这家公司________了很多优秀人才。" },
+            { word: "培养", sentence: "我们要________对艺术的兴趣。" },
+            { word: "培养", sentence: "这种植物需要细心________才能生长得好。" },
+            
+            // 增强
+            { word: "增强", sentence: "运动可以________体质，预防疾病。" },
+            { word: "增强", sentence: "我们要________环保意识。" },
+            { word: "增强", sentence: "这个措施将________公司的竞争力。" },
+            { word: "增强", sentence: "学习可以________我们的能力。" },
+            { word: "增强", sentence: "两国决定________合作，共同发展。" },
+            
+            // 国际化
+            { word: "国际化", sentence: "这座城市正在向________大都市发展。" },
+            { word: "国际化", sentence: "________教育有助于培养全球视野。" },
+            { word: "国际化", sentence: "这家公司的________战略很成功。" },
+            { word: "国际化", sentence: "语言能力是________人才的重要素质。" },
+            { word: "国际化", sentence: "我们要适应________的发展趋势。" },
+            
+            // 意识
+            { word: "意识", sentence: "我们要提高安全________，保护自己。" },
+            { word: "意识", sentence: "他缺乏环保________，经常乱扔垃圾。" },
+            { word: "意识", sentence: "健康________的提高有助于改善生活质量。" },
+            { word: "意识", sentence: "他终于________到自己的错误。" },
+            { word: "意识", sentence: "法律________是现代公民的基本素质。" },
+            
+            // 引导
+            { word: "引导", sentence: "老师应该________学生树立正确的价值观。" },
+            { word: "引导", sentence: "父母要________孩子养成良好的习惯。" },
+            { word: "引导", sentence: "路标________我们找到了正确的方向。" },
+            { word: "引导", sentence: "这本书________读者思考人生的意义。" },
+            { word: "引导", sentence: "他的建议________我们做出了正确的决定。" }
+        ];
+
+        // 3. 洗牌算法
+        function shuffleArray(arr) {
+            const newArr = [...arr];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        // 4. 随机选择20个题目
+        function getRandomQuestions() {
+            const shuffled = shuffleArray(questionBank);
+            return shuffled.slice(0, 20); // 选择前20个
+        }
+
+        // 5. 生成干扰项
+        function generateDistractors(correctWord, count = 3) {
+            const allWords = Object.keys(vocabularyData);
+            const distractors = [];
+            
+            // 过滤掉正确答案
+            const possibleDistractors = allWords.filter(word => word !== correctWord);
+            
+            // 随机选择干扰项
+            const shuffled = shuffleArray(possibleDistractors);
+            for (let i = 0; i < count && i < shuffled.length; i++) {
+                distractors.push(shuffled[i]);
+            }
+            
+            return distractors;
+        }
+
+        // 6. 初始化题目
+        function initQuestions() {
+            const exerciseArea = document.getElementById('exerciseArea');
+            const questions = getRandomQuestions();
+            
+            questions.forEach((question, index) => {
+                // 创建题目元素
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'fill-item';
+                questionDiv.dataset.word = question.word;
+                
+                // 生成干扰项
+                const distractors = generateDistractors(question.word);
+                const options = [question.word, ...distractors];
+                const shuffledOptions = shuffleArray(options);
+                
+                // 创建题目内容
+                const sentenceWithBlank = question.sentence.replace(question.word, '______');
+                questionDiv.innerHTML = `
+                    <span class="fill-item-number">${index + 1}.</span>
+                    <span class="sentence">${sentenceWithBlank}</span>
+                    <select class="fill-select" data-correct="${question.word}">
+                        <option value="">请选择</option>
+                        ${shuffledOptions.map(option => `<option value="${option}">${option}</option>`).join('')}
+                    </select>
+                `;
+                
+                exerciseArea.appendChild(questionDiv);
+            });
+        }
+
+        // 7. 检查答案
+        function checkAnswers() {
+            const selects = document.querySelectorAll('.fill-select');
+            let correctCount = 0;
+            let totalCount = selects.length;
+            let detailHtml = "";
+            
+            selects.forEach((select, index) => {
+                const userAnswer = select.value;
+                const correctAnswer = select.dataset.correct;
+                const questionDiv = select.closest('.fill-item');
+                const word = questionDiv.dataset.word;
+                
+                if (userAnswer === correctAnswer) {
+                    correctCount++;
+                    detailHtml += `第${index + 1}题：<span class="correct">正确</span>（你的答案：${userAnswer}）<br>`;
+                } else {
+                    detailHtml += `第${index + 1}题：<span class="wrong">错误</span>（你的答案：${userAnswer || "未选"}，正确答案：${correctAnswer}）<br>`;
+                    // 添加生词解释
+                    detailHtml += `<div class="explanation">${vocabularyData[word].explain}</div><br>`;
+                }
+            });
+            
+            // 显示结果
+            const accuracy = ((correctCount / totalCount) * 100).toFixed(1);
+            document.getElementById('scoreFeedback').textContent = `你的得分：${correctCount}/${totalCount}，正确率：${accuracy}%`;
+            document.getElementById('answerDetail').innerHTML = detailHtml;
+            document.getElementById('answerTips').style.display = 'block';
+        }
+
+        // 8. 页面加载初始化
+        window.onload = function() {
+            initQuestions();
+            
+            // 提交按钮事件
+            document.getElementById('submitBtn').addEventListener('click', checkAnswers);
+        };
+    </script>
+</body>
+</html>
