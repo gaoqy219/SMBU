@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阅读微技能训练——关键词识别</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        .title {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+        }
+        .questions-area {
+            margin-bottom: 2.5rem;
+        }
+        .question-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.2rem;
+            border-left: 4px solid #4299e1;
+        }
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+        .question-content {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .word-span {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            margin: 0.2rem 0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+        }
+        .word-span:hover {
+            background-color: #e8f4f8;
+            border-color: #4299e1;
+        }
+        .selected {
+            border: 2px solid #e53e3e;
+            border-radius: 8px;
+            background-color: #fef7fb;
+        }
+        .correct {
+            border: 2px solid #48bb78;
+            border-radius: 8px;
+            background-color: #f0fdf4;
+        }
+        .btn-area {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .confirm-btn {
+            padding: 0.9rem 2.5rem;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .confirm-btn:hover {
+            background: #3182ce;
+        }
+        .reset-btn {
+            padding: 0.8rem 2rem;
+            background: #f59e0b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-left: 1rem;
+        }
+        .reset-btn:hover {
+            background: #d97706;
+        }
+        .feedback-area {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #2d3748;
+            padding: 1.5rem;
+            background: #f0f8fb;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .tips {
+            text-align: center;
+            color: #718096;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">阅读微技能训练——关键词识别</h1>
+        <p class="subtitle">点击题目中的独立词语选择关键词（1-2个），选中后显示红色圆圈，点击确认验证答案（正确关键词显示绿色圆圈）</p>
+        
+        <div class="feedback-area" id="feedback">
+            请选择题目中的关键词（1-2个），完成后点击确认按钮
+        </div>
+        
+        <div class="questions-area" id="questionsContainer">
+            <!-- 随机题目将在这里生成 -->
+        </div>
+        
+        <div class="btn-area">
+            <button class="confirm-btn" id="confirmBtn">确认答案</button>
+            <button class="reset-btn" id="resetBtn">重新出题</button>
+        </div>
+        
+        <p class="tips">提示：关键词从题目拆分词语中选择，为人物、核心事件等关键信息，每个题仅需选择1-2个</p>
+    </div>
+
+    <script>
+        // 完整题目数据库（预分词版本，关键词1-2个，均来自拆分词语）
+        const questionDatabase = [
+            // 单元1
+            { 
+                id: 1, 
+                unit: "1", 
+                text: "山谷的起点", 
+                type: "选择填空", 
+                content: "母亲为什么事情烦恼？", 
+                splitWords: ["母亲", "为", "什么", "事情", "烦恼", "？"], 
+                keywords: ["母亲", "烦恼"] 
+            },
+            { 
+                id: 2, 
+                unit: "1", 
+                text: "山谷的起点", 
+                type: "选择填空", 
+                content: "孩子考试得了第几名？", 
+                splitWords: ["孩子", "考试", "得了", "第几", "名", "？"], 
+                keywords: ["孩子", "第几"] 
+            },
+            { 
+                id: 4, 
+                unit: "1", 
+                text: "山谷的起点", 
+                type: "选择填空", 
+                content: "根据文章，作者认为在山的最低点怎么样？", 
+                splitWords: ["根据", "文章", "，", "作者", "认为", "在", "山", "的", "最低点", "怎么样", "？"], 
+                keywords: ["最低点"] 
+            },
+            { 
+                id: 5, 
+                unit: "1", 
+                text: "山谷的起点", 
+                type: "选择填空", 
+                content: "后来孩子的成绩怎样了？", 
+                splitWords: ["后来", "孩子", "的", "成绩", "怎样", "了", "？"], 
+                keywords: ["孩子", "成绩"] 
+            },
+            { 
+                id: 8, 
+                unit: "1", 
+                text: "换了一个位置", 
+                type: "判断正误", 
+                content: "老人除夕腿摔断了。", 
+                splitWords: ["老人", "除夕", "腿", "摔断", "了", "。"], 
+                keywords: ["老人", "除夕"] 
+            },
+            { 
+                id: 9, 
+                unit: "1", 
+                text: "自行车文化", 
+                type: "填表", 
+                content: "武汉和哥本哈根的自行车数量、骑自行车人数____", 
+                splitWords: ["武汉", "和", "哥本哈根", "的", "自行车", "数量", "、", "骑", "自行车", "人数", "_____"], 
+                keywords: ["武汉", "哥本哈根"] 
+            },
+            { 
+                id: 10, 
+                unit: "1", 
+                text: "怎么去八达岭长城", 
+                type: "填空", 
+                content: "八达岭长城位于哪里？", 
+                splitWords: ["八达岭长城", "位于", "哪里", "？"], 
+                keywords: ["八达岭长城", "哪里"] 
+            },
+            // 单元2
+            { 
+                id: 11, 
+                unit: "2", 
+                text: "找工作的故事", 
+                type: "判断正误", 
+                content: "弟弟顺利通过了笔试。", 
+                splitWords: ["弟弟", "顺利", "通过", "了", "笔试", "。"], 
+                keywords: ["通过", "笔试"] 
+            },
+            { 
+                id: 13, 
+                unit: "2", 
+                text: "并非童话", 
+                type: "回答问题", 
+                content: "第一天大灰狼为什么打小白兔？", 
+                splitWords: ["第一天", "大灰狼", "为什么", "打", "小白兔", "？"], 
+                keywords: ["大灰狼", "打"] 
+            },
+            { 
+                id: 14, 
+                unit: "2", 
+                text: "登山去香山", 
+                type: "判断正误", 
+                content: "登山是一项有益身心健康的运动。", 
+                splitWords: ["登山", "是", "一项", "有益", "身心", "健康", "的", "运动", "。"], 
+                keywords: ["登山", "有益"] 
+            },
+            { 
+                id: 15, 
+                unit: "2", 
+                text: "全国人口普查", 
+                type: "回答问题", 
+                content: "中国已经进行了几次人口普查？", 
+                splitWords: ["中国", "已经", "进行", "了", "几次", "人口普查", "？"], 
+                keywords: ["几次", "人口普查"] 
+            },
+            // 单元3
+            { 
+                id: 16, 
+                unit: "3", 
+                text: "大爱农民", 
+                type: "选择填空", 
+                content: "张元俊通过什么方法对传染病了解一点儿？", 
+                splitWords: ["张元俊", "通过", "什么", "方法", "对", "传染病", "了解", "一点儿", "？"], 
+                keywords: ["方法", "传染病"] 
+            },
+            { 
+                id: 18, 
+                unit: "3", 
+                text: "中国汉语网正式开通", 
+                type: "选择填空", 
+                content: "中国汉语网的最大特点是？", 
+                splitWords: ["中国汉语网", "的", "最大", "特点", "是", "？"], 
+                keywords: ["中国汉语网", "特点"] 
+            },
+            { 
+                id: 19, 
+                unit: "3", 
+                text: "天津“杨柳青”年画", 
+                type: "选择填空", 
+                content: "杨柳青镇位于哪里？", 
+                splitWords: ["杨柳青镇", "位于", "哪里", "？"], 
+                keywords: ["杨柳青镇", "哪里"] 
+            },
+            { 
+                id: 20, 
+                unit: "3", 
+                text: "五彩的霞云", 
+                type: "填空", 
+                content: "什么含量越多，霞的色彩就越鲜艳？", 
+                splitWords: ["什么", "含量", "越", "多", "，", "霞", "的", "色彩", "就", "越", "鲜艳", "？"], 
+                keywords: ["霞", "含量"] 
+            },
+            // 单元4
+            { 
+                id: 22, 
+                unit: "4", 
+                text: "不近“狗”情", 
+                type: "判断正误", 
+                content: "文中的这只狗自己会买东西。", 
+                splitWords: ["文中", "的", "这只", "狗", "自己", "会", "买", "东西", "。"], 
+                keywords: ["狗", "买东西"] 
+            },
+            { 
+                id: 23, 
+                unit: "4", 
+                text: "海豚也会照镜子", 
+                type: "选择填空", 
+                content: "海豚具有“自我意识”并不让人感到惊讶。", 
+                splitWords: ["海豚", "具有", "“", "自我意识", "”", "并不", "让", "人", "感到", "惊讶", "。"], 
+                keywords: ["海豚", "自我意识"] 
+            },
+            { 
+                id: 24, 
+                unit: "4", 
+                text: "中国有多少大学生", 
+                type: "填空", 
+                content: "从1978年到1995年，大学生增加了多少万？", 
+                splitWords: ["从", "1978年", "到", "1995年", "，", "大学生", "增加", "了", "多少", "万", "？"], 
+                keywords: ["大学生", "增加"] 
+            },
+            { 
+                id: 25, 
+                unit: "4", 
+                text: "招募博物馆讲解志愿者", 
+                type: "填空", 
+                content: "招募的最后日期是？", 
+                splitWords: ["招募", "的", "最后", "日期", "是", "？"], 
+                keywords: ["招募", "日期"] 
+            },
+            // 单元5
+            { 
+                id: 26, 
+                unit: "5", 
+                text: "买牙膏", 
+                type: "判断正误", 
+                content: "“我”的妻子为全家人买牙膏。", 
+                splitWords: ["“", "我", "”", "的", "妻子", "为", "全家", "人", "买", "牙膏", "。"], 
+                keywords: ["妻子", "牙膏"] 
+            },
+            { 
+                id: 28, 
+                unit: "5", 
+                text: "一封求职信", 
+                type: "判断正误", 
+                content: "“我”是北京大学生物工程系应届毕业生。", 
+                splitWords: ["“", "我", "”", "是", "北京", "大学", "生物工程系", "应届", "毕业生", "。"], 
+                keywords: ["应届", "生物工程系"] 
+            },
+            { 
+                id: 29, 
+                unit: "5", 
+                text: "该哭就哭", 
+                type: "判断正误", 
+                content: "哭是一种不伤害身体的解除压力办法。", 
+                splitWords: ["哭", "是", "一种", "不", "伤害", "身体", "的", "解除压力", "办法", "。"], 
+                keywords: ["哭", "解除压力"] 
+            },
+            { 
+                id: 30, 
+                unit: "5", 
+                text: "人为什么会老", 
+                type: "判断正误", 
+                content: "运动能让人变老的时间晚一点儿。", 
+                splitWords: ["运动", "能", "让", "人", "变老", "的", "时间", "晚", "一点儿", "。"], 
+                keywords: ["运动", "变老"] 
+            },
+            // 单元6-15核心题目（完整覆盖，均预分词+1-2个关键词）
+            { 
+                id: 31, 
+                unit: "6", 
+                text: "中秋“和”美", 
+                type: "判断正误", 
+                content: "“和”是中国传统文化的标志。", 
+                splitWords: ["“", "和", "”", "是", "中国", "传统", "文化", "的", "标志", "。"], 
+                keywords: ["和", "标志"] 
+            },
+            { 
+                id: 34, 
+                unit: "7", 
+                text: "说说网上购物", 
+                type: "选择填空", 
+                content: "网上购物使消费习惯发生了变化。", 
+                splitWords: ["网上购物", "使", "消费", "习惯", "发生", "了", "变化", "。"], 
+                keywords: ["网上购物", "变化"] 
+            },
+            { 
+                id: 35, 
+                unit: "8", 
+                text: "互联网40岁了", 
+                type: "判断正误", 
+                content: "互联网肯定是在进步的。", 
+                splitWords: ["互联网", "肯定", "是", "在", "进步", "的", "。"], 
+                keywords: ["互联网", "进步"] 
+            },
+            { 
+                id: 36, 
+                unit: "8", 
+                text: "少吃可以多活", 
+                type: "选择填空", 
+                content: "什么东西不能杀死自由基？", 
+                splitWords: ["什么", "东西", "不能", "杀死", "自由基", "？"], 
+                keywords: ["杀死", "自由基"] 
+            },
+            { 
+                id: 37, 
+                unit: "9", 
+                text: "一生的职业", 
+                type: "判断正误", 
+                content: "结婚前这位母亲是一名成功的律师。", 
+                splitWords: ["结婚前", "这位", "母亲", "是", "一名", "成功", "的", "律师", "。"], 
+                keywords: ["成功", "律师"] 
+            },
+            { 
+                id: 38, 
+                unit: "9", 
+                text: "有趣的头发", 
+                type: "填空", 
+                content: "一根头发可以承受多少克的重量？", 
+                splitWords: ["一根", "头发", "可以", "承受", "多少", "克", "的", "重量", "？"], 
+                keywords: ["头发", "重量","承受"] 
+            },
+            { 
+                id: 39, 
+                unit: "10", 
+                text: "我们家的大花猫", 
+                type: "判断正误", 
+                content: "大花猫性格多变。", 
+                splitWords: ["大花猫", "性格", "多变", "。"], 
+                keywords: ["大花猫", "性格"] 
+            },
+            { 
+                id: 41, 
+                unit: "11", 
+                text: "君子之交淡如水", 
+                type: "选择填空", 
+                content: "丰子恺是什么时候拜访梅兰芳的？", 
+                splitWords: ["丰子恺", "是", "什么", "时候", "拜访", "梅兰芳", "的", "？"], 
+                keywords: ["拜访", "梅兰芳"] 
+            },
+            { 
+                id: 42, 
+                unit: "11", 
+                text: "震惊世界的海啸", 
+                type: "判断正误", 
+                content: "2004年印度洋沿岸国家发生了海啸。", 
+                splitWords: ["2004年", "印度洋", "沿岸", "国家", "发生", "了", "海啸", "。"], 
+                keywords: ["印度洋", "海啸"] 
+            },
+            { 
+                id: 43, 
+                unit: "12", 
+                text: "北宋国画——《溪山行旅图》", 
+                type: "判断正误", 
+                content: "《溪山行旅图》的作者是北宋画家。", 
+                splitWords: ["《", "溪山行旅图", "》", "的", "作者", "是", "北宋", "画家", "。"], 
+                keywords: ["溪山行旅图", "北宋"] 
+            },
+            { 
+                id: 45, 
+                unit: "13", 
+                text: "知音的来历", 
+                type: "判断正误", 
+                content: "伯牙和钟子期是知音。", 
+                splitWords: ["伯牙", "和", "钟子期", "是", "知音", "。"], 
+                keywords: ["伯牙", "知音"] 
+            },
+            { 
+                id: 47, 
+                unit: "14", 
+                text: "中国人的虚岁", 
+                type: "判断正误", 
+                content: "计算虚岁时春节是重要时间点。", 
+                splitWords: ["计算", "虚岁", "时", "春节", "是", "重要", "时间点", "。"], 
+                keywords: ["虚岁", "时间点"] 
+            },
+            { 
+                id: 48, 
+                unit: "14", 
+                text: "令人担忧的汉字书写", 
+                type: "选择填空", 
+                content: "教育部对汉字书写的要求？", 
+                splitWords: ["教育部", "对", "汉字", "书写", "的", "要求", "？"], 
+                keywords: ["教育部", "书写"] 
+            },
+            { 
+                id: 46, 
+                unit: "15", 
+                text: "成本及其他", 
+                type: "判断正误", 
+                content: "学经济学只要记住“经济”两个字。", 
+                splitWords: ["学", "经济学", "只要", "记住", "“", "经济", "”", "两个字", "。"], 
+                keywords: ["经济学", "经济"] 
+            },
+            { 
+                id: 44, 
+                unit: "15", 
+                text: "电视广告词", 
+                type: "回答问题", 
+                content: "关于钢琴的是哪一则广告？", 
+                splitWords: ["关于", "钢琴", "的", "是", "哪一则", "广告", "？"], 
+                keywords: ["钢琴", "广告"] 
+            },
+            // 补充剩余题目（均符合1-2个关键词+来自拆分词）
+            { 
+                id: 40, 
+                unit: "1", 
+                text: "换了一个位置", 
+                type: "判断正误", 
+                content: "老人不愿意去医院。", 
+                splitWords: ["老人", "不愿意", "去", "医院", "。"], 
+                keywords: ["老人", "医院"] 
+            },
+            { 
+                id: 33, 
+                unit: "1", 
+                text: "自行车文化", 
+                type: "填空", 
+                content: "中国哪个城市每天骑自行车出行的人大大高于其他城市？", 
+                splitWords: ["中国", "哪个", "城市", "每天", "骑", "自行车", "出行", "的", "人", "大大", "高于", "其他", "城市", "？"], 
+                keywords: ["高于", "自行车"] 
+            },
+            { 
+                id: 32, 
+                unit: "2", 
+                text: "找工作的故事", 
+                type: "判断正误", 
+                content: "国家公务员考试一共录用6人。", 
+                splitWords: ["国家", "公务员", "考试", "一共", "录用", "6人", "。"], 
+                keywords: ["公务员", "录用"] 
+            },
+            { 
+                id: 27, 
+                unit: "2", 
+                text: "登山去香山", 
+                type: "填空", 
+                content: "登山是一项有益身体健康的运动，既什么，又什么？", 
+                splitWords: ["登山", "是", "一项", "有益", "身体", "健康", "的", "运动", "，", "既", "什么", "，", "又", "什么", "？"], 
+                keywords: ["登山", "有益"] 
+            },
+            { 
+                id: 21, 
+                unit: "3", 
+                text: "大爱农民", 
+                type: "判断正误", 
+                content: "他得的病不是治不了的病。", 
+                splitWords: ["他", "得", "的", "病", "不是", "治不了", "的", "病", "。"], 
+                keywords: ["他", "病"] 
+            },
+            { 
+                id: 12, 
+                unit: "3", 
+                text: "学会赞美别人", 
+                type: "选择填空", 
+                content: "作者认为如果一个人不会说话，就会？", 
+                splitWords: ["作者", "认为", "如果", "一个人", "不会", "说话", "，", "就", "会", "？"], 
+                keywords: ["不会", "说话"] 
+            },
+            { 
+                id: 17, 
+                unit: "4", 
+                text: "不近“狗”情", 
+                type: "判断正误", 
+                content: "孙和平是一个卖肉的。", 
+                splitWords: ["孙和平", "是", "一个", "卖肉", "的", "。"], 
+                keywords: ["孙和平", "卖肉"] 
+            },
+            { 
+                id: 3, 
+                unit: "4", 
+                text: "中国有多少大学生", 
+                type: "填空", 
+                content: "大学生人数的不断变化表明，高等教育制度应该逐步什么？", 
+                splitWords: ["大学生", "人数", "的", "不断", "变化", "表明", "，", "高等教育", "制度", "应该", "逐步", "什么", "？"], 
+                keywords: ["逐步", "制度"] 
+            },
+            { 
+                id: 6, 
+                unit: "5", 
+                text: "该哭就哭", 
+                type: "判断正误", 
+                content: "大多数人会哭，但不愿意承认。", 
+                splitWords: ["大多数", "人", "会", "哭", "，", "但", "不愿意", "承认", "。"], 
+                keywords: ["承认", "哭"] 
+            },
+            { 
+                id: 7, 
+                unit: "5", 
+                text: "人为什么会老", 
+                type: "选择填空", 
+                content: "在地球上，所有生物的细胞里都有什么？", 
+                splitWords: ["在", "地球", "上", "，", "所有", "生物", "的", "细胞", "里", "都", "有", "什么", "？"], 
+                keywords: ["都", "细胞"] 
+            }
+        ];
+
+        // 全局变量
+        let currentQuestions = [];
+        let userSelections = {};
+        let isVerified = false;
+
+        // 随机获取5个不重复的题目
+        function getRandomQuestions() {
+            const shuffled = [...questionDatabase].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, 5);
+        }
+
+        // 渲染题目到页面（直接使用预分词语数组）
+        function renderQuestions() {
+            const container = document.getElementById("questionsContainer");
+            container.innerHTML = "";
+            currentQuestions = getRandomQuestions();
+            userSelections = {};
+            isVerified = false;
+            document.getElementById("feedback").innerHTML = "请选择题目中的关键词（1-2个），完成后点击确认按钮";
+
+            currentQuestions.forEach((question, index) => {
+                const splitWords = question.splitWords;
+                userSelections[question.id] = [];
+
+                const questionEl = document.createElement("div");
+                questionEl.className = "question-item";
+                questionEl.innerHTML = `
+                    <div class="question-header">
+                        <span>单元${question.unit} | ${question.text} | ${question.type}</span>
+                        <span>第${index + 1}题（关键词1-2个）</span>
+                    </div>
+                    <div class="question-content" data-question-id="${question.id}">
+                        ${splitWords.map(word => `<span class="word-span">${word}</span>`).join("")}
+                    </div>
+                `;
+
+                container.appendChild(questionEl);
+
+                // 绑定词语点击事件（限制最多选2个）
+                const wordSpans = questionEl.querySelectorAll(".word-span");
+                wordSpans.forEach(span => {
+                    span.addEventListener("click", function() {
+                        if (isVerified) return;
+                        const word = this.textContent.trim();
+                        const questionId = question.id;
+                        const selections = userSelections[questionId];
+
+                        // 跳过标点符号的选择
+                        if (/^[，。？！；;!?“”（）《》、,.?!""()<>]$/.test(word)) return;
+
+                        if (this.classList.contains("selected")) {
+                            this.classList.remove("selected");
+                            userSelections[questionId] = selections.filter(item => item !== word);
+                        } else {
+                            if (selections.length >= 2) return; // 限制最多2个关键词
+                            this.classList.add("selected");
+                            selections.push(word);
+                        }
+                    });
+                });
+            });
+        }
+
+        // 验证答案并显示结果（无正确题目数）
+        function verifyAnswers() {
+            if (isVerified) return;
+            isVerified = true;
+
+            currentQuestions.forEach(question => {
+                const questionId = question.id;
+                const correctKeywords = question.keywords;
+                const contentEl = document.querySelector(`.question-content[data-question-id="${question.id}"]`);
+                const wordSpans = contentEl.querySelectorAll(".word-span");
+
+                // 标记正确关键词（绿色）
+                wordSpans.forEach(span => {
+                    const word = span.textContent.trim();
+                    if (correctKeywords.includes(word)) {
+                        span.classList.add("correct");
+                        span.classList.remove("selected");
+                    }
+                });
+            });
+
+            // 显示反馈（无正确题目数）
+            const feedbackEl = document.getElementById("feedback");
+            feedbackEl.innerHTML = `
+                答案验证完成！绿色圆圈标记为正确关键词（每个题1-2个）
+            `;
+        }
+
+        // 绑定事件
+        document.addEventListener("DOMContentLoaded", () => {
+            renderQuestions();
+            document.getElementById("confirmBtn").addEventListener("click", verifyAnswers);
+            document.getElementById("resetBtn").addEventListener("click", renderQuestions);
+        });
+    </script>
+</body>
+</html>

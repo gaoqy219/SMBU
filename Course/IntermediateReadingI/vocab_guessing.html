@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阅读微技能训练——猜词</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        .title {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        .vocab-display {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .vocab-word {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4299e1;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .vocab-word:hover {
+            color: #3182ce;
+        }
+        .vocab-info {
+            color: #718096;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        .content-area {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+            color: #2d3748;
+            line-height: 1.8;
+        }
+        /* 固定布局：字意左右两栏 + 猜义引导 + 词义例句，均预留占位 */
+        .char-meanings {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 1.5rem;
+            min-height: 120px; /* 固定最小高度，避免布局晃动 */
+        }
+        .char-item {
+            text-align: center;
+            width: 45%;
+            padding: 1rem;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .char-title {
+            font-size: 1.5rem;
+            color: #4299e1;
+            margin-bottom: 0.5rem;
+        }
+        .guess-guide {
+            text-align: center;
+            padding: 1.5rem;
+            background: #e8f4f8;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            min-height: 80px; /* 固定最小高度 */
+        }
+        .final-meaning {
+            text-align: center;
+            padding: 1.5rem;
+            background: #f0f8fb;
+            border-radius: 6px;
+            min-height: 120px; /* 固定最小高度 */
+        }
+        .placeholder {
+            color: #a0aec0; /* 占位文本颜色 */
+            font-style: italic;
+        }
+        .practice-area {
+            background: #e8f4f8;
+            border-radius: 8px;
+            padding: 2rem;
+        }
+        .practice-title {
+            font-size: 1.3rem;
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        .practice-vocabs {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .practice-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1.2rem 2rem;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .practice-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            border-color: #4299e1;
+        }
+        .practice-word {
+            font-size: 1.5rem;
+            color: #38b2ac;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .practice-pinyin {
+            color: #718096;
+            font-size: 1rem;
+        }
+        .reset-btn {
+            display: block;
+            margin: 2rem auto 0;
+            padding: 0.8rem 2rem;
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .reset-btn:hover {
+            background: #38a169;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">阅读微技能训练——猜词</h1>
+        
+        <div class="vocab-display">
+            <div class="vocab-word" id="currentVocab"></div>
+            <div class="vocab-info" id="vocabInfo"></div>
+        </div>
+        
+        <div class="content-area" id="displayContent">
+            <!-- 字意左右两栏：固定布局，初始显示占位 -->
+            <div class="char-meanings">
+                <div class="char-item" id="char1">
+                    <div class="char-title placeholder">点击词汇显示第1字</div>
+                    <div class="char-pinyin placeholder">拼音待显示</div>
+                    <div class="char-core placeholder">意思待显示</div>
+                </div>
+                <div class="char-item" id="char2">
+                    <div class="char-title placeholder">点击词汇显示第2字</div>
+                    <div class="char-pinyin placeholder">拼音待显示</div>
+                    <div class="char-core placeholder">意思待显示</div>
+                </div>
+            </div>
+            <!-- 猜义引导：固定占位 -->
+            <div class="guess-guide" id="guessGuide">
+                <span class="placeholder">点击词汇逐步显示猜义引导</span>
+            </div>
+            <!-- 词义+例句：固定占位 -->
+            <div class="final-meaning" id="finalMeaning">
+                <div class="placeholder">点击词汇逐步显示词义和例句</div>
+            </div>
+        </div>
+        
+        <div class="practice-area">
+            <h2 class="practice-title">练习词汇（点击切换主词汇）</h2>
+            <div class="practice-vocabs" id="practiceVocabs">
+                <!-- 随机练习词汇将在这里生成 -->
+            </div>
+        </div>
+        
+        <button class="reset-btn" id="resetBtn">重新随机选择词汇</button>
+    </div>
+
+    <script>
+        // 完整词汇数据库（整合教材所有符合要求的词汇，共60个）
+        const vocabDatabase = [
+            // 一、并列式合成词
+            {
+                id: 1,
+                word: "诚恳",
+                pinyin: "chéng kěn",
+                level: "HSK4",
+                char1: { char: "诚", pinyin: "chéng", core: "真心" },
+                char2: { char: "恳", pinyin: "kěn", core: "恳切" },
+                guessGuide: "真心 + 恳切 → 待人的态度是什么？",
+                meaning: "真心实意，不虚伪",
+                example: "那位农民待人诚恳，大家都喜欢他。"
+            },
+            {
+                id: 2,
+                word: "礼让",
+                pinyin: "lǐ ràng",
+                level: "HSK4",
+                char1: { char: "礼", pinyin: "lǐ", core: "礼貌" },
+                char2: { char: "让", pinyin: "ràng", core: "谦让" },
+                guessGuide: "礼貌 + 谦让 → 相处的方式是什么？",
+                meaning: "讲礼貌，主动让别人",
+                example: "登山时要礼让老人和孩子。"
+            },
+            {
+                id: 3,
+                word: "谨慎",
+                pinyin: "jǐn shèn",
+                level: "HSK4",
+                char1: { char: "谨", pinyin: "jǐn", core: "小心" },
+                char2: { char: "慎", pinyin: "shèn", core: "慎重" },
+                guessGuide: "小心 + 慎重 → 做事的态度是什么？",
+                meaning: "做事小心，不马虎",
+                example: "过马路时要谨慎，注意来往车辆。"
+            },
+            {
+                id: 4,
+                word: "慷慨",
+                pinyin: "kāng kǎi",
+                level: "HSK5",
+                char1: { char: "慷", pinyin: "kāng", core: "大方" },
+                char2: { char: "慨", pinyin: "kǎi", core: "不小气" },
+                guessGuide: "大方 + 不小气 → 对别人的态度是什么？",
+                meaning: "大方，愿意分享",
+                example: "他很慷慨，经常帮助有需要的人。"
+            },
+            {
+                id: 5,
+                word: "孤独",
+                pinyin: "gū dú",
+                level: "HSK4",
+                char1: { char: "孤", pinyin: "gū", core: "单独" },
+                char2: { char: "独", pinyin: "dú", core: "独自" },
+                guessGuide: "单独 + 独自 → 人的状态是什么？",
+                meaning: "一个人，没陪伴",
+                example: "他一个人住，有时会感到孤独。"
+            },
+            {
+                id: 6,
+                word: "和睦",
+                pinyin: "hé mù",
+                level: "HSK4",
+                char1: { char: "和", pinyin: "hé", core: "和谐" },
+                char2: { char: "睦", pinyin: "mù", core: "友好" },
+                guessGuide: "和谐 + 友好 → 关系是什么样的？",
+                meaning: "关系好，不吵架",
+                example: "这家人相处和睦，生活很幸福。"
+            },
+            {
+                id: 7,
+                word: "勤恳",
+                pinyin: "qín kěn",
+                level: "HSK4",
+                char1: { char: "勤", pinyin: "qín", core: "勤劳" },
+                char2: { char: "恳", pinyin: "kěn", core: "踏实" },
+                guessGuide: "勤劳 + 踏实 → 做事的态度是什么？",
+                meaning: "工作努力，很踏实",
+                example: "农民们勤恳种地，收获很多粮食。"
+            },
+            {
+                id: 8,
+                word: "谦逊",
+                pinyin: "qiān xùn",
+                level: "HSK5",
+                char1: { char: "谦", pinyin: "qiān", core: "谦虚" },
+                char2: { char: "逊", pinyin: "xùn", core: "不骄傲" },
+                guessGuide: "谦虚 + 不骄傲 → 待人的态度是什么？",
+                meaning: "谦虚，不骄傲自满",
+                example: "他成绩好但很谦逊，经常请教别人。"
+            },
+            {
+                id: 9,
+                word: "淳朴",
+                pinyin: "chún pǔ",
+                level: "HSK4",
+                char1: { char: "淳", pinyin: "chún", core: "纯正" },
+                char2: { char: "朴", pinyin: "pǔ", core: "朴实" },
+                guessGuide: "纯正 + 朴实 → 人的品质是什么？",
+                meaning: "性格单纯，不浮华",
+                example: "山区村民很淳朴，待人热情。"
+            },
+            {
+                id: 10,
+                word: "磅礴",
+                pinyin: "páng bó",
+                level: "HSK6",
+                char1: { char: "磅", pinyin: "páng", core: "厚重" },
+                char2: { char: "礴", pinyin: "bó", core: "广大" },
+                guessGuide: "厚重 + 广大 → 气势是什么样的？",
+                meaning: "气势很大，很雄伟",
+                example: "《溪山行旅图》的画风很磅礴。"
+            },
+            {
+                id: 11,
+                word: "璀璨",
+                pinyin: "cuǐ càn",
+                level: "HSK6",
+                char1: { char: "璀", pinyin: "cuǐ", core: "光亮" },
+                char2: { char: "璨", pinyin: "càn", core: "耀眼" },
+                guessGuide: "光亮 + 耀眼 → 光彩是什么样的？",
+                meaning: "光彩耀眼，很漂亮",
+                example: "中秋的月亮很璀璨。"
+            },
+            {
+                id: 12,
+                word: "巍峨",
+                pinyin: "wēi é",
+                level: "HSK5",
+                char1: { char: "巍", pinyin: "wēi", core: "高大" },
+                char2: { char: "峨", pinyin: "é", core: "高耸" },
+                guessGuide: "高大 + 高耸 → 建筑或山峰是什么样的？",
+                meaning: "高大雄伟，很高耸",
+                example: "八达岭长城很巍峨。"
+            },
+            {
+                id: 13,
+                word: "浩瀚",
+                pinyin: "hào hàn",
+                level: "HSK6",
+                char1: { char: "浩", pinyin: "hào", core: "广阔" },
+                char2: { char: "瀚", pinyin: "hàn", core: "宽大" },
+                guessGuide: "广阔 + 宽大 → 空间是什么样的？",
+                meaning: "非常广阔，无边际",
+                example: "大海浩瀚无边。"
+            },
+            {
+                id: 14,
+                word: "苍茫",
+                pinyin: "cāng máng",
+                level: "HSK5",
+                char1: { char: "苍", pinyin: "cāng", core: "青色" },
+                char2: { char: "茫", pinyin: "máng", core: "辽阔" },
+                guessGuide: "青色 + 辽阔 → 景象是什么样的？",
+                meaning: "辽阔遥远，有点朦胧",
+                example: "苍茫的草原上有很多牛羊。"
+            },
+            {
+                id: 15,
+                word: "驰骋",
+                pinyin: "chí chěng",
+                level: "HSK6",
+                char1: { char: "驰", pinyin: "chí", core: "快跑" },
+                char2: { char: "骋", pinyin: "chěng", core: "奔驰" },
+                guessGuide: "快跑 + 奔驰 → 行动是什么样的？",
+                meaning: "自由奔跑，尽情发挥",
+                example: "他在学术领域驰骋多年。"
+            },
+            {
+                id: 16,
+                word: "徜徉",
+                pinyin: "cháng yáng",
+                level: "超纲",
+                char1: { char: "徜", pinyin: "cháng", core: "漫步" },
+                char2: { char: "徉", pinyin: "yáng", core: "闲逛" },
+                guessGuide: "漫步 + 闲逛 → 状态是什么样的？",
+                meaning: "慢慢走，很悠闲",
+                example: "游客在植物园里徜徉。"
+            },
+            {
+                id: 17,
+                word: "羁绊",
+                pinyin: "jī bàn",
+                level: "HSK6",
+                char1: { char: "羁", pinyin: "jī", core: "束缚" },
+                char2: { char: "绊", pinyin: "bàn", core: "阻碍" },
+                guessGuide: "束缚 + 阻碍 → 对行动的影响是什么？",
+                meaning: "被束缚，受阻碍",
+                example: "不要让失败成为前进的羁绊。"
+            },
+            {
+                id: 18,
+                word: "拮据",
+                pinyin: "jié jū",
+                level: "HSK5",
+                char1: { char: "拮", pinyin: "jié", core: "缺少" },
+                char2: { char: "据", pinyin: "jū", core: "不足" },
+                guessGuide: "缺少 + 不足 → 经济状况是什么样的？",
+                meaning: "没钱，手头紧",
+                example: "他刚工作时生活很拮据。"
+            },
+            {
+                id: 19,
+                word: "铿锵",
+                pinyin: "kēng qiāng",
+                level: "HSK6",
+                char1: { char: "铿", pinyin: "kēng", core: "响亮" },
+                char2: { char: "锵", pinyin: "qiāng", core: "有力" },
+                guessGuide: "响亮 + 有力 → 声音是什么样的？",
+                meaning: "声音响亮，有力量",
+                example: "他的演讲铿锵有力。"
+            },
+            {
+                id: 20,
+                word: "玲珑",
+                pinyin: "líng lóng",
+                level: "HSK5",
+                char1: { char: "玲", pinyin: "líng", core: "精巧" },
+                char2: { char: "珑", pinyin: "lóng", core: "细致" },
+                guessGuide: "精巧 + 细致 → 事物是什么样的？",
+                meaning: "小巧精致，很灵活",
+                example: "杨柳青年画里的娃娃很玲珑。"
+            },
+            // 二、偏正式合成词
+            {
+                id: 21,
+                word: "厚爱",
+                pinyin: "hòu ài",
+                level: "HSK4",
+                char1: { char: "厚", pinyin: "hòu", core: "深厚" },
+                char2: { char: "爱", pinyin: "ài", core: "关爱" },
+                guessGuide: "深厚 + 关爱 → 别人的态度是什么？",
+                meaning: "非常关爱，很重视",
+                example: "老师对学生很厚爱。"
+            },
+            {
+                id: 22,
+                word: "挚友",
+                pinyin: "zhì yǒu",
+                level: "HSK5",
+                char1: { char: "挚", pinyin: "zhì", core: "真挚" },
+                char2: { char: "友", pinyin: "yǒu", core: "朋友" },
+                guessGuide: "真挚 + 朋友 → 朋友是什么样的？",
+                meaning: "真心朋友，很知心",
+                example: "他们是多年的挚友。"
+            },
+            {
+                id: 23,
+                word: "良机",
+                pinyin: "liáng jī",
+                level: "HSK4",
+                char1: { char: "良", pinyin: "liáng", core: "好" },
+                char2: { char: "机", pinyin: "jī", core: "机会" },
+                guessGuide: "好 + 机会 → 时机是什么样的？",
+                meaning: "很好的机会，很难得",
+                example: "这是学习汉语的良机。"
+            },
+            {
+                id: 24,
+                word: "重任",
+                pinyin: "zhòng rèn",
+                level: "HSK4",
+                char1: { char: "重", pinyin: "zhòng", core: "重要" },
+                char2: { char: "任", pinyin: "rèn", core: "任务" },
+                guessGuide: "重要 + 任务 → 承担的事情是什么？",
+                meaning: "重要的任务，责任大",
+                example: "他接受了一项重任。"
+            },
+            {
+                id: 25,
+                word: "远见",
+                pinyin: "yuǎn jiàn",
+                level: "HSK5",
+                char1: { char: "远", pinyin: "yuǎn", core: "长远" },
+                char2: { char: "见", pinyin: "jiàn", core: "见识" },
+                guessGuide: "长远 + 见识 → 对未来的判断是什么样的？",
+                meaning: "看得远，有眼光",
+                example: "他很有远见，很早就学中文。"
+            },
+            {
+                id: 26,
+                word: "契合",
+                pinyin: "qì hé",
+                level: "HSK5",
+                char1: { char: "契", pinyin: "qì", core: "投合" },
+                char2: { char: "合", pinyin: "hé", core: "符合" },
+                guessGuide: "投合 + 符合 → 两者匹配度是什么样的？",
+                meaning: "非常符合，很契合",
+                example: "他的想法和教学目标很契合。"
+            },
+            {
+                id: 27,
+                word: "笃信",
+                pinyin: "dǔ xìn",
+                level: "HSK6",
+                char1: { char: "笃", pinyin: "dǔ", core: "坚定" },
+                char2: { char: "信", pinyin: "xìn", core: "相信" },
+                guessGuide: "坚定 + 相信 → 相信的程度是什么样的？",
+                meaning: "深信不疑，很坚定",
+                example: "他笃信努力就会有收获。"
+            },
+            {
+                id: 28,
+                word: "广袤",
+                pinyin: "guǎng mào",
+                level: "HSK6",
+                char1: { char: "广", pinyin: "guǎng", core: "宽阔" },
+                char2: { char: "袤", pinyin: "mào", core: "广阔" },
+                guessGuide: "宽阔 + 广阔 → 空间是什么样的？",
+                meaning: "广阔辽阔，多指土地",
+                example: "广袤的田野上，农民在劳作。"
+            },
+            {
+                id: 29,
+                word: "匮乏",
+                pinyin: "kuì fá",
+                level: "HSK5",
+                char1: { char: "匮", pinyin: "kuì", core: "缺乏" },
+                char2: { char: "乏", pinyin: "fá", core: "缺少" },
+                guessGuide: "缺乏 + 缺少 → 资源是什么样的？",
+                meaning: "缺乏不足，多指物资",
+                example: "那个地区水资源匮乏。"
+            },
+            {
+                id: 30,
+                word: "炽烈",
+                pinyin: "chì liè",
+                level: "HSK5",
+                char1: { char: "炽", pinyin: "chì", core: "火热" },
+                char2: { char: "烈", pinyin: "liè", core: "强烈" },
+                guessGuide: "火热 + 强烈 → 情感或温度是什么样的？",
+                meaning: "热烈强烈，很滚烫",
+                example: "他对汉语学习的热情很炽烈。"
+            },
+            // 三、动宾式/主谓式合成词
+            {
+                id: 31,
+                word: "关怀",
+                pinyin: "guān huái",
+                level: "HSK4",
+                char1: { char: "关", pinyin: "guān", core: "关心" },
+                char2: { char: "怀", pinyin: "huái", core: "心怀" },
+                guessGuide: "关心 + 心怀 → 对别人的态度是什么？",
+                meaning: "关心爱护，很重视",
+                example: "老师很关怀学生的生活。"
+            },
+            {
+                id: 32,
+                word: "担忧",
+                pinyin: "dān yōu",
+                level: "HSK4",
+                char1: { char: "担", pinyin: "dān", core: "承担" },
+                char2: { char: "忧", pinyin: "yōu", core: "忧虑" },
+                guessGuide: "承担 + 忧虑 → 对事情的态度是什么？",
+                meaning: "放心不下，很担心",
+                example: "妈妈很担忧孩子的安全。"
+            },
+            {
+                id: 33,
+                word: "尊重",
+                pinyin: "zūn zhòng",
+                level: "HSK4",
+                char1: { char: "尊", pinyin: "zūn", core: "尊敬" },
+                char2: { char: "重", pinyin: "zhòng", core: "重视" },
+                guessGuide: "尊敬 + 重视 → 对别人的态度是什么？",
+                meaning: "尊敬别人，很重视",
+                example: "我们要尊重不同的文化。"
+            },
+            {
+                id: 34,
+                word: "负责",
+                pinyin: "fù zé",
+                level: "HSK4",
+                char1: { char: "负", pinyin: "fù", core: "承担" },
+                char2: { char: "责", pinyin: "zé", core: "责任" },
+                guessGuide: "承担 + 责任 → 对待工作的态度是什么？",
+                meaning: "承担责任，很认真",
+                example: "他负责组织班级活动。"
+            },
+            {
+                id: 35,
+                word: "珍惜",
+                pinyin: "zhēn xī",
+                level: "HSK5",
+                char1: { char: "珍", pinyin: "zhēn", core: "珍贵" },
+                char2: { char: "惜", pinyin: "xī", core: "爱惜" },
+                guessGuide: "珍贵 + 爱惜 → 对待事物的态度是什么？",
+                meaning: "重视爱惜，不浪费",
+                example: "我们要珍惜学习的机会。"
+            },
+            {
+                id: 36,
+                word: "体谅",
+                pinyin: "tǐ liàng",
+                level: "HSK4",
+                char1: { char: "体", pinyin: "tǐ", core: "体会" },
+                char2: { char: "谅", pinyin: "liàng", core: "原谅" },
+                guessGuide: "体会 + 原谅 → 对待别人的态度是什么？",
+                meaning: "体会别人的难处，原谅别人",
+                example: "朋友之间要互相体谅。"
+            },
+            {
+                id: 37,
+                word: "恪守",
+                pinyin: "kè shǒu",
+                level: "HSK6",
+                char1: { char: "恪", pinyin: "kè", core: "严格" },
+                char2: { char: "守", pinyin: "shǒu", core: "遵守" },
+                guessGuide: "严格 + 遵守 → 对待规则的态度是什么？",
+                meaning: "严格遵守，不违反",
+                example: "他恪守承诺，按时完成任务。"
+            },
+            {
+                id: 38,
+                word: "缅怀",
+                pinyin: "miǎn huái",
+                level: "HSK5",
+                char1: { char: "缅", pinyin: "miǎn", core: "回想" },
+                char2: { char: "怀", pinyin: "huái", core: "心怀" },
+                guessGuide: "回想 + 心怀 → 对过去的态度是什么？",
+                meaning: "怀念过去的人或事",
+                example: "我们缅怀为国家做事的人。"
+            },
+            {
+                id: 39,
+                word: "漠视",
+                pinyin: "mò shì",
+                level: "HSK5",
+                char1: { char: "漠", pinyin: "mò", core: "冷淡" },
+                char2: { char: "视", pinyin: "shì", core: "看待" },
+                guessGuide: "冷淡 + 看待 → 对待事物的态度是什么？",
+                meaning: "冷淡对待，不重视",
+                example: "不要漠视别人的困难。"
+            },
+            {
+                id: 40,
+                word: "瞻仰",
+                pinyin: "zhān yǎng",
+                level: "HSK5",
+                char1: { char: "瞻", pinyin: "zhān", core: "观看" },
+                char2: { char: "仰", pinyin: "yǎng", core: "敬仰" },
+                guessGuide: "观看 + 敬仰 → 对待伟人或事物的态度是什么？",
+                meaning: "恭敬地看，很敬仰",
+                example: "游客瞻仰长城，感受历史。"
+            },
+            {
+                id: 41,
+                word: "追溯",
+                pinyin: "zhuī sù",
+                level: "HSK6",
+                char1: { char: "追", pinyin: "zhuī", core: "追寻" },
+                char2: { char: "溯", pinyin: "sù", core: "逆流" },
+                guessGuide: "追寻 + 逆流 → 对根源的探索是什么样的？",
+                meaning: "追寻根源，找历史",
+                example: "我们通过文物追溯古代文化。"
+            },
+            {
+                id: 42,
+                word: "遏制",
+                pinyin: "è zhì",
+                level: "HSK6",
+                char1: { char: "遏", pinyin: "è", core: "阻止" },
+                char2: { char: "制", pinyin: "zhì", core: "控制" },
+                guessGuide: "阻止 + 控制 → 对行为的限制是什么样的？",
+                meaning: "阻止控制，不让发展",
+                example: "要遏制不良行为。"
+            },
+            {
+                id: 43,
+                word: "颠覆",
+                pinyin: "diān fù",
+                level: "HSK6",
+                char1: { char: "颠", pinyin: "diān", core: "颠倒" },
+                char2: { char: "覆", pinyin: "fù", core: "翻转" },
+                guessGuide: "颠倒 + 翻转 → 对原有状态的改变是什么样的？",
+                meaning: "推翻原来的，换新的",
+                example: "新技术颠覆了传统生活方式。"
+            },
+            {
+                id: 44,
+                word: "凸显",
+                pinyin: "tū xiǎn",
+                level: "HSK5",
+                char1: { char: "凸", pinyin: "tū", core: "突出" },
+                char2: { char: "显", pinyin: "xiǎn", core: "显现" },
+                guessGuide: "突出 + 显现 → 事物的表现是什么样的？",
+                meaning: "突出显现，很明显",
+                example: "这个问题在实践中凸显出来。"
+            },
+            {
+                id: 45,
+                word: "昭示",
+                pinyin: "zhāo shì",
+                level: "HSK6",
+                char1: { char: "昭", pinyin: "zhāo", core: "明白" },
+                char2: { char: "示", pinyin: "shì", core: "表明" },
+                guessGuide: "明白 + 表明 → 对道理的表达是什么样的？",
+                meaning: "明白地表明，让人知道",
+                example: "这件事昭示了坚持就是胜利。"
+            },
+            {
+                id: 46,
+                word: "履行",
+                pinyin: "lǚ xíng",
+                level: "HSK4",
+                char1: { char: "履", pinyin: "lǚ", core: "实行" },
+                char2: { char: "行", pinyin: "xíng", core: "执行" },
+                guessGuide: "实行 + 执行 → 对义务的执行是什么样的？",
+                meaning: "执行，履行义务或承诺",
+                example: "他认真履行职责，得到认可。"
+            },
+            {
+                id: 47,
+                word: "歧视",
+                pinyin: "qí shì",
+                level: "HSK5",
+                char1: { char: "歧", pinyin: "qí", core: "偏差" },
+                char2: { char: "视", pinyin: "shì", core: "看待" },
+                guessGuide: "偏差 + 看待 → 对他人的态度是什么？",
+                meaning: "不平等看待，歧视",
+                example: "我们要反对歧视，平等对待每个人。"
+            },
+            {
+                id: 48,
+                word: "正视",
+                pinyin: "zhèng shì",
+                level: "HSK4",
+                char1: { char: "正", pinyin: "zhèng", core: "正确" },
+                char2: { char: "视", pinyin: "shì", core: "看待" },
+                guessGuide: "正确 + 看待 → 对问题的态度是什么？",
+                meaning: "正确看待，正视",
+                example: "我们要正视自己的缺点，及时改正。"
+            },
+            {
+                id: 49,
+                word: "专注",
+                pinyin: "zhuān zhù",
+                level: "HSK4",
+                char1: { char: "专", pinyin: "zhuān", core: "专一" },
+                char2: { char: "注", pinyin: "zhù", core: "集中" },
+                guessGuide: "专一 + 集中 → 对事情的态度是什么？",
+                meaning: "集中注意力，专注",
+                example: "他专注于学习，进步很快。"
+            },
+            {
+                id: 50,
+                word: "践行",
+                pinyin: "jiàn xíng",
+                level: "HSK6",
+                char1: { char: "践", pinyin: "jiàn", core: "实行" },
+                char2: { char: "行", pinyin: "xíng", core: "行动" },
+                guessGuide: "实行 + 行动 → 对理念的落实是什么样的？",
+                meaning: "实践，实行理念或承诺",
+                example: "他践行“学以致用”的理念，积极用汉语交流。"
+            },
+            {
+                id: 51,
+                word: "敬畏",
+                pinyin: "jìng wèi",
+                level: "HSK6",
+                char1: { char: "敬", pinyin: "jìng", core: "尊敬" },
+                char2: { char: "畏", pinyin: "wèi", core: "畏惧" },
+                guessGuide: "尊敬 + 畏惧 → 对事物的态度是什么？",
+                meaning: "既尊敬又畏惧，多指对规则或自然",
+                example: "我们要敬畏自然，保护生态环境。"
+            },
+            {
+                id: 52,
+                word: "体恤",
+                pinyin: "tǐ xù",
+                level: "HSK5",
+                char1: { char: "体", pinyin: "tǐ", core: "体会" },
+                char2: { char: "恤", pinyin: "xù", core: "体恤" },
+                guessGuide: "体会 + 体恤 → 对他人的关怀是什么样的？",
+                meaning: "体会别人辛苦，予以关怀",
+                example: "老师体恤学生的学习压力，适当调整作业量。"
+            },
+            {
+                id: 53,
+                word: "淳朴",
+                pinyin: "chún pǔ",
+                level: "HSK4",
+                char1: { char: "淳", pinyin: "chún", core: "纯正" },
+                char2: { char: "朴", pinyin: "pǔ", core: "朴实" },
+                guessGuide: "纯正 + 朴实 → 人的品质是什么？",
+                meaning: "性格单纯，不浮华",
+                example: "山区村民很淳朴，待人热情。"
+            },
+            {
+                id: 54,
+                word: "憨厚",
+                pinyin: "hān hòu",
+                level: "HSK4",
+                char1: { char: "憨", pinyin: "hān", core: "老实" },
+                char2: { char: "厚", pinyin: "hòu", core: "厚道" },
+                guessGuide: "老实 + 厚道 → 人的性格是什么样的？",
+                meaning: "老实厚道，很淳朴",
+                example: "那位农民憨厚淳朴，懂得大爱。"
+            },
+            {
+                id: 55,
+                word: "豪放",
+                pinyin: "háo fàng",
+                level: "HSK5",
+                char1: { char: "豪", pinyin: "háo", core: "豪爽" },
+                char2: { char: "放", pinyin: "fàng", core: "奔放" },
+                guessGuide: "豪爽 + 奔放 → 性格或风格是什么样的？",
+                meaning: "性格豪爽，风格奔放",
+                example: "李白的诗歌豪放奔放，充满激情。"
+            },
+            {
+                id: 56,
+                word: "洪亮",
+                pinyin: "hóng liàng",
+                level: "HSK4",
+                char1: { char: "洪", pinyin: "hóng", core: "响亮" },
+                char2: { char: "亮", pinyin: "liàng", core: "明亮" },
+                guessGuide: "响亮 + 明亮 → 声音是什么样的？",
+                meaning: "声音洪亮，清晰响亮",
+                example: "他的回答声音洪亮，大家都能听清。"
+            },
+            {
+                id: 57,
+                word: "华丽",
+                pinyin: "huá lì",
+                level: "HSK4",
+                char1: { char: "华", pinyin: "huá", core: "华美" },
+                char2: { char: "丽", pinyin: "lì", core: "美丽" },
+                guessGuide: "华美 + 美丽 → 事物是什么样的？",
+                meaning: "华丽精美，富丽堂皇",
+                example: "故宫的建筑华丽壮观，极具特色。"
+            },
+            {
+                id: 58,
+                word: "湍急",
+                pinyin: "tuān jí",
+                level: "HSK5",
+                char1: { char: "湍", pinyin: "tuān", core: "水流急" },
+                char2: { char: "急", pinyin: "jí", core: "快速" },
+                guessGuide: "水流急 + 快速 → 水流是什么样的？",
+                meaning: "水流湍急，速度快",
+                example: "这条河的水流湍急，过河要小心。"
+            },
+            {
+                id: 59,
+                word: "娴熟",
+                pinyin: "xián shú",
+                level: "HSK5",
+                char1: { char: "娴", pinyin: "xián", core: "熟练" },
+                char2: { char: "熟", pinyin: "shú", core: "熟悉" },
+                guessGuide: "熟练 + 熟悉 → 技能是什么样的？",
+                meaning: "技能熟练，操作娴熟",
+                example: "她操作电脑的动作娴熟，效率很高。"
+            },
+            {
+                id: 60,
+                word: "精湛",
+                pinyin: "jīng zhàn",
+                level: "HSK5",
+                char1: { char: "精", pinyin: "jīng", core: "精细" },
+                char2: { char: "湛", pinyin: "zhàn", core: "深厚" },
+                guessGuide: "精细 + 深厚 → 技艺是什么样的？",
+                meaning: "技艺精湛，水平高超",
+                example: "这位厨师的厨艺精湛，做的菜很好吃。"
+            }
+        ];
+
+        // 全局变量
+        let currentVocab = null;
+        let clickCount = 0;
+        let practiceVocabs = [];
+
+        // 随机获取一个词汇（排除指定id）
+        function getRandomVocab(excludeId = null) {
+            let filtered = excludeId ? vocabDatabase.filter(v => v.id !== excludeId) : vocabDatabase;
+            return filtered[Math.floor(Math.random() * filtered.length)];
+        }
+
+        // 生成两个不重复的练习词汇（排除当前主词汇id）
+        function generatePracticeVocabs(mainId) {
+            let vocab1 = getRandomVocab(mainId);
+            let vocab2 = getRandomVocab(mainId);
+            while (vocab2.id === vocab1.id) {
+                vocab2 = getRandomVocab(mainId);
+            }
+            return [vocab1, vocab2];
+        }
+
+        // 初始化页面（可接收指定词汇id）
+        function initPage(targetVocabId = null) {
+            // 选择当前词汇（指定id则直接使用，否则随机）
+            currentVocab = targetVocabId 
+                ? vocabDatabase.find(v => v.id === targetVocabId) 
+                : getRandomVocab();
+            
+            // 生成练习词汇
+            practiceVocabs = generatePracticeVocabs(currentVocab.id);
+            // 重置点击次数
+            clickCount = 0;
+            
+            // 更新主词汇显示
+            document.getElementById("currentVocab").textContent = currentVocab.word;
+            document.getElementById("vocabInfo").textContent = `${currentVocab.pinyin} | ${currentVocab.level}`;
+            
+            // 重置占位内容（恢复初始占位文本，保持布局不变）
+            const char1El = document.getElementById("char1");
+            const char2El = document.getElementById("char2");
+            const guessGuideEl = document.getElementById("guessGuide");
+            const finalMeaningEl = document.getElementById("finalMeaning");
+            
+            char1El.querySelector(".char-title").textContent = "点击词汇显示第1字";
+            char1El.querySelector(".char-title").className = "char-title placeholder";
+            char1El.querySelector(".char-pinyin").textContent = "拼音待显示";
+            char1El.querySelector(".char-pinyin").className = "char-pinyin placeholder";
+            char1El.querySelector(".char-core").textContent = "意思待显示";
+            char1El.querySelector(".char-core").className = "char-core placeholder";
+            
+            char2El.querySelector(".char-title").textContent = "点击词汇显示第2字";
+            char2El.querySelector(".char-title").className = "char-title placeholder";
+            char2El.querySelector(".char-pinyin").textContent = "拼音待显示";
+            char2El.querySelector(".char-pinyin").className = "char-pinyin placeholder";
+            char2El.querySelector(".char-core").textContent = "意思待显示";
+            char2El.querySelector(".char-core").className = "char-core placeholder";
+            
+            guessGuideEl.innerHTML = "<span class='placeholder'>点击词汇逐步显示猜义引导</span>";
+            finalMeaningEl.innerHTML = "<div class='placeholder'>点击词汇逐步显示词义和例句</div>";
+            
+            // 更新练习区域
+            const practiceContainer = document.getElementById("practiceVocabs");
+            practiceContainer.innerHTML = practiceVocabs.map(vocab => `
+                <div class="practice-item" data-id="${vocab.id}">
+                    <div class="practice-word">${vocab.word}</div>
+                    <div class="practice-pinyin">${vocab.pinyin} | ${vocab.level}</div>
+                </div>
+            `).join("");
+            
+            // 给练习词汇添加点击事件
+            document.querySelectorAll(".practice-item").forEach(item => {
+                item.addEventListener("click", function() {
+                    const targetId = parseInt(this.getAttribute("data-id"));
+                    initPage(targetId);
+                });
+            });
+        }
+
+        // 处理主词汇点击事件（仅更新内容，不改变布局）
+        function handleVocabClick() {
+            clickCount++;
+            const char1El = document.getElementById("char1");
+            const char2El = document.getElementById("char2");
+            const guessGuideEl = document.getElementById("guessGuide");
+            const finalMeaningEl = document.getElementById("finalMeaning");
+            
+            switch(clickCount) {
+                case 1:
+                    // 仅更新第1字内容，移除占位样式
+                    char1El.querySelector(".char-title").textContent = currentVocab.char1.char;
+                    char1El.querySelector(".char-title").className = "char-title";
+                    char1El.querySelector(".char-pinyin").textContent = currentVocab.char1.pinyin;
+                    char1El.querySelector(".char-pinyin").className = "char-pinyin";
+                    char1El.querySelector(".char-core").textContent = `意思：${currentVocab.char1.core}`;
+                    char1El.querySelector(".char-core").className = "char-core";
+                    break;
+                case 2:
+                    // 仅更新第2字内容，移除占位样式
+                    char2El.querySelector(".char-title").textContent = currentVocab.char2.char;
+                    char2El.querySelector(".char-title").className = "char-title";
+                    char2El.querySelector(".char-pinyin").textContent = currentVocab.char2.pinyin;
+                    char2El.querySelector(".char-pinyin").className = "char-pinyin";
+                    char2El.querySelector(".char-core").textContent = `意思：${currentVocab.char2.core}`;
+                    char2El.querySelector(".char-core").className = "char-core";
+                    break;
+                case 3:
+                    // 仅更新猜义引导，移除占位样式
+                    guessGuideEl.innerHTML = `猜义引导：${currentVocab.guessGuide}`;
+                    break;
+                case 4:
+                    // 仅更新词义和例句，移除占位样式
+                    finalMeaningEl.innerHTML = `词义：${currentVocab.meaning}<br><br>例句：${currentVocab.example}`;
+                    // 重置点击次数，下次点击重新开始
+                    clickCount = 0;
+                    break;
+            }
+        }
+
+        // 绑定事件
+        document.addEventListener("DOMContentLoaded", () => {
+            // 初始化页面
+            initPage();
+            // 主词汇点击事件
+            document.getElementById("currentVocab").addEventListener("click", handleVocabClick);
+            // 重置按钮事件
+            document.getElementById("resetBtn").addEventListener("click", initPage);
+        });
+    </script>
+</body>
+</html>

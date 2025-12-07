@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>短时记忆训练——句子碎片记忆</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 2.5rem;
+        }
+        .title {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        .difficulty-area {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+        .diff-btn {
+            padding: 0.8rem 2rem;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .diff-btn.active {
+            background: #38a169;
+        }
+        .diff-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+        .control-area {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .start-btn {
+            padding: 1rem 2.5rem;
+            background: #f59e0b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .start-btn:hover {
+            background: #d97706;
+        }
+        .timer-area {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            color: #e53e3e;
+            font-weight: 600;
+            display: none;
+        }
+        .sentence-area {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #2d3748;
+            text-align: center;
+        }
+        .input-area {
+            margin-bottom: 2rem;
+            display: none;
+        }
+        .input-label {
+            display: block;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: #4a5568;
+        }
+        #answerInput {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            resize: none;
+            height: 100px;
+        }
+        .submit-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 0.9rem 2rem;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .submit-btn:hover {
+            background: #3182ce;
+        }
+        .feedback-area {
+            background: #f0fdf4;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            display: none;
+        }
+        .feedback-title {
+            font-size: 1.2rem;
+            color: #2d3748;
+            margin-bottom: 1rem;
+        }
+        .correct-answer {
+            color: #38a169;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .user-answer {
+            color: #4a5568;
+        }
+        .reset-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 0.9rem 2rem;
+            background: #718096;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: none;
+        }
+        .reset-btn:hover {
+            background: #4a5568;
+        }
+        .tips {
+            text-align: center;
+            color: #718096;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">短时记忆训练——句子碎片记忆</h1>
+        
+        <div class="difficulty-area">
+            <button class="diff-btn active" data-diff="easy">简单难度（≤10字）</button>
+            <button class="diff-btn" data-diff="medium">中等难度（11-30字）</button>
+            <button class="diff-btn" data-diff="hard">高难度（≥31字）</button>
+        </div>
+        
+        <div class="control-area">
+            <button class="start-btn" id="startBtn">开始训练</button>
+        </div>
+        
+        <div class="timer-area" id="timer">倒计时：5秒</div>
+        
+        <div class="sentence-area" id="sentence">点击「开始训练」显示句子，记住核心信息（谁、在哪、做什么、有什么）</div>
+        
+        <div class="input-area" id="inputArea">
+            <label class="input-label">请填写句子核心信息（例：母亲、孩子功课、烦恼）：</label>
+            <textarea id="answerInput" placeholder="输入核心信息，用顿号或逗号分隔..."></textarea>
+            <button class="submit-btn" id="submitBtn">提交答案</button>
+        </div>
+        
+        <div class="feedback-area" id="feedback">
+            <div class="feedback-title">答案反馈</div>
+            <div class="correct-answer">正确核心信息：<span id="correctAnswer"></span></div>
+            <div class="user-answer">你的答案：<span id="userAnswer"></span></div>
+            <div id="judge"></div>
+        </div>
+        
+        <button class="reset-btn" id="resetBtn">重新训练</button>
+        
+        <p class="tips">提示：句子显示5秒后自动隐藏，请专注记住核心信息；核心信息包括人物、地点、事件、物品等关键内容</p>
+    </div>
+
+    <script>
+        // 一、句子题库（均从教材中筛选，分三个难度）
+        // 1. 简单难度（≤10字，30条）
+        const easySentences = [
+            { text: "母亲为孩子功课烦恼。", core: "母亲、孩子功课、烦恼" },
+            { text: "孩子考试得第四十名。", core: "孩子、考试、第四十名" },
+            { text: "山的最低点是起点。", core: "山的最低点、起点" },
+            { text: "人生伤痛是活珍珠。", core: "人生伤痛、活珍珠" },
+            { text: "老人除夕腿摔断了。", core: "老人、除夕、摔断腿" },
+            { text: "武汉有自行车专用道。", core: "武汉、自行车专用道" },
+            { text: "哥本哈根人爱骑车。", core: "哥本哈根人、骑车" },
+            { text: "八达岭长城在北京延庆。", core: "八达岭长城、北京延庆" },
+            { text: "弟弟通过公务员笔试。", core: "弟弟、公务员笔试、通过" },
+            { text: "带父母旅行很幸福。", core: "带父母、旅行、幸福" },
+            { text: "大灰狼打了小白兔。", core: "大灰狼、小白兔、打" },
+            { text: "登山有益身心健康。", core: "登山、有益、身心健康" },
+            { text: "中国进行六次人口普查。", core: "中国、人口普查、六次" },
+            { text: "张元俊怕传染别人。", core: "张元俊、怕传染、别人" },
+            { text: "学会赞美能交好友。", core: "赞美、交朋友" },
+            { text: "中国汉语网正式开通。", core: "中国汉语网、开通" },
+            { text: "杨柳青镇在天津。", core: "杨柳青镇、天津" },
+            { text: "霞的色彩因水汽鲜艳。", core: "霞、水汽、色彩鲜艳" },
+            { text: "林可胜是生理学鼻祖。", core: "林可胜、生理学、鼻祖" },
+            { text: "孙和平是卖肉的。", core: "孙和平、卖肉" },
+            { text: "海豚具有自我意识。", core: "海豚、自我意识" },
+            { text: "大学生人数不断增加。", core: "大学生、人数、增加" },
+            { text: "妻子为全家买牙膏。", core: "妻子、全家、买牙膏" },
+            { text: "我是北大应届毕业生。", core: "我、北京大学、应届毕业生" },
+            { text: "哭能解除压力。", core: "哭、解除压力" },
+            { text: "运动让人老得晚。", core: "运动、老得晚" },
+            { text: "“和”是传统文化标志。", core: "和、传统文化、标志" },
+            { text: "女士可称“先生”。", core: "女士、先生、称呼" },
+            { text: "塞翁失马焉知非福。", core: "塞翁失马、祸福相依" },
+            { text: "网上购物很便捷。", core: "网上购物、便捷" }
+        ];
+
+        // 2. 中等难度（11-30字，50条）
+        const mediumSentences = [
+            { text: "母亲找到我，说她正为孩子的功课烦恼。", core: "母亲、我、孩子功课、烦恼" },
+            { text: "孩子考试考了第四十名，班上只有四十个学生。", core: "孩子、考试、第四十名、四十个学生" },
+            { text: "山的最低点正是山的起点，不必烦恼。", core: "山的最低点、起点、不必烦恼" },
+            { text: "人生的伤痛就是活的珍珠，适应就能发光。", core: "人生伤痛、活珍珠、适应、发光" },
+            { text: "除夕那天，老人在家准备包饺子时摔断了腿。", core: "老人、除夕、家、包饺子、摔断腿" },
+            { text: "武汉计划建设112条自行车专用道，总长164.6公里。", core: "武汉、自行车专用道、112条、164.6公里" },
+            { text: "哥本哈根60%的市民每天骑自行车上下班。", core: "哥本哈根、60%市民、骑自行车、上下班" },
+            { text: "八达岭长城位于北京延庆县，城墙全长3741米。", core: "八达岭长城、北京延庆县、3741米" },
+            { text: "弟弟顺利通过笔试，在2000名考生中排第八。", core: "弟弟、笔试、2000名考生、第八" },
+            { text: "带父母去旅行，是孩子最大的幸福和责任。", core: "孩子、带父母、旅行、幸福、责任" },
+            { text: "第一天，大灰狼因为小白兔不戴帽子打了它。", core: "大灰狼、小白兔、不戴帽子、打" },
+            { text: "登山是有益身心健康的运动，能放松心情。", core: "登山、有益、身心健康、放松心情" },
+            { text: "中国自1953年起已进行六次全国人口普查。", core: "中国、1953年、人口普查、六次" },
+            { text: "张元俊怕传染他人，独自走回家不进村子。", core: "张元俊、怕传染、独自、回家、不进村" },
+            { text: "学会赞美别人，能让人际关系更亲密和谐。", core: "赞美别人、人际关系、亲密和谐" },
+            { text: "中国汉语网最大特点是学习互动性强。", core: "中国汉语网、最大特点、互动性强" },
+            { text: "杨柳青镇距离天津市中心16公里，以年画闻名。", core: "杨柳青镇、天津、16公里、年画" },
+            { text: "水汽含量越多，霞的色彩就越鲜艳美丽。", core: "水汽、含量、霞、色彩鲜艳" },
+            { text: "林可胜是中国神经科学和生理学的鼻祖。", core: "林可胜、中国、神经科学、生理学、鼻祖" },
+            { text: "孙和平的肉店里来了一只会买东西的狗。", core: "孙和平、肉店、狗、买东西" },
+            { text: "科学家通过实验证明海豚具有自我意识。", core: "科学家、实验、海豚、自我意识" },
+            { text: "从1978到1995年，大学生增加了83万。", core: "1978-1995年、大学生、增加83万" },
+            { text: "妻子通常为全家人买牙膏，我很少操心。", core: "妻子、全家、买牙膏、我、不操心" },
+            { text: "我是北京大学生物工程系的应届毕业生。", core: "我、北京大学、生物工程系、应届毕业生" },
+            { text: "哭是不伤害身体的有效解除压力办法。", core: "哭、不伤害身体、解除压力" },
+            { text: "适量运动能让人变老的时间晚一点儿。", core: "适量运动、变老、时间晚" },
+            { text: "“和”是中国传统文化的重要标志之一。", core: "和、中国传统文化、重要标志" },
+            { text: "在特定领域有成就的女士可以称“先生”。", core: "有成就女士、先生、称呼" },
+            { text: "塞翁失马的故事告诉我们祸福相依。", core: "塞翁失马、祸福相依" },
+            { text: "网上购物改变了人们的消费习惯和生活方式。", core: "网上购物、消费习惯、生活方式、改变" },
+            { text: "阅读能丰富知识，提高语言表达能力。", core: "阅读、丰富知识、提高语言表达能力" },
+            { text: "北京是中国的首都，历史文化底蕴深厚。", core: "北京、中国首都、历史文化、底蕴深厚" },
+            { text: "运动能增强体质，预防疾病的发生。", core: "运动、增强体质、预防疾病" },
+            { text: "中国传统节日承载着丰富的文化内涵。", core: "中国传统节日、文化内涵、承载" },
+            { text: "互联网让沟通更便捷，生活更高效。", core: "互联网、沟通、便捷、生活、高效" },
+            { text: "良好的饮食习惯是身体健康的基础。", core: "饮食习惯、良好、身体健康、基础" },
+            { text: "朋友之间真诚相待才能友谊长久。", core: "朋友、真诚相待、友谊长久" },
+            { text: "秋天是收获的季节，景色宜人。", core: "秋天、收获季节、景色宜人" },
+            { text: "学习汉语需要多听多说多读多写。", core: "学习汉语、多听、多说、多读、多写" },
+            { text: "环境保护是每个公民的责任和义务。", core: "环境保护、公民、责任、义务" },
+            { text: "冬天虽然寒冷，但有独特的美景和乐趣。", core: "冬天、寒冷、独特美景、乐趣" },
+            { text: "旅行能增长见识，放松心情。", core: "旅行、增长见识、放松心情" },
+            { text: "科技的发展推动着社会不断进步。", core: "科技、发展、社会、进步" },
+            { text: "书籍是人类进步的阶梯，知识的源泉。", core: "书籍、人类进步、阶梯、知识源泉" },
+            { text: "家庭是温暖的港湾，心灵的归宿。", core: "家庭、温暖港湾、心灵归宿" },
+            { text: "诚实是一种美德，能赢得他人尊重。", core: "诚实、美德、赢得他人尊重" },
+            { text: "音乐能表达情感，传递美好祝福。", core: "音乐、表达情感、传递祝福" },
+            { text: "坚持是成功的关键，不能半途而废。", core: "坚持、成功、关键、不半途而废" },
+            { text: "自然是美丽神奇的，需要用心爱护。", core: "自然、美丽神奇、用心爱护" },
+            { text: "汉字书写要规范、端正、整洁。", core: "汉字书写、规范、端正、整洁" }
+        ];
+
+        // 3. 高难度（≥31字，30条）
+        const hardSentences = [
+            { text: "母亲找到我，说她的孩子考试考了第四十名，而班上只有四十个学生。", core: "母亲、我、孩子、考试第四十名、四十个学生" },
+            { text: "山的最低点正是山的起点，很多人走不出来是因为蹲在山谷哭泣。", core: "山的最低点、起点、走不出来、蹲山谷、哭泣" },
+            { text: "人生的伤痛就像活珍珠，能适应就能发出美丽的光，不能则加速死亡。", core: "人生伤痛、活珍珠、适应、发光、不适应、加速死亡" },
+            { text: "除夕那天，老人在家准备和面包饺子，去厨房拿面盆时不小心摔断了腿。", core: "老人、除夕、家、和面包饺子、厨房、拿面盆、摔断腿" },
+            { text: "武汉计划投资5536万元建设112条自行车专用道，总长度达164.6公里。", core: "武汉、5536万元、112条、自行车专用道、164.6公里" },
+            { text: "哥本哈根用20多年修建了300多公里自行车专用道，市中心到火车站无红灯。", core: "哥本哈根、20多年、300多公里、自行车专用道、无红灯" },
+            { text: "八达岭长城是北京最著名的长城，开放最早，位于延庆县，城墙全长3741米。", core: "八达岭长城、北京、著名、开放最早、延庆县、3741米" },
+            { text: "弟弟决定考国家公务员，顺利通过笔试排第八，进入60人的面试环节。", core: "弟弟、国家公务员、笔试、第八、60人、面试" },
+            { text: "带父母去旅行是孩子的责任，母亲不在乎看什么，只在乎儿子的陪伴。", core: "孩子、带父母、旅行、责任、母亲、陪伴" },
+            { text: "第一天大灰狼因为小白兔不戴帽子打它，第二天戴帽子还是打了它。", core: "大灰狼、小白兔、第一天不戴帽子、第二天戴帽子、打" },
+            { text: "登山是有益身心健康的运动，能锻炼体魄，放松心情，但要注意安全。", core: "登山、有益身心健康、锻炼体魄、放松心情、注意安全" },
+            { text: "中国自1953年以来已进行六次全国人口普查，最新一次是2010年。", core: "中国、1953年、人口普查、六次、2010年、最新" },
+            { text: "张元俊在外地工作乘车回家时生病，怕传染他人，独自走回村口不进村。", core: "张元俊、外地工作、乘车回家、生病、怕传染、独自、村口" },
+            { text: "学会赞美别人能交到更多朋友，老板赞美员工能让员工更努力工作。", core: "赞美别人、交朋友、老板、员工、努力工作" },
+            { text: "中国汉语网使用最新互联网技术，提供互动教室、网络社区等学习平台。", core: "中国汉语网、最新互联网技术、互动教室、网络社区、学习平台" },
+            { text: "杨柳青镇距离天津市中心16公里，其年画历史悠久、色彩鲜艳、内容丰富。", core: "杨柳青镇、天津、16公里、年画、历史悠久、色彩鲜艳、内容丰富" },
+            { text: "霞云产生于日出日落前后，阳光穿过大气层时蓝紫光减少，红光为主。", core: "霞云、日出日落、阳光、大气层、蓝紫光减少、红光" },
+            { text: "林可胜长期在国外成长，中文不好，但成为中国生理学和神经科学鼻祖。", core: "林可胜、国外成长、中文不好、中国、生理学、神经科学、鼻祖" },
+            { text: "孙和平的肉店里来了一只狗，嘴里叼着袋子和钱，要买点香肠和羊腿。", core: "孙和平、肉店、狗、叼袋子、钱、买香肠、羊腿" },
+            { text: "科学家用涂抹颜色的方法证明海豚具有自我意识，它们会照镜子观察。", core: "科学家、涂抹颜色、实验、海豚、自我意识、照镜子" },
+            { text: "从1978年到1995年，中国大学生人数从80万增加到163万，增长显著。", core: "1978-1995年、中国大学生、80万、163万、显著增长" },
+            { text: "我旅行在外没带牙膏，去旅馆附近商店买，却被店员过度推销搞得无奈。", core: "我、旅行、没带牙膏、旅馆附近商店、店员、过度推销、无奈" },
+            { text: "我是北京大学生物工程系应届毕业生，积极参加课外实践，动手能力强。", core: "我、北京大学、生物工程系、应届毕业生、课外实践、动手能力强" },
+            { text: "哭是自然的情绪表达，能有效解除压力，对身体无害，该哭就哭。", core: "哭、自然情绪、解除压力、无害、该哭就哭" },
+            { text: "运动能让人变老的时间晚一点儿，因为运动能减少体内自由基的产生。", core: "运动、变老时间晚、减少、体内自由基" },
+            { text: "“和”是中国传统文化的标志，中秋佳节承载着团圆、和睦的美好愿望。", core: "和、中国传统文化、标志、中秋、团圆、和睦" },
+            { text: "在文学、艺术等领域有突出成就的女士，被人们尊称为“先生”。", core: "文学艺术领域、突出成就、女士、尊称、先生" },
+            { text: "塞翁失马的故事告诉我们，祸福相依，坏事可能转化为好事。", core: "塞翁失马、祸福相依、坏事、转化为好事" },
+            { text: "网上购物能节省时间和精力，商品丰富，支付安全，还能送货上门。", core: "网上购物、节省时间精力、商品丰富、支付安全、送货上门" },
+            { text: "阅读不同题材、体裁的文章，能提高辨词识句和语段语篇理解能力。", core: "阅读、不同题材体裁、文章、提高、辨词识句、语篇理解能力" }
+        ];
+
+        // 二、全局变量
+        let currentDifficulty = "easy";
+        let currentSentence = {};
+        let usedSentences = [];
+        let timer = null;
+
+        // 三、DOM元素
+        const diffBtns = document.querySelectorAll(".diff-btn");
+        const startBtn = document.getElementById("startBtn");
+        const timerEl = document.getElementById("timer");
+        const sentenceEl = document.getElementById("sentence");
+        const inputArea = document.getElementById("inputArea");
+        const answerInput = document.getElementById("answerInput");
+        const submitBtn = document.getElementById("submitBtn");
+        const feedbackEl = document.getElementById("feedback");
+        const correctAnswerEl = document.getElementById("correctAnswer");
+        const userAnswerEl = document.getElementById("userAnswer");
+        const judgeEl = document.getElementById("judge");
+        const resetBtn = document.getElementById("resetBtn");
+
+        // 四、事件绑定
+        // 难度选择
+        diffBtns.forEach(btn => {
+            btn.addEventListener("click", function() {
+                diffBtns.forEach(b => b.classList.remove("active"));
+                this.classList.add("active");
+                currentDifficulty = this.getAttribute("data-diff");
+                resetTrain(); // 切换难度重置训练
+            });
+        });
+
+        // 开始训练
+        startBtn.addEventListener("click", startTrain);
+
+        // 提交答案
+        submitBtn.addEventListener("click", checkAnswer);
+
+        // 重新训练
+        resetBtn.addEventListener("click", resetTrain);
+
+        // 五、核心函数
+        // 重置训练状态
+        function resetTrain() {
+            clearInterval(timer);
+            timerEl.style.display = "none";
+            sentenceEl.textContent = "点击「开始训练」显示句子，记住核心信息（谁、在哪、做什么、有什么）";
+            inputArea.style.display = "none";
+            feedbackEl.style.display = "none";
+            resetBtn.style.display = "none";
+            answerInput.value = "";
+            usedSentences = [];
+            startBtn.style.display = "inline-block";
+        }
+
+        // 获取当前难度的随机句子（不重复）
+        function getRandomSentence() {
+            let targetLib = easySentences;
+            if (currentDifficulty === "medium") targetLib = mediumSentences;
+            if (currentDifficulty === "hard") targetLib = hardSentences;
+
+            // 所有句子都用过了就重置
+            if (usedSentences.length >= targetLib.length) usedSentences = [];
+
+            // 筛选未使用的句子
+            const available = targetLib.filter(s => !usedSentences.includes(s.text));
+            const randomIdx = Math.floor(Math.random() * available.length);
+            const selected = available[randomIdx];
+            usedSentences.push(selected.text);
+            return selected;
+        }
+
+        // 开始训练流程
+        function startTrain() {
+            startBtn.style.display = "none";
+            // 获取随机句子
+            currentSentence = getRandomSentence();
+            // 显示句子
+            sentenceEl.textContent = currentSentence.text;
+            // 显示倒计时
+            timerEl.style.display = "block";
+            let count = 5;
+            timerEl.textContent = `倒计时：${count}秒`;
+            // 倒计时
+            timer = setInterval(() => {
+                count--;
+                timerEl.textContent = `倒计时：${count}秒`;
+                if (count <= 0) {
+                    clearInterval(timer);
+                    // 隐藏句子
+                    sentenceEl.textContent = "句子已隐藏，请填写核心信息";
+                    // 显示输入区域
+                    inputArea.style.display = "block";
+                }
+            }, 1000);
+        }
+
+        // 核对答案（模糊匹配，包含核心关键词即可）
+        function checkAnswer() {
+            const userInput = answerInput.value.trim();
+            if (!userInput) {
+                alert("请填写核心信息后提交！");
+                return;
+            }
+
+            // 核心关键词拆分
+            const coreKeywords = currentSentence.core.split(/、|，| /).filter(k => k);
+            // 统计匹配的关键词数量
+            let matchCount = 0;
+            coreKeywords.forEach(keyword => {
+                if (userInput.includes(keyword)) matchCount++;
+            });
+            // 判断是否合格（匹配≥70%关键词）
+            const isPass = matchCount / coreKeywords.length >= 0.7;
+
+            // 显示反馈
+            userAnswerEl.textContent = userInput;
+            correctAnswerEl.textContent = currentSentence.core;
+            judgeEl.textContent = isPass ? "✅ 回答合格！核心信息完整" : "❌ 回答不合格！缺少部分核心信息";
+            judgeEl.style.color = isPass ? "#38a169" : "#e53e3e";
+            feedbackEl.style.display = "block";
+            // 显示重新训练按钮
+            resetBtn.style.display = "block";
+            // 隐藏输入区域
+            inputArea.style.display = "none";
+        }
+    </script>
+</body>
+</html>
