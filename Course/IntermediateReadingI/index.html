@@ -44,10 +44,29 @@
             display: inline-block;
         }
 
+        /* 新增：微技能训练子标题样式 */
+        h2 {
+            color: #2d3748;
+            font-size: 22px;
+            margin: 50px 0 20px;
+            display: inline-block;
+            border-bottom: 2px solid #48bb78;
+            padding-bottom: 8px;
+        }
+
         /* 课程列表样式 */
         .lesson-list {
             list-style: none;
             gap: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 新增：微技能列表样式（复用基础布局，仅区分样式） */
+        .skill-list {
+            list-style: none;
+            gap: 15px; /* 微技能按钮间距略小，区分课程链接 */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -62,7 +81,7 @@
         .lesson-item a {
             display: block;
             padding: 20px;
-            background-color: #4299e1;
+            background-color: #4299e1; /* 课程链接：蓝色 */
             color: #ffffff;
             text-decoration: none;
             font-size: 20px;
@@ -71,11 +90,36 @@
             transition: all 0.3s ease;
         }
 
-        /* 鼠标悬浮效果 */
+        /* 新增：微技能项样式 */
+        .skill-item {
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .skill-item a {
+            display: block;
+            padding: 18px;
+            background-color: #48bb78; /* 微技能链接：绿色，区分蓝色课程链接 */
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 19px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        /* 鼠标悬浮效果 - 课程链接 */
         .lesson-item a:hover {
             background-color: #3182ce;
             transform: translateY(-3px);
             box-shadow: 0 5px 10px rgba(66, 153, 225, 0.3);
+        }
+
+        /* 新增：鼠标悬浮效果 - 微技能链接 */
+        .skill-item a:hover {
+            background-color: #38a169; /* 绿色加深 */
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(72, 187, 120, 0.3);
         }
 
         /* 响应式适配（手机端） */
@@ -85,9 +129,21 @@
                 margin-bottom: 30px;
             }
 
+            /* 新增：手机端微技能子标题适配 */
+            h2 {
+                font-size: 18px;
+                margin: 40px 0 15px;
+            }
+
             .lesson-item a {
                 font-size: 18px;
                 padding: 16px;
+            }
+
+            /* 新增：手机端微技能按钮适配 */
+            .skill-item a {
+                font-size: 17px;
+                padding: 15px;
             }
 
             .container {
@@ -99,6 +155,8 @@
 <body>
     <div class="container">
         <h1>中级阅读1 互动式阅读练习</h1>
+        
+        <!-- 原有课程链接列表 -->
         <ul class="lesson-list">
             <li class="lesson-item">
                 <a href="9-index.html">第九课</a>
@@ -106,8 +164,25 @@
             <li class="lesson-item">
                 <a href="10-index.html">第十课</a>
             </li>
-             <li class="lesson-item">
+            <li class="lesson-item">
                 <a href="11-index.html">第十一课</a>
+            </li>
+        </ul>
+
+        <!-- 新增：微技能训练板块 -->
+        <h2>微技能训练</h2>
+        <ul class="skill-list">
+            <li class="skill-item">
+                <a href="vocab_guessing.html">猜生词</a>
+            </li>
+            <li class="skill-item">
+                <a href="keyword_finder.html">关键词</a>
+            </li>
+            <li class="skill-item">
+                <a href="quick_seek.html">找的快</a>
+            </li>
+            <li class="skill-item">
+                <a href="STM.html">瞬时记</a>
             </li>
         </ul>
     </div>
