@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>汉字消消乐</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8e8d5, #e8d0b0);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            perspective: 1000px; /* 全局透视，增强3D效果 */
+        }
+
+        /* 游戏容器 - 梦幻花园风格 */
+        .game-container {
+            background: #fff9f0;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 30px rgba(180, 140, 100, 0.2);
+            position: relative;
+            transform: rotateX(5deg); /* 轻微3D倾斜，贴合梦幻花园视觉 */
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: #f5e6d3;
+            border-radius: 15px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .score-board {
+            font-size: 20px;
+            color: #8b5a2b;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .game-title {
+            font-size: 28px;
+            color: #8b5a2b;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* 游戏网格 - 相对定位支持拖拽和动画 */
+        .game-grid {
+            position: relative;
+            width: calc(8 * 65px + 7 * 8px);
+            height: calc(8 * 65px + 7 * 8px);
+            background: #e6d2b8;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: inset 0 5px 10px rgba(150, 120, 80, 0.1);
+        }
+
+        /* 立体方块样式 - 核心3D效果 */
+        .tile {
+            position: absolute;
+            width: 65px;
+            height: 65px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: bold;
+            cursor: grab;
+            /* 3D立体核心样式 */
+            background: linear-gradient(135deg, var(--tile-color-light), var(--tile-color));
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 6px 0 var(--tile-shadow), 
+                0 8px 10px rgba(0,0,0,0.1),
+                inset 0 -5px 10px rgba(0,0,0,0.1),
+                inset 0 5px 10px rgba(255, 255, 255, 0.2);
+            /* 线性下落动画 */
+            transition: all 0.4s linear; /* linear保证线性速度 */
+            /* 位置计算 */
+            top: calc(var(--row) * (65px + 8px));
+            left: calc(var(--col) * (65px + 8px));
+            /* 拖拽相关 */
+            user-select: none;
+            z-index: 10;
+        }
+
+        /* 拖拽状态样式 */
+        .tile:active {
+            cursor: grabbing;
+            transform: scale(1.05) rotateZ(2deg);
+            box-shadow: 
+                0 8px 0 var(--tile-shadow), 
+                0 10px 15px rgba(0,0,0,0.15),
+                inset 0 -5px 10px rgba(0,0,0,0.1),
+                inset 0 5px 10px rgba(255, 255, 255, 0.2);
+            z-index: 20;
+        }
+
+        .tile.dragging {
+            opacity: 0.8;
+            transform: scale(1.1) rotateZ(5deg);
+            box-shadow: 
+                0 10px 0 var(--tile-shadow), 
+                0 15px 20px rgba(0,0,0,0.2),
+                inset 0 -5px 10px rgba(0,0,0,0.1),
+                inset 0 5px 10px rgba(255, 255, 255, 0.2);
+            z-index: 30;
+        }
+
+        /* 不同类型汉字方块的颜色配置（立体配色） */
+        .tile-1 { 
+            --tile-color: #ff9a9e; 
+            --tile-color-light: #ffb7ba; 
+            --tile-shadow: #e88a8e;
+            color: white; 
+        }
+        .tile-2 { 
+            --tile-color: #91d4f1; 
+            --tile-color-light: #b1e0f8; 
+            --tile-shadow: #71b4d1;
+            color: white; 
+        }
+        .tile-3 { 
+            --tile-color: #97e790; 
+            --tile-color-light: #b7f0b0; 
+            --tile-shadow: #77c770;
+            color: white; 
+        }
+        .tile-4 { 
+            --tile-color: #fad0c4; 
+            --tile-color-light: #fbd9d0; 
+            --tile-shadow: #e8b0a4;
+            color: white; 
+        }
+        .tile-5 { 
+            --tile-color: #d8a7e7; 
+            --tile-color-light: #e0b7f0; 
+            --tile-shadow: #c087d7;
+            color: white; 
+        }
+        .tile-6 { 
+            --tile-color: #ffd6a5; 
+            --tile-color-light: #ffe0b5; 
+            --tile-shadow: #e8b685;
+            color: white; 
+        }
+        .tile-7 { 
+            --tile-color: #e7c080; 
+            --tile-color-light: #f0d090; 
+            --tile-shadow: #c7a060;
+            color: white; 
+        }
+        .tile-8 { 
+            --tile-color: #b0d8d8; 
+            --tile-color-light: #c0e0e0; 
+            --tile-shadow: #90b8b8;
+            color: white; 
+        }
+
+        /* 炸弹方块样式（更突出的立体效果） */
+        .tile-bomb-small { 
+            --tile-color: #ff6b6b; 
+            --tile-color-light: #ff8b8b; 
+            --tile-shadow: #e84b4b;
+            color: white; 
+            font-size: 28px;
+            border: 3px solid rgba(255, 255, 255, 0.4);
+        }
+        .tile-bomb-big { 
+            --tile-color: #ff3333; 
+            --tile-color-light: #ff5353; 
+            --tile-shadow: #e81313;
+            color: white; 
+            font-size: 32px;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* 消除动画 */
+        @keyframes disappear {
+            0% { transform: scale(1) rotateZ(0); opacity: 1; }
+            50% { transform: scale(1.2) rotateZ(10deg); opacity: 0.5; }
+            100% { transform: scale(0) rotateZ(20deg); opacity: 0; }
+        }
+
+        .tile.disappear {
+            animation: disappear 0.5s forwards;
+            pointer-events: none;
+        }
+
+        /* 炸弹爆炸动画 */
+        @keyframes explode {
+            0% { transform: scale(1) rotateZ(0); opacity: 1; }
+            50% { transform: scale(1.8) rotateZ(15deg); opacity: 0.8; }
+            100% { transform: scale(0) rotateZ(30deg); opacity: 0; }
+        }
+
+        .tile.explode {
+            animation: explode 0.6s forwards;
+            pointer-events: none;
+        }
+
+        /* 重置按钮（立体样式） */
+        .reset-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #9b6a3b, #8b5a2b);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 
+                0 6px 0 #7b4a1b,
+                0 8px 10px rgba(0,0,0,0.1);
+            font-weight: bold;
+        }
+
+        .reset-btn:hover {
+            background: linear-gradient(135deg, #a06c3b, #906030);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 0 #7b4a1b,
+                0 10px 15px rgba(0,0,0,0.15);
+        }
+
+        .reset-btn:active {
+            transform: translateY(1px);
+            box-shadow: 
+                0 4px 0 #7b4a1b,
+                0 6px 8px rgba(0,0,0,0.1);
+        }
+
+        /* 游戏提示 */
+        .game-tip {
+            margin-top: 15px;
+            color: #8b5a2b;
+            font-size: 16px;
+            text-align: center;
+            line-height: 1.5;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="score-board">得分: <span id="score">0</span></div>
+            <h1 class="game-title">汉字消消乐</h1>
+            <div class="moves-board">剩余步数: <span id="moves">30</span></div>
+        </div>
+        
+        <div class="game-grid" id="gameGrid"></div>
+        
+        <p class="game-tip">
+            © 2025 Chingyu Kao. All Rights Reserved.
+        </p>
+        <button class="reset-btn" onclick="resetGame()">重新开始</button>
+    </div>
+
+    <script>
+        // 游戏配置
+        const CONFIG = {
+            rows: 8,
+            cols: 8,
+            tileTypes: 8, // 汉字类型数量
+            tileSize: 65, // 方块尺寸（px）
+            tileGap: 8,   // 方块间距（px）
+            initialMoves: 30 // 初始步数
+        };
+
+        // 游戏状态
+        let gameState = {
+            grid: [],
+            score: 0,
+            moves: CONFIG.initialMoves,
+            isAnimating: false,
+            // 炸弹类型标记：0=普通，1=小炸弹，2=大炸弹
+            bombGrid: [],
+            // 拖拽状态
+            dragData: {
+                isDragging: false,
+                startRow: -1,
+                startCol: -1,
+                element: null
+            }
+        };
+
+        // 花园主题汉字列表
+        const TILE_CHARS = ['花', '草', '树', '叶', '藤', '果', '云', '露'];
+        // 炸弹标识
+        const BOMB_TYPES = {
+            NONE: 0,
+            SMALL: 1,    // 小炸弹（4连）
+            BIG: 2       // 大炸弹（5连）
+        };
+        const BOMB_CHARS = {
+            [BOMB_TYPES.SMALL]: '小炸',
+            [BOMB_TYPES.BIG]: '大炸'
+        };
+
+        // 初始化游戏
+        function initGame() {
+            gameState.score = 0;
+            gameState.moves = CONFIG.initialMoves;
+            gameState.isAnimating = false;
+            gameState.bombGrid = Array(CONFIG.rows).fill().map(() => Array(CONFIG.cols).fill(BOMB_TYPES.NONE));
+            gameState.dragData = {
+                isDragging: false,
+                startRow: -1,
+                startCol: -1,
+                element: null
+            };
+            
+            // 更新UI
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('moves').textContent = gameState.moves;
+            
+            // 创建游戏网格
+            createGrid();
+            
+            // 渲染网格
+            renderGrid();
+            
+            // 绑定拖拽事件
+            bindDragEvents();
+        }
+
+        // 创建随机网格（避免初始三连）
+        function createGrid() {
+            gameState.grid = [];
+            
+            for (let row = 0; row < CONFIG.rows; row++) {
+                gameState.grid[row] = [];
+                for (let col = 0; col < CONFIG.cols; col++) {
+                    // 随机生成方块类型
+                    let type = Math.floor(Math.random() * CONFIG.tileTypes) + 1;
+                    
+                    // 更严谨的初始三连检测，避免开局就有可消除的组合
+                    let isValid = false;
+                    while (!isValid) {
+                        isValid = true;
+                        // 检查垂直三连
+                        if (row >= 2 && gameState.grid[row-1][col] === type && gameState.grid[row-2][col] === type) {
+                            isValid = false;
+                            type = (type % CONFIG.tileTypes) + 1;
+                        }
+                        // 检查水平三连
+                        if (col >= 2 && gameState.grid[row][col-1] === type && gameState.grid[row][col-2] === type) {
+                            isValid = false;
+                            type = (type % CONFIG.tileTypes) + 1;
+                        }
+                    }
+                    
+                    gameState.grid[row][col] = type;
+                }
+            }
+        }
+
+        // 渲染网格（立体方块+线性动画）
+        function renderGrid() {
+            const gridElement = document.getElementById('gameGrid');
+            gridElement.innerHTML = '';
+            
+            for (let row = 0; row < CONFIG.rows; row++) {
+                for (let col = 0; col < CONFIG.cols; col++) {
+                    const tile = document.createElement('div');
+                    const type = gameState.grid[row][col];
+                    const bombType = gameState.bombGrid[row][col];
+                    
+                    // 设置方块基础样式
+                    tile.className = `tile ${bombType === BOMB_TYPES.NONE ? `tile-${type}` : 
+                                     bombType === BOMB_TYPES.SMALL ? 'tile-bomb-small' : 'tile-bomb-big'}`;
+                    tile.dataset.row = row;
+                    tile.dataset.col = col;
+                    tile.dataset.bomb = bombType;
+                    // CSS变量控制位置（线性动画依赖）
+                    tile.style.setProperty('--row', row);
+                    tile.style.setProperty('--col', col);
+                    
+                    // 设置显示内容（汉字/炸弹）
+                    tile.textContent = bombType === BOMB_TYPES.NONE ? 
+                                      TILE_CHARS[type-1] : BOMB_CHARS[bombType];
+                    
+                    // 添加拖拽相关属性
+                    tile.draggable = bombType === BOMB_TYPES.NONE; // 炸弹不可拖拽，只能点击触发
+                    
+                    gridElement.appendChild(tile);
+                }
+            }
+        }
+
+        // 绑定拖拽事件（核心交互逻辑）
+        function bindDragEvents() {
+            const gridElement = document.getElementById('gameGrid');
+            
+            // 开始拖拽
+            gridElement.addEventListener('dragstart', (e) => {
+                if (gameState.isAnimating || gameState.moves <= 0) {
+                    e.preventDefault();
+                    return;
+                }
+                
+                const tile = e.target.closest('.tile');
+                if (!tile) return;
+                
+                // 记录拖拽起始位置
+                gameState.dragData = {
+                    isDragging: true,
+                    startRow: parseInt(tile.dataset.row),
+                    startCol: parseInt(tile.dataset.col),
+                    element: tile
+                };
+                
+                // 添加拖拽样式
+                tile.classList.add('dragging');
+                
+                // 设置拖拽数据（兼容）
+                e.dataTransfer.setData('text/plain', `${gameState.dragData.startRow},${gameState.dragData.startCol}`);
+                e.dataTransfer.effectAllowed = 'move';
+            });
+            
+            // 拖拽过程（允许放置）
+            gridElement.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                
+                // 高亮目标位置（可选）
+                const targetTile = e.target.closest('.tile');
+                if (targetTile && gameState.dragData.isDragging) {
+                    const targetRow = parseInt(targetTile.dataset.row);
+                    const targetCol = parseInt(targetTile.dataset.col);
+                    // 只高亮相邻方块
+                    if (isAdjacent(
+                        {row: gameState.dragData.startRow, col: gameState.dragData.startCol},
+                        {row: targetRow, col: targetCol}
+                    )) {
+                        targetTile.style.transform = 'scale(1.05)';
+                        setTimeout(() => {
+                            if (targetTile) targetTile.style.transform = '';
+                        }, 100);
+                    }
+                }
+            });
+            
+            // 结束拖拽（放置）
+            gridElement.addEventListener('drop', (e) => {
+                e.preventDefault();
+                
+                if (!gameState.dragData.isDragging || gameState.isAnimating) return;
+                
+                const targetTile = e.target.closest('.tile');
+                if (!targetTile) {
+                    endDrag();
+                    return;
+                }
+                
+                // 获取目标位置
+                const targetRow = parseInt(targetTile.dataset.row);
+                const targetCol = parseInt(targetTile.dataset.col);
+                const startRow = gameState.dragData.startRow;
+                const startCol = gameState.dragData.startCol;
+                
+                // 检查是否是同一个方块
+                if (startRow === targetRow && startCol === targetCol) {
+                    endDrag();
+                    return;
+                }
+                
+                // 检查是否相邻
+                if (!isAdjacent({row: startRow, col: startCol}, {row: targetRow, col: targetCol})) {
+                    endDrag();
+                    return;
+                }
+                
+                // 交换方块
+                swapTiles({row: startRow, col: startCol}, {row: targetRow, col: targetCol});
+                
+                // 检查匹配（优化后的检测逻辑）
+                const matchResult = findAllMatchesWithBombs();
+                
+                if (matchResult.matches.length > 0) {
+                    // 有匹配，消耗步数
+                    gameState.moves--;
+                    document.getElementById('moves').textContent = gameState.moves;
+                    
+                    // 执行消除和炸弹生成
+                    animateMatchesAndBombs(matchResult);
+                } else {
+                    // 无匹配，交换回来
+                    swapTiles({row: startRow, col: startCol}, {row: targetRow, col: targetCol});
+                    renderGrid();
+                }
+                
+                // 结束拖拽
+                endDrag();
+            });
+            
+            // 取消拖拽
+            gridElement.addEventListener('dragend', () => {
+                endDrag();
+            });
+            
+            // 炸弹点击事件
+            gridElement.addEventListener('click', (e) => {
+                const tile = e.target.closest('.tile');
+                if (!tile || gameState.isAnimating) return;
+                
+                const bombType = parseInt(tile.dataset.bomb);
+                if (bombType !== BOMB_TYPES.NONE) {
+                    // 触发炸弹爆炸
+                    triggerBomb(
+                        parseInt(tile.dataset.row),
+                        parseInt(tile.dataset.col),
+                        bombType
+                    );
+                }
+            });
+        }
+
+        // 结束拖拽状态
+        function endDrag() {
+            if (gameState.dragData.element) {
+                gameState.dragData.element.classList.remove('dragging');
+            }
+            gameState.dragData = {
+                isDragging: false,
+                startRow: -1,
+                startCol: -1,
+                element: null
+            };
+        }
+
+        // 检查是否相邻
+        function isAdjacent(pos1, pos2) {
+            const rowDiff = Math.abs(pos1.row - pos2.row);
+            const colDiff = Math.abs(pos1.col - pos2.col);
+            return (rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1);
+        }
+
+        // 交换方块
+        function swapTiles(pos1, pos2) {
+            // 交换普通方块
+            const temp = gameState.grid[pos1.row][pos1.col];
+            gameState.grid[pos1.row][pos1.col] = gameState.grid[pos2.row][pos2.col];
+            gameState.grid[pos2.row][pos2.col] = temp;
+            
+            // 交换炸弹标记
+            const tempBomb = gameState.bombGrid[pos1.row][pos1.col];
+            gameState.bombGrid[pos1.row][pos1.col] = gameState.bombGrid[pos2.row][pos2.col];
+            gameState.bombGrid[pos2.row][pos2.col] = tempBomb;
+            
+            renderGrid();
+        }
+
+        // ========== 核心优化：精准的匹配检测逻辑 ==========
+        function findAllMatchesWithBombs() {
+            const matches = new Set(); // 存储所有需要消除的位置（去重）
+            const bombPositions = [];  // 存储炸弹生成位置
+            const continuousMatches = []; // 存储连续匹配段
+            
+            // 重置炸弹网格
+            gameState.bombGrid = Array(CONFIG.rows).fill().map(() => Array(CONFIG.cols).fill(BOMB_TYPES.NONE));
+            
+            // 1. 检测水平方向所有匹配（滑动窗口法，确保无遗漏）
+            for (let row = 0; row < CONFIG.rows; row++) {
+                let col = 0;
+                while (col < CONFIG.cols - 2) {
+                    const currentType = gameState.grid[row][col];
+                    if (currentType === 0) { // 跳过空方块
+                        col++;
+                        continue;
+                    }
+                    
+                    // 检查连续匹配的长度
+                    let matchLength = 1;
+                    let endCol = col;
+                    while (endCol + 1 < CONFIG.cols && gameState.grid[row][endCol + 1] === currentType) {
+                        matchLength++;
+                        endCol++;
+                    }
+                    
+                    // 记录所有匹配位置（≥3连）
+                    if (matchLength >= 3) {
+                        // 添加所有连续匹配的位置到消除列表
+                        for (let c = col; c <= endCol; c++) {
+                            matches.add(`${row},${c}`);
+                        }
+                        // 记录连续匹配段，用于生成炸弹
+                        continuousMatches.push({
+                            row,
+                            startCol: col,
+                            endCol,
+                            length: matchLength,
+                            isHorizontal: true
+                        });
+                    }
+                    
+                    col = endCol + 1; // 跳过已检测的连续段
+                }
+            }
+            
+            // 2. 检测垂直方向所有匹配（滑动窗口法）
+            for (let col = 0; col < CONFIG.cols; col++) {
+                let row = 0;
+                while (row < CONFIG.rows - 2) {
+                    const currentType = gameState.grid[row][col];
+                    if (currentType === 0) { // 跳过空方块
+                        row++;
+                        continue;
+                    }
+                    
+                    // 检查连续匹配的长度
+                    let matchLength = 1;
+                    let endRow = row;
+                    while (endRow + 1 < CONFIG.rows && gameState.grid[endRow + 1][col] === currentType) {
+                        matchLength++;
+                        endRow++;
+                    }
+                    
+                    // 记录所有匹配位置（≥3连）
+                    if (matchLength >= 3) {
+                        // 添加所有连续匹配的位置到消除列表
+                        for (let r = row; r <= endRow; r++) {
+                            matches.add(`${r},${col}`);
+                        }
+                        // 记录连续匹配段，用于生成炸弹
+                        continuousMatches.push({
+                            col,
+                            startRow: row,
+                            endRow,
+                            length: matchLength,
+                            isHorizontal: false
+                        });
+                    }
+                    
+                    row = endRow + 1; // 跳过已检测的连续段
+                }
+            }
+            
+            // 3. 根据连续匹配长度生成炸弹
+            continuousMatches.forEach(segment => {
+                const { length, isHorizontal } = segment;
+                
+                // 4连生成小炸弹
+                if (length === 4) {
+                    let bombRow, bombCol;
+                    if (isHorizontal) {
+                        bombRow = segment.row;
+                        bombCol = segment.startCol + Math.floor(length / 2) - 1;
+                    } else {
+                        bombRow = segment.startRow + Math.floor(length / 2) - 1;
+                        bombCol = segment.col;
+                    }
+                    // 确保炸弹位置有效且未被其他炸弹占用
+                    if (bombRow >= 0 && bombRow < CONFIG.rows && bombCol >= 0 && bombCol < CONFIG.cols) {
+                        bombPositions.push({ row: bombRow, col: bombCol, type: BOMB_TYPES.SMALL });
+                        gameState.bombGrid[bombRow][bombCol] = BOMB_TYPES.SMALL;
+                    }
+                }
+                // 5连及以上生成大炸弹
+                else if (length >= 5) {
+                    let bombRow, bombCol;
+                    if (isHorizontal) {
+                        bombRow = segment.row;
+                        bombCol = segment.startCol + Math.floor(length / 2);
+                    } else {
+                        bombRow = segment.startRow + Math.floor(length / 2);
+                        bombCol = segment.col;
+                    }
+                    // 确保炸弹位置有效且未被其他炸弹占用
+                    if (bombRow >= 0 && bombRow < CONFIG.rows && bombCol >= 0 && bombCol < CONFIG.cols) {
+                        bombPositions.push({ row: bombRow, col: bombCol, type: BOMB_TYPES.BIG });
+                        gameState.bombGrid[bombRow][bombCol] = BOMB_TYPES.BIG;
+                    }
+                }
+            });
+            
+            // 转换为数组格式返回
+            const matchesArray = Array.from(matches).map(pos => {
+                const [row, col] = pos.split(',').map(Number);
+                return { row, col };
+            });
+            
+            return {
+                matches: matchesArray,
+                bombs: bombPositions
+            };
+        }
+
+        // 执行消除动画和炸弹生成
+        function animateMatchesAndBombs(matchResult) {
+            gameState.isAnimating = true;
+            const { matches, bombs } = matchResult;
+            
+            // 添加消除动画
+            matches.forEach(match => {
+                const tile = document.querySelector(`.tile[data-row="${match.row}"][data-col="${match.col}"]`);
+                if (tile) tile.classList.add('disappear');
+            });
+            
+            // 计算得分
+            gameState.score += matches.length * 10;
+            gameState.score += bombs.length * 50;
+            document.getElementById('score').textContent = gameState.score;
+            
+            // 动画结束后更新网格
+            setTimeout(() => {
+                // 移除匹配方块（炸弹位置保留）
+                matches.forEach(match => {
+                    // 炸弹位置不置空，避免炸弹被消除
+                    if (gameState.bombGrid[match.row][match.col] === BOMB_TYPES.NONE) {
+                        gameState.grid[match.row][match.col] = 0;
+                    }
+                });
+                
+                // 线性下落填充
+                fillEmptySpacesWithLinearAnimation();
+                
+                // 检查连锁消除
+                setTimeout(() => {
+                    const newMatchResult = findAllMatchesWithBombs();
+                    if (newMatchResult.matches.length > 0) {
+                        animateMatchesAndBombs(newMatchResult);
+                    } else {
+                        gameState.isAnimating = false;
+                        
+                        // 游戏结束判断
+                        if (gameState.moves <= 0) {
+                            setTimeout(() => {
+                                alert(`游戏结束！你的得分是: ${gameState.score}`);
+                            }, 500);
+                        }
+                    }
+                }, 500);
+                
+            }, 500);
+        }
+
+        // 触发炸弹爆炸
+        function triggerBomb(row, col, bombType) {
+            if (gameState.isAnimating) return;
+            
+            gameState.isAnimating = true;
+            let explodeRange = 1; // 3×3范围（半径1）
+            let explodeScore = 100;
+            
+            if (bombType === BOMB_TYPES.BIG) {
+                explodeRange = 2; // 5×5范围（半径2）
+                explodeScore = 200;
+            }
+            
+            // 计算爆炸范围
+            const explodePositions = [];
+            const startRow = Math.max(0, row - explodeRange);
+            const endRow = Math.min(CONFIG.rows - 1, row + explodeRange);
+            const startCol = Math.max(0, col - explodeRange);
+            const endCol = Math.min(CONFIG.cols - 1, col + explodeRange);
+            
+            // 标记爆炸范围
+            for (let r = startRow; r <= endRow; r++) {
+                for (let c = startCol; c <= endCol; c++) {
+                    explodePositions.push({ row: r, col: c });
+                    gameState.grid[r][c] = 0;
+                    gameState.bombGrid[r][c] = BOMB_TYPES.NONE;
+                }
+            }
+            
+            // 爆炸动画
+            explodePositions.forEach(pos => {
+                const tile = document.querySelector(`.tile[data-row="${pos.row}"][data-col="${pos.col}"]`);
+                if (tile) tile.classList.add('explode');
+            });
+            
+            // 加分
+            gameState.score += explodeScore;
+            document.getElementById('score').textContent = gameState.score;
+            
+            // 动画结束后填充
+            setTimeout(() => {
+                fillEmptySpacesWithLinearAnimation();
+                gameState.isAnimating = false;
+                
+                // 检查连锁消除
+                setTimeout(() => {
+                    const newMatchResult = findAllMatchesWithBombs();
+                    if (newMatchResult.matches.length > 0) {
+                        animateMatchesAndBombs(newMatchResult);
+                    }
+                }, 500);
+                
+            }, 600);
+        }
+
+        // 线性下落动画填充（核心优化）
+        function fillEmptySpacesWithLinearAnimation() {
+            // 处理每一列
+            for (let col = 0; col < CONFIG.cols; col++) {
+                // 收集非空方块（包括炸弹）
+                const column = [];
+                const bombColumn = [];
+                
+                for (let row = 0; row < CONFIG.rows; row++) {
+                    if (gameState.grid[row][col] !== 0) {
+                        column.push(gameState.grid[row][col]);
+                        bombColumn.push(gameState.bombGrid[row][col]);
+                    }
+                }
+                
+                // 顶部填充新方块
+                while (column.length < CONFIG.rows) {
+                    column.unshift(Math.floor(Math.random() * CONFIG.tileTypes) + 1);
+                    bombColumn.unshift(BOMB_TYPES.NONE);
+                }
+                
+                // 更新列数据
+                for (let row = 0; row < CONFIG.rows; row++) {
+                    gameState.grid[row][col] = column[row];
+                    gameState.bombGrid[row][col] = bombColumn[row];
+                }
+            }
+            
+            // 重新渲染触发线性动画
+            renderGrid();
+        }
+
+        // 重置游戏
+        function resetGame() {
+            initGame();
+        }
+
+        // 页面加载初始化
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>
