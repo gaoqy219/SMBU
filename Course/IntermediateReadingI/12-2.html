@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>英语借走的“中国词”</title>
+    <style>
+        /* 基础样式保持一致 */
+        body { 
+            font-family: "Microsoft YaHei", sans-serif; 
+            line-height: 1.8; 
+            margin: 20px; 
+            position: relative; 
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .lesson, .exercise, .translation, .source { 
+            margin: 30px 0; 
+            padding: 20px; 
+            border: 1px solid #eee; 
+            border-radius: 8px; 
+        }
+        h1, h2, h3 { color: #212121; }
+        .article-title {
+            color: #1976d2;
+            text-align: center;
+            margin: 30px 0;
+            font-size: 2em;
+        }
+        .pre-reading {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 20px;
+            padding-left: 10px;
+            border-left: 3px solid #eee;
+        }
+
+        /* 生词样式 */
+        .new-word { 
+            color: #d32f2f; 
+            font-weight: bold;
+            cursor: pointer; 
+            text-decoration: underline dotted; 
+            position: relative;
+        }
+        .pinyin { color: #1976d2; margin: 0 5px; }
+        .note-ref {
+            color: #9c27b0;
+            font-size: 0.8em;
+            cursor: pointer;
+            vertical-align: super;
+        }
+        .notes {
+            font-size: 0.9em;
+            color: #666;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            display: none;
+        }
+
+        /* 弹窗样式 */
+        .word-tooltip {
+            position: absolute;
+            z-index: 999;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            min-width: 200px;
+            max-width: 300px;
+            display: none;
+            font-size: 0.9em;
+        }
+        .word-tooltip .tooltip-title {
+            font-size: 0.9em;
+            color: #d32f2f;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .word-tooltip .tooltip-content {
+            color: #388e3c;
+            line-height: 1.6;
+        }
+
+        /* 翻译部分样式 */
+        .translation .new-word {
+            color: #1976d2;
+            text-decoration: underline dotted #1976d2;
+        }
+        .translation .word-tooltip {
+            border-color: #1976d2;
+        }
+        .translation .word-tooltip .tooltip-title {
+            color: #1976d2;
+        }
+        .translation .word-tooltip .tooltip-content {
+            color: #1976d2;
+        }
+
+        /* 练习题样式 */
+        .question { 
+            margin: 25px 0; 
+            padding: 15px; 
+            background: #f9f9f9; 
+            border-radius: 6px;
+        }
+        .option { 
+            margin: 8px 0; 
+            cursor: pointer; 
+        }
+        .option input { 
+            margin-right: 8px; 
+            cursor: pointer; 
+        }
+        .submit-btn {
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background: #1565c0;
+        }
+        .answer-feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+        .correct { color: #2e7d32; background: #e8f5e9; }
+        .incorrect { color: #c62828; background: #ffebee; }
+        .feedback-item { margin: 8px 0; }
+
+        footer {
+            margin-top: 50px; 
+            text-align: center; 
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="article-title">文章二 英语借走的“中国词”</h1>
+    <div class="pre-reading">【通读 约590字】</div>
+
+    <!-- 课文部分（含可点击生词） -->
+    <div class="lesson">
+        <p>英语，代表西方的文化，是世界性的大语种，它成了现代与文明的标志。</p>
+        <p>有人说，只要有两点，就是“现代<span class="new-word" data-explain="文（文字）+ 盲（看不见）→ 不认识字的人，这里指不懂现代技能的人">文盲</span><span class="pinyin">（wénmáng）</span>”：一，不懂英语；二，不会电脑。<span class="note-ref" onclick="toggleNote('note1')">①</span></p>
+        <p>现代中国，为了“和世界<span class="new-word" data-explain="接（连接）+ 轨（轨道）→ 连接到同一轨道，比喻跟上世界的规则">接轨</span><span class="pinyin">（jiēguǐ）</span>”，人们学习英语、法语、俄语、德语、日语、意大利语、西班牙语和阿拉伯语等语言，因为语言是走向世界、走向文明的<span class="new-word" data-explain="桥（桥梁）+ 梁（架子）→ 连接两岸的建筑，比喻连接不同事物的东西">桥梁</span><span class="pinyin">（qiáoliáng）</span>。<span class="note-ref" onclick="toggleNote('note2')">②</span></p>
+        <p>今天，中国的国家<span class="new-word" data-explain="实（实际）+ 力（力量）→ 实际拥有的力量">实力</span><span class="pinyin">（shílì）</span>一天天增强，汉语也逐渐变成了热门语言。仔细一看，才发现，许多英语词汇其实就是从汉语来的。欧洲人做过仔细的<span class="new-word" data-explain="统（统一）+ 计（计算）→ 统一收集数据并计算">统计</span><span class="pinyin">（tǒngjì）</span>，1994年以来，加入国际英语行列的词汇中，中式英语有5%到20%，超过所有的其他语言。</p>
+        <p>一些有中国味道、代表中华文明、并影响全球当代生活的“白皮黄心的鸡蛋词”，早就<span class="new-word" data-explain="默（不出声）+ 默（重复）→ 不出声地，悄悄地">默默</span><span class="pinyin">（mòmò）</span>影响全世界了。你看，“孔夫子（Confucius）”、“功夫（kung fu）”、“麻将（mahjong）”或者“豆腐（tofu）”之类，都是汉语里才有的名词，再挑几个真正有中国味道、代表中华文明，并影响全球当代生活的“鸡蛋词”：<span class="note-ref" onclick="toggleNote('note3')">③</span></p>
+        <p>silk——“<span class="new-word" data-explain="丝（蚕丝）+ 绸（绸缎）→ 用蚕丝做的光滑布料">丝绸</span><span class="pinyin">（sīchóu）</span>”的发音，显然是汉语的<span class="new-word" data-explain="音（声音）+ 译（翻译）→ 按照发音翻译成另一种语言">音译</span><span class="pinyin">（yīnyì）</span>。</p>
+        <p>tea——“茶”这个词，是英国人从<span class="new-word" data-explain="闽（福建）+ 南（南方）→ 福建南部的地区">闽南</span><span class="pinyin">（Mǐnnán）</span>话里拿走的。<span class="note-ref" onclick="toggleNote('note4')">④</span></p>
+        <p>feng shui——风水，还是音译。近年来，风水在美国很流行。</p>
+        <p>tycoon——<span class="new-word" data-explain="大（很大）+ 款（钱财）→ 很有钱的人">大款</span><span class="pinyin">（dàkuǎn）</span>，是指有钱的商人或者<span class="new-word" data-explain="企（企图）+ 业（事业）→ 从事生产或服务的组织">企业</span><span class="pinyin">（qǐyè）</span>家，中国传统的叫法是“大掌柜（zhǎngguì）”。被英语拿走，也是<span class="new-word" data-explain="闽（福建）+ 粤（广东）→ 福建和广东地区">闽粤</span><span class="pinyin">（Mǐnyuè）</span>之地的音译。<span class="note-ref" onclick="toggleNote('note5')">⑤</span></p>
+        <p>此外，“关系”、“太空人”等这些词语也是汉语对英语词汇的丰富。</p>
+        <p>看来，<span class="new-word" data-explain="全（全部）+ 球（地球）+ 化（变化）→ 全世界联系越来越紧密的过程">全球化</span><span class="pinyin">（quánqiúhuà）</span>并不只是经济<span class="new-word" data-explain="一（一个）+ 体（整体）+ 化（变化）→ 变成一个整体的过程">一体化</span><span class="pinyin">（yītǐhuà）</span>，也是人类社会的全面一体化，当然也包括了语言。</p>
+
+        <!-- 页脚注释（点击编号显示/隐藏） -->
+        <div id="note1" class="notes">① 文盲（wénmáng）：illiterate person（不认识字的人，此处指不懂现代基本技能的人）</div>
+        <div id="note2" class="notes">② 接轨（jiēguǐ）：get onto the track, catch up with（此处指按照世界通行惯例行事）</div>
+        <div id="note3" class="notes">③ 默默（mòmò）：silent（不出声地，悄悄地）</div>
+        <div id="note4" class="notes">④ 闽南（Mǐnnán）：福建南部地区，当地有独特的方言</div>
+        <div id="note5" class="notes">⑤ 粤（Yuè）：广东省的简称，闽粤地区指福建和广东一带</div>
+
+        <!-- 课文生词弹窗（独立） -->
+        <div class="word-tooltip">
+            <div class="tooltip-title">拆字解释</div>
+            <div class="tooltip-content"></div>
+        </div>
+    </div>
+
+    <!-- 练习题部分（互动式） -->
+    <div class="exercise">
+        <h2>二、练习题</h2>
+        <form id="exercise-form">
+            <h3>（一）根据文章内容判断正误（正确的画"√"，错误的画"×"）</h3>
+            <div class="question">
+                <p>1. 不懂英语或者不会电脑，都是“现代文盲”。</p>
+                <div class="option"><input type="radio" name="q1" value="√" id="q1-√"> <label for="q1-√">√ 正确</label></div>
+                <div class="option"><input type="radio" name="q1" value="×" id="q1-×"> <label for="q1-×">× 错误</label></div>
+            </div>
+
+            <div class="question">
+                <p>2. 汉语变成热门语言与中国国力的增强有关。</p>
+                <div class="option"><input type="radio" name="q2" value="√" id="q2-√"> <label for="q2-√">√ 正确</label></div>
+                <div class="option"><input type="radio" name="q2" value="×" id="q2-×"> <label for="q2-×">× 错误</label></div>
+            </div>
+
+            <div class="question">
+                <p>3. 许多英语词汇来源于汉语。</p>
+                <div class="option"><input type="radio" name="q3" value="√" id="q3-√"> <label for="q3-√">√ 正确</label></div>
+                <div class="option"><input type="radio" name="q3" value="×" id="q3-×"> <label for="q3-×">× 错误</label></div>
+            </div>
+
+            <div class="question">
+                <p>4. 中式英语是中国人发明的英语。</p>
+                <div class="option"><input type="radio" name="q4" value="√" id="q4-√"> <label for="q4-√">√ 正确</label></div>
+                <div class="option"><input type="radio" name="q4" value="×" id="q4-×"> <label for="q4-×">× 错误</label></div>
+            </div>
+
+            <div class="question">
+                <p>5. “关系”、“太空人”等这些词语来源于英语。</p>
+                <div class="option"><input type="radio" name="q5" value="√" id="q5-√"> <label for="q5-√">√ 正确</label></div>
+                <div class="option"><input type="radio" name="q5" value="×" id="q5-×"> <label for="q5-×">× 错误</label></div>
+            </div>
+
+            <h3>（二）根据文章内容选择正确答案（从A、B、C、D四个选项中选择一个最佳答案）</h3>
+            <div class="question">
+                <p>1. “一些有中国味道、代表中华文明、并影响全球当代生活的‘白皮黄心的鸡蛋词’”中，“鸡蛋词”的意思是：（ ）</p>
+                <div class="option"><input type="radio" name="q6" value="A" id="q6-A"> <label for="q6-A">A. 词语的形式是英语的，内容是中国文化</label></div>
+                <div class="option"><input type="radio" name="q6" value="B" id="q6-B"> <label for="q6-B">B. 词语外面是白色的，里面是黄色的</label></div>
+                <div class="option"><input type="radio" name="q6" value="C" id="q6-C"> <label for="q6-C">C. 词语长得像鸡蛋</label></div>
+                <div class="option"><input type="radio" name="q6" value="D" id="q6-D"> <label for="q6-D">D. 白色的鸡蛋和黄色的鸡蛋</label></div>
+            </div>
+
+            <div class="question">
+                <p>2. “‘孔夫子’、‘功夫’、‘麻将’或者‘豆腐’之类，都是汉语里才有的名词”，这句话的意思是：（ ）</p>
+                <div class="option"><input type="radio" name="q7" value="A" id="q7-A"> <label for="q7-A">A. 这些词什么语言里都有</label></div>
+                <div class="option"><input type="radio" name="q7" value="B" id="q7-B"> <label for="q7-B">B. 这些词只有英语里有</label></div>
+                <div class="option"><input type="radio" name="q7" value="C" id="q7-C"> <label for="q7-C">C. 这些词只有汉语里有</label></div>
+                <div class="option"><input type="radio" name="q7" value="D" id="q7-D"> <label for="q7-D">D. 这些词什么语言里都没有</label></div>
+            </div>
+
+            <div class="question">
+                <p>3. “丝绸、茶、风水、大款”等都是有中国味道的“鸡蛋词”，意思是：（ ）</p>
+                <div class="option"><input type="radio" name="q8" value="A" id="q8-A"> <label for="q8-A">A. 这些词有中国文化特点</label></div>
+                <div class="option"><input type="radio" name="q8" value="B" id="q8-B"> <label for="q8-B">B. 这些词符合汉语语法特点</label></div>
+                <div class="option"><input type="radio" name="q8" value="C" id="q8-C"> <label for="q8-C">C. 这些词像鸡蛋一样有味道</label></div>
+                <div class="option"><input type="radio" name="q8" value="D" id="q8-D"> <label for="q8-D">D. 这些词符合英语语法特点</label></div>
+            </div>
+
+            <button type="submit" class="submit-btn">提交答案</button>
+        </form>
+        <!-- 答题反馈区域 -->
+        <div class="answer-feedback" id="feedback"></div>
+    </div>
+
+    <!-- 生词英俄翻译解释（可点击，弹窗独立） -->
+    <div class="translation">
+        <h2>三、生词英俄翻译解释</h2>
+        <ul>
+            <li><span class="new-word" data-trans="英语：illiterate person（不识字的人）；俄语：неграмотный человек（не-гра-мот-ный че-ло-vek）">文盲</span><span class="pinyin">（wénmáng）</span></li>
+            <li><span class="new-word" data-trans="英语：get onto the track（接轨）；俄语：примыкать к международным стандартам（при-мы-кать к мен-же-ду-народ-ным стан-дар-там）">接轨</span><span class="pinyin">（jiēguǐ）</span></li>
+            <li><span class="new-word" data-trans="英语：bridge（桥梁）；俄语：мост（мост）">桥梁</span><span class="pinyin">（qiáoliáng）</span></li>
+            <li><span class="new-word" data-trans="英语：strength（实力）；俄语：сила（си-ла）">实力</span><span class="pinyin">（shílì）</span></li>
+            <li><span class="new-word" data-trans="英语：statistics（统计）；俄语：статистика（ста-ти-ст-и-ка）">统计</span><span class="pinyin">（tǒngjì）</span></li>
+            <li><span class="new-word" data-trans="英语：silently（默默）；俄语：тихо（ти-хо）">默默</span><span class="pinyin">（mòmò）</span></li>
+            <li><span class="new-word" data-trans="英语：silk（丝绸）；俄语：шелк（шелк）">丝绸</span><span class="pinyin">（sīchóu）</span></li>
+            <li><span class="new-word" data-trans="英语：transliteration（音译）；俄语：транслитерирование（транс-ли-те-ри-ро-ва-ние）">音译</span><span class="pinyin">（yīnyì）</span></li>
+            <li><span class="new-word" data-trans="英语：Southern Fujian（闽南）；俄语：южная Фуцзянь（юж-ная Фу-цзянь）">闽南</span><span class="pinyin">（Mǐnnán）</span></li>
+            <li><span class="new-word" data-trans="英语：tycoon（大款）；俄语：миллионер（ми-лли-о-нер）">大款</span><span class="pinyin">（dàkuǎn）</span></li>
+            <li><span class="new-word" data-trans="英语：enterprise（企业）；俄语：предприятие（пред-при-я-тие）">企业</span><span class="pinyin">（qǐyè）</span></li>
+            <li><span class="new-word" data-trans="英语：Fujian and Guangdong（闽粤）；俄语：Фуцзянь и Гуандун（Фу-цзянь и Гу-ань-дун）">闽粤</span><span class="pinyin">（Mǐnyuè）</span></li>
+            <li><span class="new-word" data-trans="英语：globalization（全球化）；俄语：глобализация（гло-ба-ли-за-ция）">全球化</span><span class="pinyin">（quánqiúhuà）</span></li>
+            <li><span class="new-word" data-trans="英语：integration（一体化）；俄语：интеграция（ин-те-гра-ция）">一体化</span><span class="pinyin">（yītǐhuà）</span></li>
+        </ul>
+        <!-- 翻译生词弹窗（独立） -->
+        <div class="word-tooltip">
+            <div class="tooltip-title">英俄翻译</div>
+            <div class="tooltip-content"></div>
+        </div>
+    </div>
+
+    <!-- 题目原文出处标记 -->
+    <div class="source">
+        <h2>四、题目原文出处标记</h2>
+        <h3>（一）判断题出处</h3>
+        <ol>
+            <li>第1题：对应原文“有人说，只要有两点，就是‘现代文盲’：一，不懂英语；二，不会电脑”</li>
+            <li>第2题：对应原文“中国的国家实力一天天增强，汉语也逐渐变成了热门语言”</li>
+            <li>第3题：对应原文“许多英语词汇其实就是从汉语来的”</li>
+            <li>第4题：对应原文“加入国际英语行列的词汇中，中式英语有5%到20%”（中式英语是源于汉语的英语词汇，非中国人发明的英语）</li>
+            <li>第5题：对应原文“‘关系’、‘太空人’等这些词语也是汉语对英语词汇的丰富”（源于汉语，非英语）</li>
+        </ol>
+        <h3>（二）选择题出处</h3>
+        <ol>
+            <li>第1题：对应原文“有中国味道、代表中华文明、并影响全球当代生活的‘白皮黄心的鸡蛋词’”（形式是英语，内容是中国文化）</li>
+            <li>第2题：对应原文“‘孔夫子’、‘功夫’、‘麻将’或者‘豆腐’之类，都是汉语里才有的名词”</li>
+            <li>第3题：对应原文“有中国味道、代表中华文明”（有中国文化特点）</li>
+        </ol>
+    </div>
+
+    <footer>
+        <p>©</p>
+    </footer>
+
+    <script>
+        // 注释显示/隐藏功能
+        function toggleNote(noteId) {
+            const note = document.getElementById(noteId);
+            note.style.display = note.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // 1. 分别获取课文/翻译的弹窗和内容，避免冲突
+        // 课文生词相关元素
+        const lessonWords = document.querySelectorAll('.lesson .new-word');
+        const lessonTooltip = document.querySelector('.lesson .word-tooltip');
+        const lessonTooltipContent = lessonTooltip.querySelector('.tooltip-content');
+        
+        // 翻译生词相关元素
+        const translationWords = document.querySelectorAll('.translation .new-word');
+        const translationTooltip = document.querySelector('.translation .word-tooltip');
+        const translationTooltipContent = translationTooltip.querySelector('.tooltip-content');
+
+        // 2. 课文生词：鼠标悬停/点击显示简化的拆字解释
+        lessonWords.forEach(word => {
+            // 悬停显示
+            word.addEventListener('mouseenter', (e) => {
+                const explain = e.target.dataset.explain;
+                lessonTooltipContent.textContent = explain;
+                // 弹窗定位（避免超出屏幕）
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                lessonTooltip.style.left = `${leftPos}px`;
+                lessonTooltip.style.top = `${e.pageY + 10}px`;
+                lessonTooltip.style.display = 'block';
+            });
+            // 离开隐藏
+            word.addEventListener('mouseleave', () => {
+                lessonTooltip.style.display = 'none';
+            });
+            // 点击固定显示
+            word.addEventListener('click', (e) => {
+                const explain = e.target.dataset.explain;
+                lessonTooltipContent.textContent = explain;
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                lessonTooltip.style.left = `${leftPos}px`;
+                lessonTooltip.style.top = `${e.pageY + 10}px`;
+                lessonTooltip.style.display = 'block';
+            });
+        });
+
+        // 3. 翻译生词：鼠标悬停/点击显示英俄翻译
+        translationWords.forEach(word => {
+            // 悬停显示
+            word.addEventListener('mouseenter', (e) => {
+                const trans = e.target.dataset.trans;
+                translationTooltipContent.textContent = trans;
+                // 弹窗定位（避免超出屏幕）
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                translationTooltip.style.left = `${leftPos}px`;
+                translationTooltip.style.top = `${e.pageY + 10}px`;
+                translationTooltip.style.display = 'block';
+            });
+            // 离开隐藏
+            word.addEventListener('mouseleave', () => {
+                translationTooltip.style.display = 'none';
+            });
+            // 点击固定显示
+            word.addEventListener('click', (e) => {
+                const trans = e.target.dataset.trans;
+                translationTooltipContent.textContent = trans;
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                translationTooltip.style.left = `${leftPos}px`;
+                translationTooltip.style.top = `${e.pageY + 10}px`;
+                translationTooltip.style.display = 'block';
+            });
+        });
+
+        // 4. 点击空白处关闭所有弹窗
+        document.addEventListener('click', (e) => {
+            const isNewWord = e.target.classList.contains('new-word');
+            const isNoteRef = e.target.classList.contains('note-ref');
+            if (!isNewWord && !isNoteRef) {
+                lessonTooltip.style.display = 'none';
+                translationTooltip.style.display = 'none';
+            }
+        });
+
+        // 5. 练习题提交校验功能
+        const form = document.getElementById('exercise-form');
+        const feedback = document.getElementById('feedback');
+        // 正确答案库
+        const correctAnswers = {
+            q1: '√', q2: '√', q3: '√', q4: '×', q5: '×',
+            q6: 'A', q7: 'C', q8: 'A'
+        };
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault(); // 阻止表单默认提交
+            feedback.innerHTML = ''; // 清空之前的反馈
+            feedback.style.display = 'block';
+            let correctCount = 0;
+            const totalCount = Object.keys(correctAnswers).length;
+
+            // 遍历所有题目校验答案
+            for (let [qId, correctAns] of Object.entries(correctAnswers)) {
+                const selectedOption = document.querySelector(`input[name="${qId}"]:checked`);
+                const feedbackItem = document.createElement('div');
+                feedbackItem.className = 'feedback-item';
+
+                if (!selectedOption) {
+                    feedbackItem.textContent = `第${qId.replace('q', '')}题：未作答`;
+                    feedbackItem.className = 'feedback-item incorrect';
+                } else {
+                    const userAns = selectedOption.value;
+                    if (userAns === correctAns) {
+                        correctCount++;
+                        feedbackItem.textContent = `第${qId.replace('q', '')}题：回答正确 ✔`;
+                        feedbackItem.className = 'feedback-item correct';
+                    } else {
+                        feedbackItem.textContent = `第${qId.replace('q', '')}题：回答错误 ❌ 正确答案是${correctAns}`;
+                        feedbackItem.className = 'feedback-item incorrect';
+                    }
+                }
+                feedback.appendChild(feedbackItem);
+            }
+
+            // 总分统计
+            const summary = document.createElement('div');
+            summary.style.marginTop = '15px';
+            summary.style.paddingTop = '15px';
+            summary.style.borderTop = '1px solid #eee';
+            summary.textContent = `本次作答：答对${correctCount}题，答错${totalCount - correctCount}题`;
+            feedback.appendChild(summary);
+        });
+    </script>
+</body>
+</html>
