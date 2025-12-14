@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>闲话筷子</title>
+    <style>
+        /* 基础样式 */
+        body { 
+            font-family: "Microsoft YaHei", sans-serif; 
+            line-height: 1.8; 
+            margin: 20px; 
+            position: relative; /* 为tooltip定位 */
+        }
+        .lesson, .exercise, .translation, .source { 
+            margin: 30px 0; 
+            padding: 20px; 
+            border: 1px solid #eee; 
+            border-radius: 8px; 
+        }
+        h1, h2, h3 { color: #212121; }
+        .new-word { 
+            color: #d32f2f; 
+            font-weight: bold;
+            cursor: pointer; /* 提示可点击 */
+            text-decoration: underline dotted; /* 点状下划线提示 */
+            position: relative;
+        }
+        .pinyin { color: #1976d2; margin: 0 5px; }
+        
+        /* 生词解释弹窗样式 */
+        .word-tooltip {
+            position: absolute;
+            z-index: 999;
+            top: 30px;
+            left: 0;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            min-width: 200px;
+            display: none;
+            /* 避免弹窗超出页面 */
+            max-width: 300px;
+        }
+        .word-tooltip .tooltip-title {
+            font-size: 0.9em;
+            color: #d32f2f;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .word-tooltip .tooltip-content {
+            color: #388e3c;
+            font-size: 0.85em;
+            line-height: 1.6;
+        }
+        /* 练习题样式 */
+        .question { 
+            margin: 25px 0; 
+            padding: 15px; 
+            background: #f9f9f9; 
+            border-radius: 6px;
+        }
+        .option { 
+            margin: 8px 0; 
+            cursor: pointer; 
+        }
+        .option input { 
+            margin-right: 8px; 
+            cursor: pointer; 
+        }
+        .submit-btn {
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background: #1565c0;
+        }
+        .answer-feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+        .correct { color: #2e7d32; background: #e8f5e9; }
+        .incorrect { color: #c62828; background: #ffebee; }
+        .feedback-item { margin: 8px 0; }
+        /* 翻译部分生词+弹窗样式（单独区分） */
+        .translation .new-word {
+            color: #1976d2; /* 翻译部分生词改为蓝色，更易区分 */
+            text-decoration: underline dotted #1976d2;
+        }
+        .translation .word-tooltip {
+            border-color: #1976d2;
+        }
+        .translation .word-tooltip .tooltip-title {
+            color: #1976d2;
+        }
+        .translation .word-tooltip .tooltip-content {
+            color: #1976d2;
+        }
+        footer {
+            margin-top: 50px; 
+            text-align: center; 
+            color: #666;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>闲话筷子</h1>
+    <!-- 课文部分（含可点击生词，初始显示拆字解释） -->
+    <div class="lesson">
+        <h2>一、课文原文</h2>
+        <p>对于真正传统的中国人来说，一天也离不开筷子。</p>
+        <p>在中国，筷子很平常，但是，在世界各国的餐具中<span class="new-word" data-explain="独（只）+ 一（一个）+ 无（没有）+ 二（第二个）→ 只有这一个，没有第二个" data-trans="英语：unique；俄语：уникальный（у-ник-а-ль-ный）">独一无二</span><span class="pinyin">（dú yī wú èr）</span>，被西方人称为“东方的<span class="new-word" data-explain="文（文字）+ 明（光明）→ 有文字、有秩序的光明状态" data-trans="英语：civilization；俄语：цивилизация（ци-ви-ли-за-ция）">文明</span><span class="pinyin">（wén míng）</span>”。</p>
+        <p>筷子的文明，在不同时期有不同的意义。唐朝时，筷子代表人正直的<span class="new-word" data-explain="品（品行）+ 格（标准）→ 做人品行的标准" data-trans="英语：character；俄语：характер（ха-рак-тер）">品格</span><span class="pinyin">（pǐn gé）</span>，筷子还<span class="new-word" data-explain="包（包裹）+ 含（内含）→ 包裹着、内含着" data-trans="英语：embody；俄语：включать（вклю-чать）">包含</span><span class="pinyin">（bāo hán）</span>两个人坐在一起吃饭，像一家人一样<span class="new-word" data-explain="友（朋友）+ 好（和好）→ 像朋友一样和好相处" data-trans="英语：friendly；俄语：дружелюбный（дру-же-люб-ный）">友好</span><span class="pinyin">（yǒu hǎo）</span>的意思。1972年，美国总统尼克松访问中国，周恩来总理在人民大会堂用最高级的宴会招待他，使用了一种江安竹筷。周总理知道尼克松总统习惯使用刀叉，却安排了用筷子，这真的令人奇怪。其实，周总理是根据筷子的<span class="new-word" data-explain="寓（寄托）+ 意（意思）→ 寄托在事物中的意思" data-trans="英语：implication；俄语：покровительство（пок-ро-ви-тель-ство）">寓意</span><span class="pinyin">（yù yì）</span>来招待客人，希望两国发展<span class="new-word" data-explain="和（和睦）+ 平（平稳）→ 和睦平稳的状态" data-trans="英语：peace；俄语：мир（мир）">和平</span><span class="pinyin">（hé píng）</span>友好的关系。</p>
+        <p>筷子不但有特殊意义，还有特殊的作用。古代所说的“<span class="new-word" data-explain="筹（筹码）+ 算（计算）→ 用筹码来计算" data-trans="英语：calculation with chips；俄语：расчет фишками（рас-чет фиш-ка-ми）">筹算</span><span class="pinyin">（chóu suàn）</span>”，就是春秋战国时，用筷子来计算的一种方法。</p>
+        <p>筷子简单方便，用处很大，在我们日常生活中有重要作用。筷子文化<span class="new-word" data-explain="经（经过）+ 历（历程）→ 经过的历程" data-trans="英语：experience；俄语：опыт（о-пыт）">经历</span><span class="pinyin">（jīng lì）</span>了四千多年的时间，现在已经<span class="new-word" data-explain="传（传递）+ 到（到达）→ 传递并到达某地" data-trans="英语：spread to；俄语：распространиться на（рас-про-стран-ни-ться на）">传到</span><span class="pinyin">（chuán dào）</span>世界各地。</p>
+        <!-- 课文生词弹窗（独立） -->
+        <div class="word-tooltip">
+            <div class="tooltip-title">拆字解释</div>
+            <div class="tooltip-content"></div>
+        </div>
+    </div>
+    <!-- 练习题部分（互动式） -->
+    <div class="exercise">
+        <h2>二、练习题</h2>
+        <form id="exercise-form">
+            <h3>根据文章内容选择正确答案（从A、B、C、D四个选项中选择一个最佳答案）</h3>
+            <div class="question">
+                <p>1. 文章的主要内容是：（ ）</p>
+                <div class="option"><input type="radio" name="q1" value="A" id="q1-A"> <label for="q1-A">A. 筷子文化</label></div>
+                <div class="option"><input type="radio" name="q1" value="B" id="q1-B"> <label for="q1-B">B. 中国文化</label></div>
+                <div class="option"><input type="radio" name="q1" value="C" id="q1-C"> <label for="q1-C">C. 饮食文化</label></div>
+                <div class="option"><input type="radio" name="q1" value="D" id="q1-D"> <label for="q1-D">D. 筷子好坏</label></div>
+            </div>
+            <div class="question">
+                <p>2. 文章中没有提到的餐具是：（ ）</p>
+                <div class="option"><input type="radio" name="q2" value="A" id="q2-A"> <label for="q2-A">A. 刀</label></div>
+                <div class="option"><input type="radio" name="q2" value="B" id="q2-B"> <label for="q2-B">B. 叉</label></div>
+                <div class="option"><input type="radio" name="q2" value="C" id="q2-C"> <label for="q2-C">C. 筷子</label></div>
+                <div class="option"><input type="radio" name="q2" value="D" id="q2-D"> <label for="q2-D">D. 手指</label></div>
+            </div>
+            <div class="question">
+                <p>3. 关于筷子，以下说法不正确的是：（ ）</p>
+                <div class="option"><input type="radio" name="q3" value="A" id="q3-A"> <label for="q3-A">A. 被称为“东方的文明”</label></div>
+                <div class="option"><input type="radio" name="q3" value="B" id="q3-B"> <label for="q3-B">B. 代表人正直的品格</label></div>
+                <div class="option"><input type="radio" name="q3" value="C" id="q3-C"> <label for="q3-C">C. 古代用于计算</label></div>
+                <div class="option"><input type="radio" name="q3" value="D" id="q3-D"> <label for="q3-D">D. 比刀叉更好用</label></div>
+            </div>
+            <button type="submit" class="submit-btn">提交答案</button>
+        </form>
+        <!-- 答题反馈区域 -->
+        <div class="answer-feedback" id="feedback"></div>
+    </div>
+    <!-- 生词英俄翻译解释（答题后显示） -->
+    <div class="translation hidden" id="translation-section">
+        <h2>三、生词英俄翻译解释</h2>
+        <ul>
+            <li><span class="new-word" data-trans="英语：chat；俄语：общение（об-ще-ние）">闲话</span><span class="pinyin">（xián huà）</span></li>
+            <li><span class="new-word" data-trans="英语：unique；俄语：уникальный（у-ник-а-ль-ный）">独一无二</span><span class="pinyin">（dú yī wú èr）</span></li>
+            <li><span class="new-word" data-trans="英语：civilization；俄语：цивилизация（ци-ви-ли-за-ция）">文明</span><span class="pinyin">（wén míng）</span></li>
+            <li><span class="new-word" data-trans="英语：character；俄语：характер（ха-рак-тер）">品格</span><span class="pinyin">（pǐn gé）</span></li>
+            <li><span class="new-word" data-trans="英语：embody；俄语：включать（вклю-чать）">包含</span><span class="pinyin">（bāo hán）</span></li>
+            <li><span class="new-word" data-trans="英语：friendly；俄语：дружелюбный（дру-же-люб-ный）">友好</span><span class="pinyin">（yǒu hǎo）</span></li>
+            <li><span class="new-word" data-trans="英语：implication；俄语：покровительство（пок-ро-ви-тель-ство）">寓意</span><span class="pinyin">（yù yì）</span></li>
+            <li><span class="new-word" data-trans="英语：peace；俄语：мир（мир）">和平</span><span class="pinyin">（hé píng）</span></li>
+            <li><span class="new-word" data-trans="英语：calculation with chips；俄语：расчет фишками（рас-чет фиш-ка-ми）">筹算</span><span class="pinyin">（chóu suàn）</span></li>
+            <li><span class="new-word" data-trans="英语：experience；俄语：опыт（о-пыт）">经历</span><span class="pinyin">（jīng lì）</span></li>
+            <li><span class="new-word" data-trans="英语：spread to；俄语：распространиться на（рас-про-стран-ни-ться на）">传到</span><span class="pinyin">（chuán dào）</span></li>
+        </ul>
+        <!-- 翻译生词弹窗（独立） -->
+        <div class="word-tooltip">
+            <div class="tooltip-title">英俄翻译</div>
+            <div class="tooltip-content"></div>
+        </div>
+    </div>
+    <!-- 题目原文出处标记（答题后显示） -->
+    <div class="source hidden" id="source-section">
+        <h2>四、题目原文出处标记</h2>
+        <ol>
+            <li>第1题：全文围绕筷子的文化意义、特殊作用、历史传承展开，核心内容为筷子文化</li>
+            <li>第2题：对应原文“周总理知道尼克松总统习惯使用刀叉”“在中国，筷子很平常”，文中未提及“手指”作为餐具</li>
+            <li>第3题：对应原文“被西方人称为‘东方的文明’”“唐朝时，筷子代表人正直的品格”“古代所说的‘筹算’，就是春秋战国时，用筷子来计算的一种方法”，文中未提及“筷子比刀叉更好用”</li>
+        </ol>
+    </div>
+    <footer>
+        <p>© 2025</p>
+    </footer>
+    <script>
+        // 1. 核心元素获取
+        // 课文生词相关元素
+        const lessonWords = document.querySelectorAll('.lesson .new-word');
+        const lessonTooltip = document.querySelector('.lesson .word-tooltip');
+        const lessonTooltipContent = lessonTooltip.querySelector('.tooltip-content');
+        const lessonTooltipTitle = lessonTooltip.querySelector('.tooltip-title');
+        
+        // 翻译生词相关元素
+        const translationWords = document.querySelectorAll('.translation .new-word');
+        const translationTooltip = document.querySelector('.translation .word-tooltip');
+        const translationTooltipContent = translationTooltip.querySelector('.tooltip-content');
+        const translationTooltipTitle = translationTooltip.querySelector('.tooltip-title');
+        
+        // 其他元素
+        const form = document.getElementById('exercise-form');
+        const feedback = document.getElementById('feedback');
+        const translationSection = document.getElementById('translation-section');
+        const sourceSection = document.getElementById('source-section');
+        
+        // 正确答案
+        const correctAnswers = {
+            q1: 'A', q2: 'D', q3: 'D'
+        };
+
+        // 2. 初始状态：课文生词显示拆字解释
+        lessonWords.forEach(word => {
+            // 悬停显示
+            word.addEventListener('mouseenter', (e) => {
+                const explain = e.target.dataset.explain;
+                lessonTooltipTitle.textContent = '拆字解释';
+                lessonTooltipContent.textContent = explain;
+                // 弹窗定位（避免超出屏幕）
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                lessonTooltip.style.left = `${leftPos}px`;
+                lessonTooltip.style.top = `${e.pageY + 10}px`;
+                lessonTooltip.style.display = 'block';
+            });
+            // 离开隐藏
+            word.addEventListener('mouseleave', () => {
+                lessonTooltip.style.display = 'none';
+            });
+            // 点击固定显示
+            word.addEventListener('click', (e) => {
+                const explain = e.target.dataset.explain;
+                lessonTooltipTitle.textContent = '拆字解释';
+                lessonTooltipContent.textContent = explain;
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                lessonTooltip.style.left = `${leftPos}px`;
+                lessonTooltip.style.top = `${e.pageY + 10}px`;
+                lessonTooltip.style.display = 'block';
+            });
+        });
+
+        // 3. 练习题提交功能
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            feedback.innerHTML = '';
+            feedback.style.display = 'block';
+            
+            // 检查每道题答案
+            for (let [qId, correctAns] of Object.entries(correctAnswers)) {
+                const selectedOption = document.querySelector(`input[name="${qId}"]:checked`);
+                const feedbackItem = document.createElement('div');
+                feedbackItem.className = 'feedback-item';
+                
+                if (!selectedOption) {
+                    feedbackItem.textContent = `第${qId.replace('q', '')}题：未作答`;
+                    feedbackItem.className = 'feedback-item incorrect';
+                } else {
+                    const userAns = selectedOption.value;
+                    if (userAns === correctAns) {
+                        feedbackItem.textContent = `第${qId.replace('q', '')}题：回答正确 ✔`;
+                        feedbackItem.className = 'feedback-item correct';
+                    } else {
+                        feedbackItem.textContent = `第${qId.replace('q', '')}题：回答错误 ❌ 正确答案是${correctAns}`;
+                        feedbackItem.className = 'feedback-item incorrect';
+                    }
+                }
+                feedback.appendChild(feedbackItem);
+            }
+            
+            // 显示翻译和出处部分
+            translationSection.classList.remove('hidden');
+            sourceSection.classList.remove('hidden');
+            
+            // 切换课文生词解释为英俄翻译
+            lessonWords.forEach(word => {
+                word.removeEventListener('mouseenter', handleLessonWordMouseEnter);
+                word.removeEventListener('click', handleLessonWordClick);
+                
+                // 重新绑定事件，显示翻译
+                word.addEventListener('mouseenter', (e) => {
+                    const trans = e.target.dataset.trans;
+                    lessonTooltipTitle.textContent = '英俄翻译';
+                    lessonTooltipContent.textContent = trans;
+                    const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                    lessonTooltip.style.left = `${leftPos}px`;
+                    lessonTooltip.style.top = `${e.pageY + 10}px`;
+                    lessonTooltip.style.display = 'block';
+                });
+                
+                word.addEventListener('click', (e) => {
+                    const trans = e.target.dataset.trans;
+                    lessonTooltipTitle.textContent = '英俄翻译';
+                    lessonTooltipContent.textContent = trans;
+                    const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                    lessonTooltip.style.left = `${leftPos}px`;
+                    lessonTooltip.style.top = `${e.pageY + 10}px`;
+                    lessonTooltip.style.display = 'block';
+                });
+            });
+        });
+
+        // 4. 翻译部分生词弹窗功能
+        translationWords.forEach(word => {
+            // 悬停显示
+            word.addEventListener('mouseenter', (e) => {
+                const trans = e.target.dataset.trans;
+                translationTooltipTitle.textContent = '英俄翻译';
+                translationTooltipContent.textContent = trans;
+                // 弹窗定位（避免超出屏幕）
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                translationTooltip.style.left = `${leftPos}px`;
+                translationTooltip.style.top = `${e.pageY + 10}px`;
+                translationTooltip.style.display = 'block';
+            });
+            // 离开隐藏
+            word.addEventListener('mouseleave', () => {
+                translationTooltip.style.display = 'none';
+            });
+            // 点击固定显示
+            word.addEventListener('click', (e) => {
+                const trans = e.target.dataset.trans;
+                translationTooltipTitle.textContent = '英俄翻译';
+                translationTooltipContent.textContent = trans;
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                translationTooltip.style.left = `${leftPos}px`;
+                translationTooltip.style.top = `${e.pageY + 10}px`;
+                translationTooltip.style.display = 'block';
+            });
+        });
+
+        // 5. 点击空白处关闭所有弹窗
+        document.addEventListener('click', (e) => {
+            const isNewWord = e.target.classList.contains('new-word');
+            if (!isNewWord) {
+                lessonTooltip.style.display = 'none';
+                translationTooltip.style.display = 'none';
+            }
+        });
+
+        // 初始事件处理函数（用于移除）
+        function handleLessonWordMouseEnter(e) {
+            const explain = e.target.dataset.explain;
+            lessonTooltipTitle.textContent = '拆字解释';
+            lessonTooltipContent.textContent = explain;
+            const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+            lessonTooltip.style.left = `${leftPos}px`;
+            lessonTooltip.style.top = `${e.pageY + 10}px`;
+            lessonTooltip.style.display = 'block';
+        }
+
+        function handleLessonWordClick(e) {
+            const explain = e.target.dataset.explain;
+            lessonTooltipTitle.textContent = '拆字解释';
+            lessonTooltipContent.textContent = explain;
+            const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+            lessonTooltip.style.left = `${leftPos}px`;
+            lessonTooltip.style.top = `${e.pageY + 10}px`;
+            lessonTooltip.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
