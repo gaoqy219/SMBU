@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>有水的月球</title>
+    <style>
+        /* 基础样式与范例统一 */
+        body { 
+            font-family: "Microsoft YaHei", sans-serif; 
+            line-height: 1.8; 
+            margin: 20px; 
+            position: relative; 
+        }
+        .lesson, .exercise, .translation, .source { 
+            margin: 30px 0; 
+            padding: 20px; 
+            border: 1px solid #eee; 
+            border-radius: 8px; 
+        }
+        h1, h2, h3 { color: #212121; }
+        .new-word { 
+            color: #d32f2f; 
+            font-weight: bold;
+            cursor: pointer; 
+            text-decoration: underline dotted; 
+            position: relative;
+        }
+        .pinyin { color: #1976d2; margin: 0 5px; }
+        
+        /* 生词解释弹窗样式 */
+        .word-tooltip {
+            position: absolute;
+            z-index: 999;
+            top: 30px;
+            left: 0;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            min-width: 200px;
+            display: none;
+            max-width: 300px;
+        }
+        .word-tooltip .tooltip-title {
+            font-size: 0.9em;
+            color: #d32f2f;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .word-tooltip .tooltip-content {
+            color: #388e3c;
+            font-size: 0.85em;
+            line-height: 1.6;
+        }
+
+        /* 练习题样式 */
+        .question { 
+            margin: 25px 0; 
+            padding: 15px; 
+            background: #f9f9f9; 
+            border-radius: 6px;
+        }
+        .fill-blank {
+            margin: 12px 0;
+        }
+        .fill-blank input {
+            width: 280px;
+            padding: 6px 10px;
+            margin: 0 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .option { 
+            margin: 8px 0; 
+            cursor: pointer; 
+        }
+        .option input { 
+            margin-right: 8px; 
+            cursor: pointer; 
+        }
+        .submit-btn {
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background: #1565c0;
+        }
+        .answer-feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+        .correct { color: #2e7d32; background: #e8f5e9; }
+        .incorrect { color: #c62828; background: #ffebee; }
+        .feedback-item { margin: 8px 0; }
+
+        /* 翻译部分样式（单独区分） */
+        .translation .new-word {
+            color: #1976d2;
+            text-decoration: underline dotted #1976d2;
+        }
+        .translation .word-tooltip {
+            border-color: #1976d2;
+        }
+        .translation .word-tooltip .tooltip-title {
+            color: #1976d2;
+        }
+        .translation .word-tooltip .tooltip-content {
+            color: #1976d2;
+        }
+
+        footer {
+            margin-top: 50px; 
+            text-align: center; 
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>有水的月球</h1>
+
+    <!-- 课文部分（含HSK3级及以上生词拆字解释+拼音） -->
+    <div class="lesson">
+        <h2>一、课文原文</h2>
+        <p>月球上到底有没有水？长期以来一直是科学家们注意的<span class="new-word" data-explain="焦（集中）+ 点（地方）→ 大家集中关注的核心话题（HSK3级）">焦点</span><span class="pinyin">（jiāodiǎn）</span>。为了找水，各国都在行动。</p>
+        <p>随着印度“月船一号”第一次发现月球表面有水，2009年10月9日19时31分，美国宇航局（NASA）又<span class="new-word" data-explain="撞（冲击）→ 用力让物体相互碰撞（HSK3级）">撞</span><span class="pinyin">（zhuàng）</span>月成功。这些消息引起国际社会的注意。</p>
+        <p>研究人员估计，从1吨（dūn）重的月球物质中，可以得到1公斤的水，相当于一个棒球（baseball）场大小的土地上，才有一杯水。</p>
+        <p>月球上的各种能源，可以对人类社会的发展起到长时间的<span class="new-word" data-explain="支（支撑）+ 持（维持）→ 支持事物持续发展（HSK4级）">支撑</span><span class="pinyin">（zhīchēng）</span>作用。</p>
+        <p>月球上每一次重大的科学发现，都会在一定程度上促进（promote）各国的探月行动，同时也会进一步推动国际上的<span class="new-word" data-explain="竞（比赛）+ 争（争夺）→ 互相竞争争取优势（HSK3级）">竞争</span><span class="pinyin">（jìngzhēng）</span>。</p>
+        <p>二十世纪六七十年代，美苏两国在世界上第一次探月；进入二十一世纪以来，人类对于探月越来越<span class="new-word" data-explain="热（热情）+ 衷（投入）→ 对某事特别感兴趣并积极参与（HSK4级）">热衷</span><span class="pinyin">（rèzhōng）</span>，探月竞争从美洲到欧洲（Europe），亚洲也成为新的参加者。在新世纪开始的登月竞争中，除了过去国家之间的竞争外，还出现了国家之间合作的新特点。</p>
+        <p>现在，正在兴起第二次探月竞争，各国的研究内容包括：开发（exploit）月球资源；在月球上建立新的能源基地（base）；建立太空工业基地和科学研究基地；发展月球媒体娱乐、交通运输和旅游业；有的还准备开发月球上的房地产（real estate）。</p>
+        <!-- 课文生词弹窗（独立） -->
+        <div class="word-tooltip">
+            <div class="tooltip-title">拆字解释</div>
+            <div class="tooltip-content"></div>
+        </div>
+    </div>
+
+    <!-- 练习题部分（互动式） -->
+    <div class="exercise">
+        <h2>二、练习题</h2>
+        <form id="exercise-form">
+            <h3>（一）根据文章内容填空</h3>
+            <div class="question">
+                <div class="fill-blank">
+                    <p>1. 美国撞月计划和印度“月船一号”行动都是在月球上寻找 <input type="text" name="q1" placeholder="请输入答案">。</p>
+                </div>
+                <div class="fill-blank">
+                    <p>2. 从1吨重的月球物质中可以得到1公斤的水，相当于 <input type="text" name="q2" placeholder="请输入答案">。</p>
+                </div>
+                <div class="fill-blank">
+                    <p>3. 月球上的各种能源，可以对 <input type="text" name="q3" placeholder="请输入答案"> 起到长期的支撑作用。</p>
+                </div>
+                <div class="fill-blank">
+                    <p>4. 月球上每一次重大的科学发现，都会进一步推动世界各国的 <input type="text" name="q4" placeholder="请输入答案">。</p>
+                </div>
+                <div class="fill-blank">
+                    <p>5. 二十世纪六七十年代，<input type="text" name="q5" placeholder="请输入答案"> 在世界上第一次探月。</p>
+                </div>
+                <div class="fill-blank">
+                    <p>6. 二十一世纪以来，探月竞争从美洲扩展到欧洲，<input type="text" name="q6" placeholder="请输入答案"> 也成为新的参与者。</p>
+                </div>
+                <div class="fill-blank">
+                    <p>7. 在新世纪的登月竞争中，国家之间除了竞争之外，还出现了 <input type="text" name="q7" placeholder="请输入答案"> 的新特点。</p>
+                </div>
+            </div>
+
+            <h3>（二）下面句子中，哪些是文章中提到的关于第二次探月竞争的内容？（多项选择）</h3>
+            <div class="question">
+                <div class="option"><input type="checkbox" name="q8" value="A" id="q8-A"> <label for="q8-A">A. 在月球上建立棒球场</label></div>
+                <div class="option"><input type="checkbox" name="q8" value="B" id="q8-B"> <label for="q8-B">B. 在月球上建立新的能源基地</label></div>
+                <div class="option"><input type="checkbox" name="q8" value="C" id="q8-C"> <label for="q8-C">C. 建立太空工业基地和科学研究基地</label></div>
+                <div class="option"><input type="checkbox" name="q8" value="D" id="q8-D"> <label for="q8-D">D. 向月球移民</label></div>
+                <div class="option"><input type="checkbox" name="q8" value="E" id="q8-E"> <label for="q8-E">E. 发展月球媒体娱乐、交通运输和旅游业</label></div>
+                <div class="option"><input type="checkbox" name="q8" value="F" id="q8-F"> <label for="q8-F">F. 开发月球上的房地产</label></div>
+            </div>
+
+            <button type="submit" class="submit-btn">提交答案</button>
+        </form>
+        <!-- 答题反馈区域 -->
+        <div class="answer-feedback" id="feedback"></div>
+    </div>
+
+    <!-- 生词英俄翻译解释（可点击弹窗） -->
+    <div class="translation">
+        <h2>三、生词英俄翻译解释</h2>
+        <ul>
+            <li><span class="new-word" data-trans="英语：focus（焦点）；俄语：фокус внимания（фо-кус вни-ma-ния）">焦点</span><span class="pinyin">（jiāodiǎn）</span></li>
+            <li><span class="new-word" data-trans="英语：collide（撞击）；俄语：столкнуться（столк-нуть-ся）">撞</span><span class="pinyin">（zhuàng）</span></li>
+            <li><span class="new-word" data-trans="英语：support（支撑）；俄语：поддерживать（под-дер-жи-вать）">支撑</span><span class="pinyin">（zhīchēng）</span></li>
+            <li><span class="new-word" data-trans="英语：competition（竞争）；俄语：конкуренция（кон-ку-рен-ция）">竞争</span><span class="pinyin">（jìngzhēng）</span></li>
+            <li><span class="new-word" data-trans="英语：be keen on（热衷）；俄语：интересоваться（ин-те-ре-сов-атъ-ся）">热衷</span><span class="pinyin">（rèzhōng）</span></li>
+        </ul>
+        <!-- 翻译生词弹窗（独立） -->
+        <div class="word-tooltip">
+            <div class="tooltip-title">英俄翻译</div>
+            <div class="tooltip-content"></div>
+        </div>
+    </div>
+
+    <!-- 题目原文出处标记 -->
+    <div class="source">
+        <h2>四、题目原文出处标记</h2>
+        <h3>（一）填空题出处</h3>
+        <ol>
+            <li>第1题：对应原文“月球上到底有没有水？长期以来一直是科学家们注意的焦点。为了找水，各国都在行动”“印度‘月船一号’第一次发现月球表面有水，美国宇航局又撞月成功”</li>
+            <li>第2题：对应原文“从1吨重的月球物质中，可以得到1公斤的水，相当于一个棒球场大小的土地上，才有一杯水”</li>
+            <li>第3题：对应原文“月球上的各种能源，可以对人类社会的发展起到长时间的支撑作用”</li>
+            <li>第4题：对应原文“月球上每一次重大的科学发现，都会在一定程度上促进各国的探月行动，同时也会进一步推动国际上的竞争”</li>
+            <li>第5题：对应原文“二十世纪六七十年代，美苏两国在世界上第一次探月”</li>
+            <li>第6题：对应原文“探月竞争从美洲到欧洲，亚洲也成为新的参加者”</li>
+            <li>第7题：对应原文“在新世纪开始的登月竞争中，除了过去国家之间的竞争外，还出现了国家之间合作的新特点”</li>
+        </ol>
+        <h3>（二）多项选择题出处</h3>
+        <ol>
+            <li>第8题：对应原文“正在兴起第二次探月竞争，各国的研究内容包括：开发月球资源；在月球上建立新的能源基地；建立太空工业基地和科学研究基地；发展月球媒体娱乐、交通运输和旅游业；有的还准备开发月球上的房地产”</li>
+        </ol>
+    </div>
+
+    <footer>
+        <p>© 2025</p>
+    </footer>
+
+    <script>
+        // 1. 分别获取课文/翻译的弹窗和内容，避免冲突
+        const lessonWords = document.querySelectorAll('.lesson .new-word');
+        const lessonTooltip = document.querySelector('.lesson .word-tooltip');
+        const lessonTooltipContent = lessonTooltip.querySelector('.tooltip-content');
+        
+        const translationWords = document.querySelectorAll('.translation .new-word');
+        const translationTooltip = document.querySelector('.translation .word-tooltip');
+        const translationTooltipContent = translationTooltip.querySelector('.tooltip-content');
+
+        // 2. 课文生词：鼠标悬停/点击显示拆字解释
+        lessonWords.forEach(word => {
+            word.addEventListener('mouseenter', (e) => {
+                const explain = e.target.dataset.explain;
+                lessonTooltipContent.textContent = explain;
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                lessonTooltip.style.left = `${leftPos}px`;
+                lessonTooltip.style.top = `${e.pageY + 10}px`;
+                lessonTooltip.style.display = 'block';
+            });
+            word.addEventListener('mouseleave', () => {
+                lessonTooltip.style.display = 'none';
+            });
+            word.addEventListener('click', (e) => {
+                const explain = e.target.dataset.explain;
+                lessonTooltipContent.textContent = explain;
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                lessonTooltip.style.left = `${leftPos}px`;
+                lessonTooltip.style.top = `${e.pageY + 10}px`;
+                lessonTooltip.style.display = 'block';
+            });
+        });
+
+        // 3. 翻译生词：鼠标悬停/点击显示英俄翻译
+        translationWords.forEach(word => {
+            word.addEventListener('mouseenter', (e) => {
+                const trans = e.target.dataset.trans;
+                translationTooltipContent.textContent = trans;
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                translationTooltip.style.left = `${leftPos}px`;
+                translationTooltip.style.top = `${e.pageY + 10}px`;
+                translationTooltip.style.display = 'block';
+            });
+            word.addEventListener('mouseleave', () => {
+                translationTooltip.style.display = 'none';
+            });
+            word.addEventListener('click', (e) => {
+                const trans = e.target.dataset.trans;
+                translationTooltipContent.textContent = trans;
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                translationTooltip.style.left = `${leftPos}px`;
+                translationTooltip.style.top = `${e.pageY + 10}px`;
+                translationTooltip.style.display = 'block';
+            });
+        });
+
+        // 4. 点击空白处关闭所有弹窗
+        document.addEventListener('click', (e) => {
+            const isNewWord = e.target.classList.contains('new-word');
+            if (!isNewWord) {
+                lessonTooltip.style.display = 'none';
+                translationTooltip.style.display = 'none';
+            }
+        });
+
+        // 5. 练习题提交校验功能
+        const form = document.getElementById('exercise-form');
+        const feedback = document.getElementById('feedback');
+        // 正确答案库（填空题忽略大小写和空格）
+        const correctAnswers = {
+            q1: '水', q2: '一个棒球场大小的土地上才有一杯水', q3: '人类社会的发展',
+            q4: '竞争', q5: '美苏两国', q6: '亚洲', q7: '合作',
+            q8: ['B', 'C', 'E', 'F'] // 多项选择正确答案
+        };
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            feedback.innerHTML = '';
+            feedback.style.display = 'block';
+            let correctCount = 0;
+            const totalCount = Object.keys(correctAnswers).length;
+
+            // 校验填空题（q1-q7）
+            for (let i = 1; i <= 7; i++) {
+                const qId = `q${i}`;
+                const userAns = document.querySelector(`input[name="${qId}"]`).value.trim().replace(/\s+/g, '');
+                const correctAns = correctAnswers[qId].trim().replace(/\s+/g, '');
+                const feedbackItem = document.createElement('div');
+                feedbackItem.className = 'feedback-item';
+
+                if (userAns === '') {
+                    feedbackItem.textContent = `第${i}题：未作答`;
+                    feedbackItem.className = 'feedback-item incorrect';
+                } else if (userAns.toLowerCase() === correctAns.toLowerCase()) {
+                    correctCount++;
+                    feedbackItem.textContent = `第${i}题：回答正确 ✔`;
+                    feedbackItem.className = 'feedback-item correct';
+                } else {
+                    feedbackItem.textContent = `第${i}题：回答错误 ❌ 正确答案是${correctAnswers[qId]}`;
+                    feedbackItem.className = 'feedback-item incorrect';
+                }
+                feedback.appendChild(feedbackItem);
+            }
+
+            // 校验多项选择题（q8）
+            const selectedOptions = Array.from(document.querySelectorAll('input[name="q8"]:checked')).map(item => item.value);
+            const isQ8Correct = selectedOptions.sort().join() === correctAnswers.q8.sort().join();
+            const q8Feedback = document.createElement('div');
+            q8Feedback.className = 'feedback-item';
+            if (selectedOptions.length === 0) {
+                q8Feedback.textContent = `第8题：未作答`;
+                q8Feedback.className = 'feedback-item incorrect';
+            } else if (isQ8Correct) {
+                correctCount++;
+                q8Feedback.textContent = `第8题：回答正确 ✔`;
+                q8Feedback.className = 'feedback-item correct';
+            } else {
+                q8Feedback.textContent = `第8题：回答错误 ❌ 正确答案是${correctAnswers.q8.join('、')}`;
+                q8Feedback.className = 'feedback-item incorrect';
+            }
+            feedback.appendChild(q8Feedback);
+
+            // 总分统计
+            const summary = document.createElement('div');
+            summary.style.marginTop = '15px';
+            summary.style.paddingTop = '15px';
+            summary.style.borderTop = '1px solid #eee';
+            summary.textContent = `本次作答：答对${correctCount}题，答错${totalCount - correctCount}题`;
+            feedback.appendChild(summary);
+        });
+    </script>
+</body>
+</html>
