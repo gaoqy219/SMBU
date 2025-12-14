@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>北京小胡同里的联合国</title>
+    <style>
+        /* 基础样式 */
+        body { 
+            font-family: "Microsoft YaHei", sans-serif; 
+            line-height: 1.8; 
+            margin: 20px; 
+            position: relative; /* 为tooltip定位 */
+        }
+        .lesson, .exercise, .translation, .source { 
+            margin: 30px 0; 
+            padding: 20px; 
+            border: 1px solid #eee; 
+            border-radius: 8px; 
+        }
+        h1, h2, h3 { color: #212121; }
+        .new-word { 
+            color: #d32f2f; 
+            font-weight: bold;
+            cursor: pointer; /* 提示可点击 */
+            text-decoration: underline dotted; /* 点状下划线提示 */
+            position: relative;
+        }
+        .pinyin { color: #1976d2; margin: 0 5px; }
+        
+        /* 生词解释弹窗样式 */
+        .word-tooltip {
+            position: absolute;
+            z-index: 999;
+            top: 30px;
+            left: 0;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            min-width: 200px;
+            display: none;
+            /* 避免弹窗超出页面 */
+            max-width: 300px;
+        }
+        .word-tooltip .tooltip-title {
+            font-size: 0.9em;
+            color: #d32f2f;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .word-tooltip .tooltip-content {
+            color: #388e3c;
+            font-size: 0.85em;
+            line-height: 1.6;
+        }
+        /* 练习题样式 */
+        .question { 
+            margin: 25px 0; 
+            padding: 15px; 
+            background: #f9f9f9; 
+            border-radius: 6px;
+        }
+        .fill-input { 
+            padding: 6px 10px; 
+            width: 60%; 
+            margin-left: 10px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px;
+        }
+        .submit-btn {
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background: #1565c0;
+        }
+        .answer-feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+        .correct { color: #2e7d32; background: #e8f5e9; }
+        .incorrect { color: #c62828; background: #ffebee; }
+        .feedback-item { margin: 8px 0; }
+        /* 翻译部分生词+弹窗样式（单独区分） */
+        .translation .new-word {
+            color: #1976d2; /* 翻译部分生词改为蓝色，更易区分 */
+            text-decoration: underline dotted #1976d2;
+        }
+        .translation .word-tooltip {
+            border-color: #1976d2;
+        }
+        .translation .word-tooltip .tooltip-title {
+            color: #1976d2;
+        }
+        .translation .word-tooltip .tooltip-content {
+            color: #1976d2;
+        }
+        footer {
+            margin-top: 50px; 
+            text-align: center; 
+            color: #666;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>北京小胡同里的联合国</h1>
+    <!-- 课文部分（含可点击生词，初始显示拆字解释） -->
+    <div class="lesson">
+        <h2>一、课文原文</h2>
+        <p>阿凡提<span class="new-word" data-explain="嘉（美好）+ 年（年份）+ 华（精华）→ 美好年份的精华，指狂欢类活动或特色场所" data-trans="英语：carnival；俄语：карнавал（кар-на-вал）">嘉年华</span><span class="pinyin">（jiā nián huá）</span>是新疆人买买提女士和她的爱人——具有多年酒店<span class="new-word" data-explain="管（管理）+ 理（治理）→ 对事物进行管理治理" data-trans="英语：management；俄语：управление（уп-рав-ле-ние）">管理</span><span class="pinyin">（guǎn lǐ）</span>经验的范哈提先生于1995年共同<span class="new-word" data-explain="创（开创）+ 建（建立）→ 开创并建立" data-trans="英语：establish；俄语：основать（осно-вать）">创建</span><span class="pinyin">（chuàng jiàn）</span>的一家餐厅。</p>
+        <p>餐厅具有新疆地区的<span class="new-word" data-explain="特（特别）+ 色（特点）→ 特别的特点" data-trans="英语：characteristics；俄语：особенности（о-соб-ен-но-сти）">特色</span><span class="pinyin">（tè sè）</span>，除了“新疆特色菜”以外，还有“阿凡提歌舞团”，成为北京一个<span class="new-word" data-explain="独（单独）+ 特（特别）→ 单独且特别的" data-trans="英语：unique；俄语：уникальный（у-ник-а-ль-ный）">独特</span><span class="pinyin">（dú tè）</span>的旅游景点。</p>
+        <p>餐厅独特的风格引起了社会的<span class="new-word" data-explain="关（关心）+ 注（注视）→ 关心并注视" data-trans="英语：attention；俄语：внимание（вни-ma-ни-е）">关注</span><span class="pinyin">（guān zhù）</span>，被全世界一百四十多个国家的电视台重点<span class="new-word" data-explain="报（报告）+ 道（传达）→ 报告并传达信息" data-trans="英语：report；俄语：сообщить（со-об-щить）">报道</span><span class="pinyin">（bào dào）</span>，成为“北京小胡同里的<span class="new-word" data-explain="天（天空）+ 堂（厅堂）→ 像天空般美好的厅堂，指极乐之地" data-trans="英语：paradise；俄语：рай（рай）">天堂</span><span class="pinyin">（tiān táng）</span>”、“北京小胡同里的<span class="new-word" data-explain="联（联合）+ 合（结合）+ 国（国家）→ 多个国家联合结合的组织，此处为比喻" data-trans="英语：the United Nations；俄语：Организация Объединенных Наций（Орг-а-ни-za-ция Об-ъе-ди-нен-ных На-ций）">联合国</span><span class="pinyin">（lián hé guó）</span>”。《华尔街日报》曾说：“北京城里有个‘阿凡提’，它几乎和中国的长城一样有名......”，来北京而没去过“阿凡提”就像没去过长城一样。</p>
+        <p>这里的<span class="new-word" data-explain="宾（客人）+ 客（宾客）→ 前来的客人" data-trans="英语：guests；俄语：гости（го-сти）">宾客</span><span class="pinyin">（bīn kè）</span>来自世界各地，他们身份不同，<span class="new-word" data-explain="肤（皮肤）+ 色（颜色）→ 皮肤的颜色" data-trans="英语：skin color；俄语：цвет кожи（цвет ко-жи）">肤色</span><span class="pinyin">（fū sè）</span>不同，语言不同，但在阿凡提的大家庭里，他们热情、友好、<span class="new-word" data-explain="无（没有）+ 拘（拘束）+ 无（没有）+ 束（束缚）→ 没有拘束和束缚" data-trans="英语：unrestrained；俄语：неукротимый（не-ук-ро-ти-мый）">无拘无束</span><span class="pinyin">（wú jū wú shù）</span>。每位宾客在这里都能找到“自我”的感受！</p>
+        <p>餐厅现<span class="new-word" data-explain="营（经营）+ 业（业务）→ 开展经营业务" data-trans="英语：business；俄语：деятельность（де-ят-ель-ность）">营业</span><span class="pinyin">（yíng yè）</span>面积约700平米，适合于旅游、<span class="new-word" data-explain="宴（宴会）+ 请（邀请）→ 举办宴会邀请他人" data-trans="英语：banquet；俄语：банкет（бан-кет）">宴请</span><span class="pinyin">（yàn qǐng）</span>、生日<span class="new-word" data-explain="聚（聚集）+ 会（会面）→ 聚集会面" data-trans="英语：gathering；俄语：собрание（со-бра-ни-е）">聚会</span><span class="pinyin">（jù huì）</span>、朋友聚会、家庭聚会、各种<span class="new-word" data-explain="庆（庆祝）+ 祝（祝贺）→ 庆祝祝贺" data-trans="英语：celebration；俄语：праздник（праз-дник）">庆祝</span><span class="pinyin">（qìng zhù）</span>活动......</p>
+        <p>“阿凡提歌舞团”每晚19:45为客人<span class="new-word" data-explain="表（表现）+ 演（演出）→ 表现演出节目" data-trans="英语：perform；俄语：выступать（вы-ступ-ать）">表演</span><span class="pinyin">（biǎo yǎn）</span>节目，21:30在美丽热情的姑娘们<span class="new-word" data-explain="陪（陪伴）+ 伴（相伴）→ 陪伴相伴" data-trans="英语：accompany；俄语：сопровождать（со-про-во-жда-ть）">陪伴</span><span class="pinyin">（péi bàn）</span>下，<span class="new-word" data-explain="来（前来）+ 宾（宾客）→ 前来的宾客" data-trans="英语：visitors；俄语：гости（го-сти）">来宾</span><span class="pinyin">（lái bīn）</span>们进入著名的桌上<span class="new-word" data-explain="狂（狂欢）+ 欢（欢乐）→ 尽情狂欢欢乐" data-trans="英语：revel；俄语：оргиум（ор-гей-ум）">狂欢</span><span class="pinyin">（kuáng huān）</span>。</p>
+        <p>★地点:东城区朝内大街 188号</p>
+        <p>★电话:65272288</p>
+        <p>★营业时间:11:00AM-11:00PM</p>
+        <p>★演出时间:</p> 
+        <p>上半场19:45-20:30</p>
+        <p>下半场20:45-21:30</p>
+        <p>桌上狂欢21:30 至<span class="new-word" data-explain="结（结束）+ 束（收尾）→ 结束收尾" data-trans="英语：end；俄语：конец（кон-ец）">结束</span><span class="pinyin">（jié shù）</span>。</p>
+        <!-- 课文生词弹窗（独立） -->
+        <div class="word-tooltip">
+            <div class="tooltip-title">拆字解释</div>
+            <div class="tooltip-content"></div>
+        </div>
+    </div>
+    <!-- 练习题部分（互动式） -->
+    <div class="exercise">
+        <h2>二、练习题</h2>
+        <form id="exercise-form">
+            <h3>根据文章内容填空</h3>
+            <div class="question">
+                <p>1. 阿凡提嘉年华是一个________________________________</p>
+                <input type="text" class="fill-input" name="q1" placeholder="请输入答案">
+            </div>
+            <div class="question">
+                <p>2. 阿凡提嘉年华的营业时间是__________________________</p>
+                <input type="text" class="fill-input" name="q2" placeholder="请输入答案">
+            </div>
+            <div class="question">
+                <p>3. 每晚________________开始桌上狂欢。</p>
+                <input type="text" class="fill-input" name="q3" placeholder="请输入答案">
+            </div>
+            <button type="submit" class="submit-btn">提交答案</button>
+        </form>
+        <!-- 答题反馈区域 -->
+        <div class="answer-feedback" id="feedback"></div>
+    </div>
+    <!-- 生词英俄翻译解释（答题后显示） -->
+    <div class="translation hidden" id="translation-section">
+        <h2>三、生词英俄翻译解释</h2>
+        <ul>
+            <li><span class="new-word" data-trans="英语：carnival；俄语：карнавал（кар-на-вал）">嘉年华</span><span class="pinyin">（jiā nián huá）</span></li>
+            <li><span class="new-word" data-trans="英语：management；俄语：управление（уп-рав-ле-ние）">管理</span><span class="pinyin">（guǎn lǐ）</span></li>
+            <li><span class="new-word" data-trans="英语：establish；俄语：основать（осно-вать）">创建</span><span class="pinyin">（chuàng jiàn）</span></li>
+            <li><span class="new-word" data-trans="英语：characteristics；俄语：особенности（о-соб-ен-но-сти）">特色</span><span class="pinyin">（tè sè）</span></li>
+            <li><span class="new-word" data-trans="英语：unique；俄语：уникальный（у-ник-а-ль-ный）">独特</span><span class="pinyin">（dú tè）</span></li>
+            <li><span class="new-word" data-trans="英语：attention；俄语：внимание（вни-ma-ни-е）">关注</span><span class="pinyin">（guān zhù）</span></li>
+            <li><span class="new-word" data-trans="英语：report；俄语：сообщить（со-об-щить）">报道</span><span class="pinyin">（bào dào）</span></li>
+            <li><span class="new-word" data-trans="英语：paradise；俄语：рай（рай）">天堂</span><span class="pinyin">（tiān táng）</span></li>
+            <li><span class="new-word" data-trans="英语：the United Nations；俄语：Организация Объединенных Наций（Орг-а-ни-za-ция Об-ъе-ди-нен-ных На-ций）">联合国</span><span class="pinyin">（lián hé guó）</span></li>
+            <li><span class="new-word" data-trans="英语：guests；俄语：гости（го-сти）">宾客</span><span class="pinyin">（bīn kè）</span></li>
+            <li><span class="new-word" data-trans="英语：skin color；俄语：цвет кожи（цвет ко-жи）">肤色</span><span class="pinyin">（fū sè）</span></li>
+            <li><span class="new-word" data-trans="英语：unrestrained；俄语：неукротимый（не-ук-ро-ти-мый）">无拘无束</span><span class="pinyin">（wú jū wú shù）</span></li>
+            <li><span class="new-word" data-trans="英语：business；俄语：деятельность（де-ят-ель-ность）">营业</span><span class="pinyin">（yíng yè）</span></li>
+            <li><span class="new-word" data-trans="英语：banquet；俄语：банкет（бан-кет）">宴请</span><span class="pinyin">（yàn qǐng）</span></li>
+            <li><span class="new-word" data-trans="英语：gathering；俄语：собрание（со-бра-ни-е）">聚会</span><span class="pinyin">（jù huì）</span></li>
+            <li><span class="new-word" data-trans="英语：celebration；俄语：праздник（праз-дник）">庆祝</span><span class="pinyin">（qìng zhù）</span></li>
+            <li><span class="new-word" data-trans="英语：perform；俄语：выступать（вы-ступ-ать）">表演</span><span class="pinyin">（biǎo yǎn）</span></li>
+            <li><span class="new-word" data-trans="英语：accompany；俄语：сопровождать（со-про-во-жда-ть）">陪伴</span><span class="pinyin">（péi bàn）</span></li>
+            <li><span class="new-word" data-trans="英语：visitors；俄语：гости（го-сти）">来宾</span><span class="pinyin">（lái bīn）</span></li>
+            <li><span class="new-word" data-trans="英语：revel；俄语：оргиум（ор-гей-ум）">狂欢</span><span class="pinyin">（kuáng huān）</span></li>
+            <li><span class="new-word" data-trans="英语：end；俄语：конец（кон-ец）">结束</span><span class="pinyin">（jié shù）</span></li>
+        </ul>
+        <!-- 翻译生词弹窗（独立） -->
+        <div class="word-tooltip">
+            <div class="tooltip-title">英俄翻译</div>
+            <div class="tooltip-content"></div>
+        </div>
+    </div>
+    <!-- 题目原文出处标记（答题后显示） -->
+    <div class="source hidden" id="source-section">
+        <h2>四、题目原文出处标记</h2>
+        <ol>
+            <li>第1题：对应原文“阿凡提嘉年华是新疆人买买提女士和她的爱人——具有多年酒店管理经验的范哈提先生于1995年共同创建的一家餐厅。餐厅具有新疆地区的特色，除了‘新疆特色菜’以外，还有‘阿凡提歌舞团’”</li>
+            <li>第2题：对应原文“营业时间:11:00AM-11:00PM”</li>
+            <li>第3题：对应原文“桌上狂欢21:30 至结束”</li>
+        </ol>
+    </div>
+    <footer>
+        <p>© 2025</p>
+    </footer>
+    <script>
+        // 1. 核心元素获取
+        // 课文生词相关元素
+        const lessonWords = document.querySelectorAll('.lesson .new-word');
+        const lessonTooltip = document.querySelector('.lesson .word-tooltip');
+        const lessonTooltipContent = lessonTooltip.querySelector('.tooltip-content');
+        const lessonTooltipTitle = lessonTooltip.querySelector('.tooltip-title');
+        
+        // 翻译生词相关元素
+        const translationWords = document.querySelectorAll('.translation .new-word');
+        const translationTooltip = document.querySelector('.translation .word-tooltip');
+        const translationTooltipContent = translationTooltip.querySelector('.tooltip-content');
+        const translationTooltipTitle = translationTooltip.querySelector('.tooltip-title');
+        
+        // 其他元素
+        const form = document.getElementById('exercise-form');
+        const feedback = document.getElementById('feedback');
+        const translationSection = document.getElementById('translation-section');
+        const sourceSection = document.getElementById('source-section');
+        
+        // 正确答案（允许合理精简表述）
+        const correctAnswers = {
+            q1: ["新疆人买买提女士和她的爱人范哈提先生于1995年共同创建的一家具有新疆特色、有阿凡提歌舞团的餐厅", "具有新疆地区特色、有阿凡提歌舞团的餐厅", "1995年创建的新疆特色餐厅","餐厅","一家餐厅"],
+            q2: ["11:00AM-11:00PM", "上午11点到晚上11点"],
+            q3: ["21:30", "晚上9点30分"]
+        };
+
+        // 2. 初始状态：课文生词显示拆字解释
+        lessonWords.forEach(word => {
+            // 悬停显示
+            word.addEventListener('mouseenter', (e) => {
+                const explain = e.target.dataset.explain;
+                lessonTooltipTitle.textContent = '拆字解释';
+                lessonTooltipContent.textContent = explain;
+                // 弹窗定位（避免超出屏幕）
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                lessonTooltip.style.left = `${leftPos}px`;
+                lessonTooltip.style.top = `${e.pageY + 10}px`;
+                lessonTooltip.style.display = 'block';
+            });
+            // 离开隐藏
+            word.addEventListener('mouseleave', () => {
+                lessonTooltip.style.display = 'none';
+            });
+            // 点击固定显示
+            word.addEventListener('click', (e) => {
+                const explain = e.target.dataset.explain;
+                lessonTooltipTitle.textContent = '拆字解释';
+                lessonTooltipContent.textContent = explain;
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                lessonTooltip.style.left = `${leftPos}px`;
+                lessonTooltip.style.top = `${e.pageY + 10}px`;
+                lessonTooltip.style.display = 'block';
+            });
+        });
+
+        // 3. 练习题提交功能
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            feedback.innerHTML = '';
+            feedback.style.display = 'block';
+            
+            // 检查每道题答案（模糊匹配合理表述）
+            for (let [qId, correctAnsList] of Object.entries(correctAnswers)) {
+                const userAns = document.querySelector(`input[name="${qId}"]`).value.trim();
+                const feedbackItem = document.createElement('div');
+                feedbackItem.className = 'feedback-item';
+                
+                if (!userAns) {
+                    feedbackItem.textContent = `第${qId.replace('q', '')}题：未作答`;
+                    feedbackItem.className = 'feedback-item incorrect';
+                } else {
+                    const isCorrect = correctAnsList.some(ans => userAns.includes(ans.split("、")[0]) || ans.includes(userAns));
+                    if (isCorrect) {
+                        feedbackItem.textContent = `第${qId.replace('q', '')}题：回答正确 ✔`;
+                        feedbackItem.className = 'feedback-item correct';
+                    } else {
+                        feedbackItem.textContent = `第${qId.replace('q', '')}题：回答错误 ❌ 正确答案参考：${correctAnsList[0]}`;
+                        feedbackItem.className = 'feedback-item incorrect';
+                    }
+                }
+                feedback.appendChild(feedbackItem);
+            }
+            
+            // 显示翻译和出处部分
+            translationSection.classList.remove('hidden');
+            sourceSection.classList.remove('hidden');
+            
+            // 切换课文生词解释为英俄翻译
+            lessonWords.forEach(word => {
+                // 移除原有悬停/点击事件
+                const newWord = word.cloneNode(true);
+                word.parentNode.replaceChild(newWord, word);
+                
+                // 重新绑定事件，显示翻译
+                newWord.addEventListener('mouseenter', (e) => {
+                    const trans = e.target.dataset.trans;
+                    lessonTooltipTitle.textContent = '英俄翻译';
+                    lessonTooltipContent.textContent = trans;
+                    const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                    lessonTooltip.style.left = `${leftPos}px`;
+                    lessonTooltip.style.top = `${e.pageY + 10}px`;
+                    lessonTooltip.style.display = 'block';
+                });
+                
+                newWord.addEventListener('click', (e) => {
+                    const trans = e.target.dataset.trans;
+                    lessonTooltipTitle.textContent = '英俄翻译';
+                    lessonTooltipContent.textContent = trans;
+                    const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                    lessonTooltip.style.left = `${leftPos}px`;
+                    lessonTooltip.style.top = `${e.pageY + 10}px`;
+                    lessonTooltip.style.display = 'block';
+                });
+                
+                newWord.addEventListener('mouseleave', () => {
+                    lessonTooltip.style.display = 'none';
+                });
+            });
+        });
+
+        // 4. 翻译部分生词弹窗功能
+        translationWords.forEach(word => {
+            // 悬停显示
+            word.addEventListener('mouseenter', (e) => {
+                const trans = e.target.dataset.trans;
+                translationTooltipTitle.textContent = '英俄翻译';
+                translationTooltipContent.textContent = trans;
+                // 弹窗定位（避免超出屏幕）
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                translationTooltip.style.left = `${leftPos}px`;
+                translationTooltip.style.top = `${e.pageY + 10}px`;
+                translationTooltip.style.display = 'block';
+            });
+            // 离开隐藏
+            word.addEventListener('mouseleave', () => {
+                translationTooltip.style.display = 'none';
+            });
+            // 点击固定显示
+            word.addEventListener('click', (e) => {
+                const trans = e.target.dataset.trans;
+                translationTooltipTitle.textContent = '英俄翻译';
+                translationTooltipContent.textContent = trans;
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                translationTooltip.style.left = `${leftPos}px`;
+                translationTooltip.style.top = `${e.pageY + 10}px`;
+                translationTooltip.style.display = 'block';
+            });
+        });
+
+        // 5. 点击空白处关闭所有弹窗
+        document.addEventListener('click', (e) => {
+            const isNewWord = e.target.classList.contains('new-word');
+            if (!isNewWord) {
+                lessonTooltip.style.display = 'none';
+                translationTooltip.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
