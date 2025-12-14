@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>北宋国画————《溪山行旅图》</title>
+    <style>
+        /* 基础样式 */
+        body { 
+            font-family: "Microsoft YaHei", sans-serif; 
+            line-height: 1.8; 
+            margin: 20px; 
+            position: relative; /* 为tooltip定位 */
+        }
+        .lesson, .exercise, .translation, .source { 
+            margin: 30px 0; 
+            padding: 20px; 
+            border: 1px solid #eee; 
+            border-radius: 8px; 
+        }
+        h1, h2, h3 { color: #212121; }
+        .new-word { 
+            color: #d32f2f; 
+            font-weight: bold;
+            cursor: pointer; /* 提示可点击 */
+            text-decoration: underline dotted; /* 点状下划线提示 */
+            position: relative;
+        }
+        .pinyin { color: #1976d2; margin: 0 5px; }
+        
+        /* 生词解释弹窗样式 */
+        .word-tooltip {
+            position: absolute;
+            z-index: 999;
+            top: 30px;
+            left: 0;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            min-width: 200px;
+            display: none;
+            /* 避免弹窗超出页面 */
+            max-width: 300px;
+        }
+        .word-tooltip .tooltip-title {
+            font-size: 0.9em;
+            color: #d32f2f;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .word-tooltip .tooltip-content {
+            color: #388e3c;
+            font-size: 0.85em;
+            line-height: 1.6;
+        }
+
+        /* 练习题样式 */
+        .question { 
+            margin: 25px 0; 
+            padding: 15px; 
+            background: #f9f9f9; 
+            border-radius: 6px;
+        }
+        .option { 
+            margin: 8px 0; 
+            cursor: pointer; 
+        }
+        .option input { 
+            margin-right: 8px; 
+            cursor: pointer; 
+        }
+        .submit-btn {
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background: #1565c0;
+        }
+        .answer-feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+        .correct { color: #2e7d32; background: #e8f5e9; }
+        .incorrect { color: #c62828; background: #ffebee; }
+        .feedback-item { margin: 8px 0; }
+
+        /* 翻译部分生词+弹窗样式（单独区分） */
+        .translation .new-word {
+            color: #1976d2; /* 翻译部分生词改为蓝色，更易区分 */
+            text-decoration: underline dotted #1976d2;
+        }
+        .translation .word-tooltip {
+            border-color: #1976d2;
+        }
+        .translation .word-tooltip .tooltip-title {
+            color: #1976d2;
+        }
+        .translation .word-tooltip .tooltip-content {
+            color: #1976d2;
+        }
+
+        footer {
+            margin-top: 50px; 
+            text-align: center; 
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>北宋国画————《溪山行旅图》</h1>
+
+    <!-- 课文部分（含可点击生词，拆字解释已简化） -->
+    <div class="lesson">
+        <h2>一、课文原文</h2>
+        <p>40多年前，一位普通美国观众，在看完中国古代山水画后，提出这样的疑问：“看你们的画，尽是些山峰、石头、树林、流水，难道说中国人都是住在山里面吗？”</p>
+        <p>中国古画是<span class="new-word" data-explain="独（只）+ 一（一个）+ 无（没有）+ 二（第二个）→ 只有这一个，没有第二个，就是唯一的意思">独一无二</span><span class="pinyin">（dú yī wú èr）</span>的，深含着<span class="new-word" data-explain="诗（诗歌）+ 意（感觉）→ 像诗歌一样美好的感觉">诗意</span><span class="pinyin">（shī yì）</span>与<span class="new-word" data-explain="灵（灵机）+ 感（感觉）→ 突然想到好主意的感觉">灵感</span><span class="pinyin">（líng gǎn）</span>，使人们感受到自然<span class="new-word" data-explain="宁（安宁）+ 静（安静）→ 安安静静的，不吵闹（HSK3级）">宁静</span><span class="pinyin">（níng jìng）</span>的吸引力。</p>
+        <p>一千年前，北宋画家范宽的《溪山行旅图》，被称为宋代画的第一。在画中，立在画幅正中央的，是一座高大的山，细线一样的<span class="new-word" data-explain="瀑（水流）+ 布（布）→ 从山上流下来的水，像布一样">瀑布</span><span class="pinyin">（pù bù）</span>从高山飞下，消失在云烟里，一队人物，走在高山林中。</p>
+        <p>这幅画的内容并不复杂，但画法特别，画家用雨点一样密的手法，将山的高大<span class="new-word" data-explain="逼（接近）+ 真（真的）→ 看起来和真的差不多">逼真</span><span class="pinyin">（bī zhēn）</span>地表现出来。</p>
+        <p>对于范宽，北宋时期的书中写得很少。我们只知道，这位先生喜欢喝酒，成天坐在石头上，向四面张望。</p>
+        <p>台湾艺术<span class="new-word" data-explain="批（评论）+ 评（评价）+ 家（人）→ 专门评论艺术的人">批评家</span><span class="pinyin">（pī píng jiā）</span>蒋勋（Jiǎng Xūn）这样解释：画家觉得，人是一个<span class="new-word" data-explain="过（路过）+ 客（客人）→ 路过的人，比喻人在世上待的时间短（HSK3级）">过客</span><span class="pinyin">（guò kè）</span>。人的一生就是：走进山水里面，还没有爬山之前，抬头看到山，对这山有很多的<span class="new-word" data-explain="向（朝着）+ 往（去）→ 心里特别想去某个地方">向往</span><span class="pinyin">（xiàng wǎng）</span>，很多的<span class="new-word" data-explain="渴（特别想）+ 望（希望）→ 非常希望得到某样东西">渴望</span><span class="pinyin">（kě wàng）</span>，很多的<span class="new-word" data-explain="期（等着）+ 待（等候）→ 等着想要的事情发生（HSK3级）">期待</span><span class="pinyin">（qī dài）</span>，然后，慢慢走进山里面去了。在山里，会碰到各种各样的事情，快乐的、不快乐的。等到爬完山以后，从山中返回，看到自己刚才走的那一条路，知道人世间的<span class="new-word" data-explain="喜（高兴）+ 怒（生气）+ 哀（难过）+ 乐（快乐）→ 人所有的情绪">喜怒哀乐</span><span class="pinyin">（xǐ nù āi lè）</span>都过去了，一切都过去了。</p>
+        <p>也许，每个中国人心中，都有一个关于自然的<span class="new-word" data-explain="童（小孩）+ 话（故事）→ 小孩听的、有想象的故事">童话</span><span class="pinyin">（tóng huà）</span>。在台北故宫旁，有一座中式<span class="new-word" data-explain="园（园子）+ 林（树林）→ 有树有花的园子，供人玩">园林</span><span class="pinyin">（yuán lín）</span>，名叫至善园。里面有很多<span class="new-word" data-explain="景（景色）+ 观（看）→ 能看的好看的景色">景观</span><span class="pinyin">（jǐng guān）</span>，其中，有块叫“坐看云起”的石头，它的名字<span class="new-word" data-explain="来（来自）+ 源（源头）+ 于（从）→ 从某个地方来的">来源于</span><span class="pinyin">（lái yuán yú）</span>唐朝诗人王维的一首诗：行到水穷处，坐看云起时。偶然值林叟，谈笑无还期。</p>
+        <p>千百年来，这一直是中国<span class="new-word" data-explain="文（文化）+ 人（人）→ 有文化、搞文学的人">文人</span><span class="pinyin">（wén rén）</span>的人生最高<span class="new-word" data-explain="理（合理）+ 想（想的）→ 心里想要的最好的样子（HSK3级）">理想</span><span class="pinyin">（lǐ xiǎng）</span>。表现这样生活的山水画，自然就成为中国画家们最喜爱的<span class="new-word" data-explain="主（主要）+ 题（题目）→ 作品主要讲的内容">主题</span><span class="pinyin">（zhǔ tí）</span>之一。</p>
+        <!-- 课文生词弹窗（独立） -->
+        <div class="word-tooltip">
+            <div class="tooltip-title">拆字解释</div>
+            <div class="tooltip-content"></div>
+        </div>
+    </div>
+
+    <!-- 练习题部分（互动式） -->
+    <div class="exercise">
+        <h2>二、练习题</h2>
+        <form id="exercise-form">
+            <h3>（一）根据文章内容选择填空，完成概要重述</h3>
+            <div class="question">
+                <p>1. 一千年前，北宋画家范宽的《溪山行旅图》，是宋代绘画的（ ）</p>
+                <div class="option"><input type="radio" name="q1" value="A" id="q1-A"> <label for="q1-A">A. 代表作品</label></div>
+                <div class="option"><input type="radio" name="q1" value="B" id="q1-B"> <label for="q1-B">B. 神仙的作品</label></div>
+                <div class="option"><input type="radio" name="q1" value="C" id="q1-C"> <label for="q1-C">C. 画的是神</label></div>
+                <div class="option"><input type="radio" name="q1" value="D" id="q1-D"> <label for="q1-D">D. 疯狂作品</label></div>
+            </div>
+
+            <div class="question">
+                <p>2. 台湾艺术批评家蒋勋对于这幅画的理解是：画家觉得（ ），走进一个山水里面去，还没有爬山之前，抬头看山，对这山有很多的向往，然后，慢慢走进山里面。</p>
+                <div class="option"><input type="radio" name="q2" value="A" id="q2-A"> <label for="q2-A">A. 人生没意思</label></div>
+                <div class="option"><input type="radio" name="q2" value="B" id="q2-B"> <label for="q2-B">B. 人是自然的主人</label></div>
+                <div class="option"><input type="radio" name="q2" value="C" id="q2-C"> <label for="q2-C">C. 人是生命的过客</label></div>
+                <div class="option"><input type="radio" name="q2" value="D" id="q2-D"> <label for="q2-D">D. 人来了，又走了</label></div>
+            </div>
+
+            <div class="question">
+                <p>3. 等到爬完山，从山中返回，看到自己刚才走的那一条路，他知道（ ）</p>
+                <div class="option"><input type="radio" name="q3" value="A" id="q3-A"> <label for="q3-A">A. 他已经活过了</label></div>
+                <div class="option"><input type="radio" name="q3" value="B" id="q3-B"> <label for="q3-B">B. 他已经死了</label></div>
+                <div class="option"><input type="radio" name="q3" value="C" id="q3-C"> <label for="q3-C">C. 他白活了</label></div>
+                <div class="option"><input type="radio" name="q3" value="D" id="q3-D"> <label for="q3-D">D. 他什么都不知道</label></div>
+            </div>
+
+            <div class="question">
+                <p>4. 唐代诗人王维有一句诗：行到水穷处，坐看云起时。千百年来，这一直是中国文人的（ ）</p>
+                <div class="option"><input type="radio" name="q4" value="A" id="q4-A"> <label for="q4-A">A. 最富有的人生</label></div>
+                <div class="option"><input type="radio" name="q4" value="B" id="q4-B"> <label for="q4-B">B. 最高级的人生</label></div>
+                <div class="option"><input type="radio" name="q4" value="C" id="q4-C"> <label for="q4-C">C. 理想人生</label></div>
+                <div class="option"><input type="radio" name="q4" value="D" id="q4-D"> <label for="q4-D">D. 达不到的人生</label></div>
+            </div>
+
+            <h3>（二）根据文章内容判断正误（正确的画"√"，错误的画"×"）</h3>
+            <div class="question">
+                <p>1. 《溪山行旅图》内容复杂，画法特别。</p>
+                <div class="option"><input type="radio" name="q5" value="√" id="q5-√"> <label for="q5-√">√ 正确</label></div>
+                <div class="option"><input type="radio" name="q5" value="×" id="q5-×"> <label for="q5-×">× 错误</label></div>
+            </div>
+
+            <div class="question">
+                <p>2. 《溪山行旅图》中没有人物。</p>
+                <div class="option"><input type="radio" name="q6" value="√" id="q6-√"> <label for="q6-√">√ 正确</label></div>
+                <div class="option"><input type="radio" name="q6" value="×" id="q6-×"> <label for="q6-×">× 错误</label></div>
+            </div>
+
+            <div class="question">
+                <p>3. 《溪山行旅图》的作者是北宋一个不出名的画家。</p>
+                <div class="option"><input type="radio" name="q7" value="√" id="q7-√"> <label for="q7-√">√ 正确</label></div>
+                <div class="option"><input type="radio" name="q7" value="×" id="q7-×"> <label for="q7-×">× 错误</label></div>
+            </div>
+
+            <div class="question">
+                <p>4. 每个中国人心中都有关于自然的童话。</p>
+                <div class="option"><input type="radio" name="q8" value="√" id="q8-√"> <label for="q8-√">√ 正确</label></div>
+                <div class="option"><input type="radio" name="q8" value="×" id="q8-×"> <label for="q8-×">× 错误</label></div>
+            </div>
+
+            <div class="question">
+                <p>5. 至善园中有一块叫“坐看云起”的石头。</p>
+                <div class="option"><input type="radio" name="q9" value="√" id="q9-√"> <label for="q9-√">√ 正确</label></div>
+                <div class="option"><input type="radio" name="q9" value="×" id="q9-×"> <label for="q9-×">× 错误</label></div>
+            </div>
+
+            <div class="question">
+                <p>6. 描绘隐居生活的山水画是中国画家们最喜爱的主题之一。</p>
+                <div class="option"><input type="radio" name="q10" value="√" id="q10-√"> <label for="q10-√">√ 正确</label></div>
+                <div class="option"><input type="radio" name="q10" value="×" id="q10-×"> <label for="q10-×">× 错误</label></div>
+            </div>
+
+            <button type="submit" class="submit-btn">提交答案</button>
+        </form>
+        <!-- 答题反馈区域 -->
+        <div class="answer-feedback" id="feedback"></div>
+    </div>
+
+    <!-- 生词英俄翻译解释（可点击，弹窗独立） -->
+    <div class="translation">
+        <h2>三、生词英俄翻译解释</h2>
+        <ul>
+            <li><span class="new-word" data-trans="英语：unique（唯一的）；俄语：уникальный（у-ник-а-ль-ный，唯一的）">独一无二</span><span class="pinyin">（dú yī wú èr）</span></li>
+            <li><span class="new-word" data-trans="英语：poetic feeling（诗意的感觉）；俄语：поэтическое чувство（по-э-ти-чес-кое чув-ст-во）">诗意</span><span class="pinyin">（shī yì）</span></li>
+            <li><span class="new-word" data-trans="英语：inspiration（灵感）；俄语：вдохновение（вдо-хно-ве-ние）">灵感</span><span class="pinyin">（líng gǎn）</span></li>
+            <li><span class="new-word" data-trans="英语：peaceful（安静的）；俄语：спокойный（спо-й-ки-й）">宁静</span><span class="pinyin">（níng jìng）</span></li>
+            <li><span class="new-word" data-trans="英语：waterfall（瀑布）；俄语：водопад（во-до-пад）">瀑布</span><span class="pinyin">（pù bù）</span></li>
+            <li><span class="new-word" data-trans="英语：lifelike（像真的一样）；俄语：живой（жи-вой）">逼真</span><span class="pinyin">（bī zhēn）</span></li>
+            <li><span class="new-word" data-trans="英语：art critic（艺术批评家）；俄语：художественный критик（ху-дож-еств-ен-ный кри-тик）">批评家</span><span class="pinyin">（pī píng jiā）</span></li>
+            <li><span class="new-word" data-trans="英语：passing traveller（路过的人）；俄语：прохожий（про-хо-жий）">过客</span><span class="pinyin">（guò kè）</span></li>
+            <li><span class="new-word" data-trans="英语：yearn for（向往）；俄语：страстно желать（страст-но же-лать）">向往</span><span class="pinyin">（xiàng wǎng）</span></li>
+            <li><span class="new-word" data-trans="英语：desire（渴望）；俄语：желание（же-ла-ние）">渴望</span><span class="pinyin">（kě wàng）</span></li>
+            <li><span class="new-word" data-trans="英语：expect（期待）；俄语：ожидать（о-жи-да-ть）">期待</span><span class="pinyin">（qī dài）</span></li>
+            <li><span class="new-word" data-trans="英语：joys and sorrows（喜怒哀乐）；俄语：радости и печали（ра-дос-tи и пе-ча-ли）">喜怒哀乐</span><span class="pinyin">（xǐ nù āi lè）</span></li>
+            <li><span class="new-word" data-trans="英语：fairy tale（童话）；俄语：сказка（ска-зка）">童话</span><span class="pinyin">（tóng huà）</span></li>
+            <li><span class="new-word" data-trans="英语：garden（园林）；俄语：сад（сад）">园林</span><span class="pinyin">（yuán lín）</span></li>
+            <li><span class="new-word" data-trans="英语：scenery（景色）；俄语：пейзаж（пей-саж）">景观</span><span class="pinyin">（jǐng guān）</span></li>
+            <li><span class="new-word" data-trans="英语：come from（来自）；俄语：происходить из（про-ис-хо-дить из）">来源于</span><span class="pinyin">（lái yuán yú）</span></li>
+            <li><span class="new-word" data-trans="英语：scholar（文人）；俄语：учёный（у-чё-ный）">文人</span><span class="pinyin">（wén rén）</span></li>
+            <li><span class="new-word" data-trans="英语：ideal（理想）；俄语：идеал（и-де-ал）">理想</span><span class="pinyin">（lǐ xiǎng）</span></li>
+            <li><span class="new-word" data-trans="英语：theme（主题）；俄语：тема（те-ма）">主题</span><span class="pinyin">（zhǔ tí）</span></li>
+        </ul>
+        <!-- 翻译生词弹窗（独立） -->
+        <div class="word-tooltip">
+            <div class="tooltip-title">英俄翻译</div>
+            <div class="tooltip-content"></div>
+        </div>
+    </div>
+
+    <!-- 题目原文出处标记 -->
+    <div class="source">
+        <h2>四、题目原文出处标记</h2>
+        <h3>（一）选择题出处</h3>
+        <ol>
+            <li>第1题：对应原文“一千年前，北宋画家范宽的《溪山行旅图》，被称为宋代画的第一”</li>
+            <li>第2题：对应原文“台湾艺术批评家蒋勋（Jiǎng Xūn）这样解释：画家觉得，人是一个过客”</li>
+            <li>第3题：对应原文“等到爬完山以后，从山中返回，看到自己刚才走的那一条路，知道人世间的喜怒哀乐都过去了，一切都过去了”</li>
+            <li>第4题：对应原文“千百年来，这一直是中国文人的人生最高理想”</li>
+        </ol>
+        <h3>（二）判断题出处</h3>
+        <ol>
+            <li>第1题：对应原文“这幅画的内容并不复杂，但画法特别”</li>
+            <li>第2题：对应原文“一队人物，走在高山林中”</li>
+            <li>第3题：对应原文“对于范宽，北宋时期的书中写得很少”</li>
+            <li>第4题：对应原文“也许，每个中国人心中，都有一个关于自然的童话”</li>
+            <li>第5题：对应原文“在台北故宫旁，有一座中式园林，名叫至善园。里面有很多景观，其中，有块叫‘坐看云起’的石头”</li>
+            <li>第6题：对应原文“表现这样生活的山水画，自然就成为中国画家们最喜爱的主题之一”</li>
+        </ol>
+    </div>
+
+    <footer>
+        <p>© 2025 对外汉语课文练习素材</p>
+    </footer>
+
+    <script>
+        // 1. 核心修复：分别获取课文/翻译的弹窗和内容，避免冲突
+        // 课文生词相关元素
+        const lessonWords = document.querySelectorAll('.lesson .new-word');
+        const lessonTooltip = document.querySelector('.lesson .word-tooltip');
+        const lessonTooltipContent = lessonTooltip.querySelector('.tooltip-content');
+        
+        // 翻译生词相关元素
+        const translationWords = document.querySelectorAll('.translation .new-word');
+        const translationTooltip = document.querySelector('.translation .word-tooltip');
+        const translationTooltipContent = translationTooltip.querySelector('.tooltip-content');
+
+        // 2. 课文生词：鼠标悬停/点击显示简化的拆字解释
+        lessonWords.forEach(word => {
+            // 悬停显示
+            word.addEventListener('mouseenter', (e) => {
+                const explain = e.target.dataset.explain;
+                lessonTooltipContent.textContent = explain;
+                // 弹窗定位（避免超出屏幕）
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                lessonTooltip.style.left = `${leftPos}px`;
+                lessonTooltip.style.top = `${e.pageY + 10}px`;
+                lessonTooltip.style.display = 'block';
+            });
+            // 离开隐藏
+            word.addEventListener('mouseleave', () => {
+                lessonTooltip.style.display = 'none';
+            });
+            // 点击固定显示（防止悬停消失）
+            word.addEventListener('click', (e) => {
+                const explain = e.target.dataset.explain;
+                lessonTooltipContent.textContent = explain;
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                lessonTooltip.style.left = `${leftPos}px`;
+                lessonTooltip.style.top = `${e.pageY + 10}px`;
+                lessonTooltip.style.display = 'block';
+            });
+        });
+
+        // 3. 翻译生词：鼠标悬停/点击显示英俄翻译（修复显示问题）
+        translationWords.forEach(word => {
+            // 悬停显示
+            word.addEventListener('mouseenter', (e) => {
+                const trans = e.target.dataset.trans;
+                translationTooltipContent.textContent = trans;
+                // 弹窗定位（避免超出屏幕）
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                translationTooltip.style.left = `${leftPos}px`;
+                translationTooltip.style.top = `${e.pageY + 10}px`;
+                translationTooltip.style.display = 'block';
+            });
+            // 离开隐藏
+            word.addEventListener('mouseleave', () => {
+                translationTooltip.style.display = 'none';
+            });
+            // 点击固定显示
+            word.addEventListener('click', (e) => {
+                const trans = e.target.dataset.trans;
+                translationTooltipContent.textContent = trans;
+                const leftPos = e.pageX + 10 > window.innerWidth - 320 ? window.innerWidth - 320 : e.pageX + 10;
+                translationTooltip.style.left = `${leftPos}px`;
+                translationTooltip.style.top = `${e.pageY + 10}px`;
+                translationTooltip.style.display = 'block';
+            });
+        });
+
+        // 4. 点击空白处关闭所有弹窗
+        document.addEventListener('click', (e) => {
+            const isNewWord = e.target.classList.contains('new-word');
+            if (!isNewWord) {
+                lessonTooltip.style.display = 'none';
+                translationTooltip.style.display = 'none';
+            }
+        });
+
+        // 5. 练习题提交校验功能（保留原有逻辑）
+        const form = document.getElementById('exercise-form');
+        const feedback = document.getElementById('feedback');
+        const correctAnswers = {
+            q1: 'A', q2: 'C', q3: 'A', q4: 'C',
+            q5: '×', q6: '×', q7: '×', q8: '√', q9: '√', q10: '×'
+        };
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            feedback.innerHTML = '';
+            feedback.style.display = 'block';
+            let correctCount = 0;
+            const totalCount = Object.keys(correctAnswers).length;
+
+            for (let [qId, correctAns] of Object.entries(correctAnswers)) {
+                const selectedOption = document.querySelector(`input[name="${qId}"]:checked`);
+                const feedbackItem = document.createElement('div');
+                feedbackItem.className = 'feedback-item';
+
+                if (!selectedOption) {
+                    feedbackItem.textContent = `第${qId.replace('q', '')}题：未作答`;
+                    feedbackItem.className = 'feedback-item incorrect';
+                } else {
+                    const userAns = selectedOption.value;
+                    if (userAns === correctAns) {
+                        correctCount++;
+                        feedbackItem.textContent = `第${qId.replace('q', '')}题：回答正确 ✔`;
+                        feedbackItem.className = 'feedback-item correct';
+                    } else {
+                        feedbackItem.textContent = `第${qId.replace('q', '')}题：回答错误 ❌ 正确答案是${correctAns}`;
+                        feedbackItem.className = 'feedback-item incorrect';
+                    }
+                }
+                feedback.appendChild(feedbackItem);
+            }
+
+            const summary = document.createElement('div');
+            summary.style.marginTop = '15px';
+            summary.style.paddingTop = '15px';
+            summary.style.borderTop = '1px solid #eee';
+            summary.textContent = `本次作答：答对${correctCount}题，答错${totalCount - correctCount}题`;
+            feedback.appendChild(summary);
+        });
+    </script>
+</body>
+</html>
