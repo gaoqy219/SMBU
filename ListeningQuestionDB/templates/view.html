@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMBU CLC 听力题库——查看与检索</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        h1 {
+            color: #165DFF;
+            margin-bottom: 25px;
+            font-size: 24px;
+            font-weight: 600;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .filter {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+        }
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .filter-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #444;
+        }
+        .filter-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        .filter-group select:focus {
+            outline: none;
+            border-color: #165DFF;
+            box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.1);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .btn-primary {
+            background: #165DFF;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #0f48d1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(22, 93, 255, 0.2);
+        }
+        .btn-secondary {
+            background: #f0f2f5;
+            color: #444;
+        }
+        .btn-secondary:hover {
+            background: #e0e4eb;
+        }
+        .btn-generate {
+            background: #36CFC9;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .btn-generate:hover {
+            background: #28B5B0;
+            box-shadow: 0 4px 12px rgba(54, 207, 201, 0.2);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+        }
+        th {
+            background: linear-gradient(180deg, #f9fafc 0%, #f5f7fa 100%);
+            color: #444;
+            font-weight: 500;
+            padding: 15px 12px;
+            text-align: left;
+            font-size: 14px;
+            border-bottom: 2px solid #eee;
+            position: sticky;
+            top: 0;
+        }
+        td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            vertical-align: middle;
+            transition: background-color 0.2s ease;
+        }
+        tr:hover td {
+            background-color: #f8f9ff;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-size: 15px;
+        }
+
+        audio {
+            width: 100%;
+            max-width: 220px;
+            border-radius: 8px;
+        }
+
+        .link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #165DFF;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        .link:hover {
+            color: #0f48d1;
+            text-decoration: underline;
+        }
+
+        .checkbox-cell {
+            width: 60px;
+            text-align: center;
+        }
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* 版权声明样式 */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            padding: 20px 0 0;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin-top: 20px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+            .filter {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            td {
+                padding: 12px 8px;
+                font-size: 13px;
+            }
+            th {
+                padding: 12px 8px;
+                font-size: 13px;
+            }
+            audio {
+                max-width: 100%;
+            }
+            .footer {
+                font-size: 11px;
+                margin-top: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SMBU CLC 听力题库——查看与检索</h1>
+
+        <!-- 检索筛选区域 -->
+        <div class="filter">
+            <form method="GET">
+                <div class="filter-group">
+                    <label>等级：</label>
+                    <select name="level">
+                        <option value="">全部</option>
+                        {% for opt in level_options %}
+                            <option value="{{ opt }}" {% if selected_level == opt %}selected{% endif %}>{{ opt }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>出处：</label>
+                    <select name="source">
+                        <option value="">全部</option>
+                        {% for opt in source_options %}
+                            <option value="{{ opt }}" {% if selected_source == opt %}selected{% endif %}>{{ opt }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">检索</button>
+                <a href="/view"><button type="button" class="btn btn-secondary">重置</button></a>
+            </form>
+        </div>
+
+        <!-- 生成试题按钮 -->
+        <button id="generateBtn" class="btn btn-generate">生成选中的试题</button>
+
+        <!-- 题目列表 -->
+        <div class="table-container">
+            <form id="questionForm">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="checkbox-cell">选择</th>
+                            <th>ID</th>
+                            <th>音频</th>
+                            <th>题目文字</th>
+                            <th>答案</th>
+                            <th>等级</th>
+                            <th>出处</th>
+                            <th>上传时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if questions %}
+                            {% for q in questions %}
+                                <tr>
+                                    <td class="checkbox-cell">
+                                        <input type="checkbox" name="question_ids" value="{{ q.id }}" class="checkbox">
+                                    </td>
+                                    <td>{{ q.id }}</td>
+                                    <td><audio controls src="/audio/{{ q.audio_path }}">您的浏览器不支持音频播放</audio></td>
+                                    <td>{{ q.question_text }}</td>
+                                    <td>{{ q.answer }}</td>
+                                    <td>{{ q.level }}</td>
+                                    <td>{{ q.source }}</td>
+                                    <td>{{ q.upload_time }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="8" class="no-data">暂无题目数据</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </form>
+        </div>
+
+        <a href="/" class="link">返回上传页面</a>
+
+        <!-- 版权声明 -->
+        <div class="footer">© Chingyu Kao 2025</div>
+    </div>
+
+    <script>
+        // 生成按钮点击事件
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('input[name="question_ids"]:checked');
+            if (checkboxes.length === 0) {
+                alert('请至少选择一道试题！');
+                return;
+            }
+
+            // 拼接选中的ID参数
+            const ids = Array.from(checkboxes).map(cb => cb.value);
+            const url = `/generate?question_ids=${ids.join('&question_ids=')}`;
+            window.location.href = url;
+        });
+    </script>
+</body>
+</html>

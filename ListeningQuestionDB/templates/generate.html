@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMBU CLC 听力题库——音频文件合成</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        h1 {
+            color: #165DFF;
+            margin-bottom: 25px;
+            font-size: 24px;
+            font-weight: 600;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .question-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: #fafafa;
+            transition: all 0.2s ease;
+        }
+        .question-item:hover {
+            border-color: #165DFF;
+            background: #f8f9ff;
+        }
+
+        .drag-handle {
+            cursor: move;
+            color: #999;
+            font-size: 20px;
+            margin-right: 15px;
+            padding: 0 10px;
+        }
+
+        .question-info {
+            flex: 1;
+            padding: 0 10px;
+        }
+        .question-id {
+            font-weight: 600;
+            color: #165DFF;
+            margin-bottom: 5px;
+        }
+        .question-text {
+            font-size: 14px;
+            color: #444;
+        }
+
+        .audio-player {
+            width: 200px;
+            margin-right: 15px;
+        }
+
+        .duration-select {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .move-btn {
+            background: #f0f2f5;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 5px;
+            font-size: 16px;
+            color: #666;
+            transition: all 0.2s ease;
+        }
+        .move-btn:hover {
+            background: #e0e4eb;
+            color: #165DFF;
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .generate-btn {
+            background: #36CFC9;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .generate-btn:hover {
+            background: #28B5B0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(54, 207, 201, 0.2);
+        }
+        .generate-btn:disabled {
+            background: #999;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #165DFF;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 20px;
+            color: #165DFF;
+        }
+        .success-message {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-radius: 8px;
+        }
+        .download-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* 版权声明样式 */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            padding: 20px 0 0;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin-top: 20px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+            .question-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            .audio-player {
+                width: 100%;
+                margin-right: 0;
+            }
+            .duration-select {
+                width: 100%;
+            }
+            .move-buttons {
+                text-align: center;
+            }
+            .footer {
+                font-size: 11px;
+                margin-top: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SMBU CLC 听力题库——音频文件合成</h1>
+
+        <!-- 试题列表（可排序） -->
+        <div id="questionList">
+            {% for q in questions %}
+                <div class="question-item" data-id="{{ q.id }}">
+                    <div class="drag-handle">☰</div>
+                    <div class="question-info">
+                        <div class="question-id">试题 {{ q.id }}</div>
+                        <div class="question-text">{{ q.question_text }}</div>
+                    </div>
+                    <audio class="audio-player" controls src="/audio/{{ q.audio_path }}">您的浏览器不支持音频播放</audio>
+                    <div>
+                        <label>空白间隔：</label>
+                        <select class="duration-select" data-id="{{ q.id }}">
+                            {% for dur in duration_options %}
+                                <option value="{{ dur }}" {% if dur == 5 %}selected{% endif %}>{{ dur }}秒</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="move-buttons">
+                        <button class="move-btn move-up">↑</button>
+                        <button class="move-btn move-down">↓</button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- 生成按钮 -->
+        <div class="btn-container">
+            <button id="generateAudioBtn" class="generate-btn">生成拼接音频</button>
+            <div class="loading" id="loading">正在生成音频，请稍候...</div>
+            <div class="success-message" id="successMessage">
+                音频生成成功！
+                <br>
+                <button class="download-btn" id="downloadBtn">下载音频文件</button>
+            </div>
+        </div>
+
+        <a href="/view" class="back-link">← 返回试题列表</a>
+
+        <!-- 版权声明 -->
+        <div class="footer">© Chingyu Kao 2025</div>
+    </div>
+
+    <script>
+        // 获取试题列表元素
+        const questionList = document.getElementById('questionList');
+        const questionItems = document.querySelectorAll('.question-item');
+        const generateBtn = document.getElementById('generateAudioBtn');
+        const loading = document.getElementById('loading');
+        const successMessage = document.getElementById('successMessage');
+        const downloadBtn = document.getElementById('downloadBtn');
+        let generatedFilename = '';
+
+        // 上移按钮事件
+        document.querySelectorAll('.move-up').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const item = this.closest('.question-item');
+                if (item.previousElementSibling) {
+                    questionList.insertBefore(item, item.previousElementSibling);
+                }
+            });
+        });
+
+        // 下移按钮事件
+        document.querySelectorAll('.move-down').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const item = this.closest('.question-item');
+                if (item.nextElementSibling) {
+                    questionList.insertBefore(item.nextElementSibling, item);
+                }
+            });
+        });
+
+        // 生成音频按钮事件
+        generateBtn.addEventListener('click', async function() {
+            // 获取试题顺序和时长
+            const questionOrder = [];
+            const durations = {};
+            
+            document.querySelectorAll('.question-item').forEach(item => {
+                const qId = item.dataset.id;
+                questionOrder.push(qId);
+                const durationSelect = document.querySelector(`.duration-select[data-id="${qId}"]`);
+                durations[qId] = durationSelect.value;
+            });
+
+            // 禁用按钮，显示加载
+            generateBtn.disabled = true;
+            loading.style.display = 'block';
+            successMessage.style.display = 'none';
+
+            try {
+                // 发送请求生成音频
+                const response = await fetch('/generate_audio', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        question_order: questionOrder,
+                        durations: durations
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    generatedFilename = result.filename;
+                    loading.style.display = 'none';
+                    successMessage.style.display = 'block';
+                } else {
+                    alert('生成失败：' + result.message);
+                    loading.style.display = 'none';
+                    generateBtn.disabled = false;
+                }
+            } catch (error) {
+                alert('生成失败：' + error.message);
+                loading.style.display = 'none';
+                generateBtn.disabled = false;
+            }
+        });
+
+        // 下载按钮事件
+        downloadBtn.addEventListener('click', function() {
+            if (generatedFilename) {
+                window.location.href = `/download/${generatedFilename}`;
+            }
+        });
+
+        // 可选：拖拽排序（增强体验）
+        let draggedItem = null;
+        questionItems.forEach(item => {
+            item.setAttribute('draggable', true);
+            
+            item.addEventListener('dragstart', function() {
+                draggedItem = this;
+                setTimeout(() => this.style.opacity = '0.5', 0);
+            });
+
+            item.addEventListener('dragend', function() {
+                draggedItem = null;
+                this.style.opacity = '1';
+            });
+
+            item.addEventListener('dragover', function(e) {
+                e.preventDefault();
+            });
+
+            item.addEventListener('dragenter', function(e) {
+                e.preventDefault();
+                if (this !== draggedItem) {
+                    this.style.border = '2px dashed #165DFF';
+                }
+            });
+
+            item.addEventListener('dragleave', function() {
+                this.style.border = '1px solid #eee';
+            });
+
+            item.addEventListener('drop', function() {
+                this.style.border = '1px solid #eee';
+                if (this !== draggedItem) {
+                    const index1 = Array.from(questionItems).indexOf(draggedItem);
+                    const index2 = Array.from(questionItems).indexOf(this);
+                    if (index1 < index2) {
+                        questionList.insertBefore(draggedItem, this.nextElementSibling);
+                    } else {
+                        questionList.insertBefore(draggedItem, this);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
