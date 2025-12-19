@@ -5,21 +5,30 @@ from flask import Flask, render_template, request, redirect, url_for, flash, sen
 from werkzeug.utils import secure_filename
 from pydub import AudioSegment
 
+# 获取app.py所在目录的绝对路径（核心修改）
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # 初始化Flask应用
 app = Flask(__name__)
 app.secret_key = 'hsk_listening_2025'
-app.config['UPLOAD_FOLDER'] = 'static/audio'
-app.config['GENERATED_FOLDER'] = 'static/generated'  # 存储生成的音频
+
+# 基于BASE_DIR构建所有路径（确保在app.py同目录）
+app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'static/audio')
+app.config['GENERATED_FOLDER'] = os.path.join(BASE_DIR, 'static/generated')
+app.config['ORDER_FILES_FOLDER'] = os.path.join(BASE_DIR, 'static/ordersfile')
+app.config['DATABASE_PATH'] = os.path.join(BASE_DIR, 'database.db')  # 数据库文件路径
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 ALLOWED_EXTENSIONS = {'mp3'}
 
-# 确保目录存在
+# 确保所有目录存在（基于BASE_DIR）
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['GENERATED_FOLDER'], exist_ok=True)
+os.makedirs(app.config['ORDER_FILES_FOLDER'], exist_ok=True)
 
-# 初始化数据库
+# 初始化数据库（绑定到app.py同目录的database.db）
 def init_db():
-    conn = sqlite3.connect('database.db')
+    # 连接BASE_DIR下的database.db
+    conn = sqlite3.connect(app.config['DATABASE_PATH'])
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS listening_questions
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,13 +45,13 @@ def init_db():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# 数据库连接
+# 数据库连接（使用BASE_DIR下的database.db）
 def get_db_connection():
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(app.config['DATABASE_PATH'])
     conn.row_factory = sqlite3.Row
     return conn
 
-# 原有上传路由（不变）
+# 原有上传路由（路径已绑定BASE_DIR，无需其他修改）
 @app.route('/', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
@@ -84,7 +93,7 @@ def upload():
     
     return render_template('upload.html')
 
-# 原有查看路由（修改：支持选中试题）
+# 原有查看路由（无需修改）
 @app.route('/view', methods=['GET'])
 def view():
     level = request.args.get('level', '')
@@ -114,33 +123,29 @@ def view():
                            selected_level=level,
                            selected_source=source)
 
-# 新增：生成试题页面路由
+# 生成试题页面路由（无需修改）
 @app.route('/generate', methods=['GET'])
 def generate():
-    # 获取选中的试题ID列表
     question_ids = request.args.getlist('question_ids')
     if not question_ids:
         flash('请至少选择一道试题！')
         return redirect(url_for('view'))
     
-    # 查询选中的试题
     placeholders = ', '.join(['?'] * len(question_ids))
     conn = get_db_connection()
     questions = conn.execute(f'SELECT * FROM listening_questions WHERE id IN ({placeholders})', question_ids).fetchall()
     conn.close()
 
-    # 时长选项
     duration_options = [5, 10, 15, 20, 25, 30]
     
     return render_template('generate.html', 
                            questions=questions,
                            duration_options=duration_options)
 
-# 新增：音频拼接生成路由
+# 音频拼接生成路由（路径已绑定BASE_DIR，无需修改）
 @app.route('/generate_audio', methods=['POST'])
 def generate_audio():
     try:
-        # 获取前端提交的试题顺序和时长
         data = request.json
         question_order = data.get('question_order', [])
         durations = data.get('durations', {})
@@ -148,11 +153,21 @@ def generate_audio():
         if not question_order:
             return jsonify({'success': False, 'message': '请选择试题并调整顺序'})
         
-        # 拼接音频
         combined = AudioSegment.empty()
+        missing_files = []  # 记录缺失的提示音文件
         
-        for q_id in question_order:
-            # 获取试题音频
+        for idx, q_id in enumerate(question_order, 1):
+            # 加载序号提示音
+            order_filename = f"{idx:02d}.mp3"
+            order_audio_path = os.path.join(app.config['ORDER_FILES_FOLDER'], order_filename)
+            
+            if os.path.exists(order_audio_path):
+                order_audio = AudioSegment.from_mp3(order_audio_path)
+                combined += order_audio
+            else:
+                missing_files.append(order_filename)
+            
+            # 加载试题音频
             conn = get_db_connection()
             question = conn.execute('SELECT audio_path FROM listening_questions WHERE id = ?', (q_id,)).fetchone()
             conn.close()
@@ -160,38 +175,48 @@ def generate_audio():
             if not question:
                 continue
             
-            # 加载试题音频
             audio_path = os.path.join(app.config['UPLOAD_FOLDER'], question['audio_path'])
             audio = AudioSegment.from_mp3(audio_path)
             combined += audio
             
-            # 添加空白音（静音）
-            duration = int(durations.get(str(q_id), 5))  # 默认5秒
-            silence = AudioSegment.silent(duration=duration * 1000)  # 转换为毫秒
+            # 生成静音段
+            duration = int(durations.get(str(q_id), 5))
+            silence = AudioSegment.silent(duration=duration * 1000)
             combined += silence
         
-        # 生成唯一文件名
+        # 拼接结尾结束音
+        over_audio_path = os.path.join(app.config['ORDER_FILES_FOLDER'], 'over.mp3')
+        if os.path.exists(over_audio_path):
+            over_audio = AudioSegment.from_mp3(over_audio_path)
+            combined += over_audio
+        else:
+            missing_files.append('over.mp3')
+        
+        # 生成唯一文件名（保存到GENERATED_FOLDER）
         filename = f"combined_{uuid.uuid4()}.mp3"
         output_path = os.path.join(app.config['GENERATED_FOLDER'], filename)
-        
-        # 导出拼接后的音频
         combined.export(output_path, format="mp3")
         
-        return jsonify({'success': True, 'filename': filename})
+        # 返回结果（含缺失文件提示）
+        response = {'success': True, 'filename': filename}
+        if missing_files:
+            response['message'] = f'音频生成成功，但缺失以下提示音文件：{", ".join(missing_files)}'
+        
+        return jsonify(response)
     
     except Exception as e:
         return jsonify({'success': False, 'message': f'生成失败：{str(e)}'})
 
-# 新增：下载生成的音频
+# 下载生成的音频（无需修改）
 @app.route('/download/<filename>')
 def download_audio(filename):
     return send_from_directory(app.config['GENERATED_FOLDER'], filename, as_attachment=True)
 
-# 原有音频访问路由（不变）
+# 音频文件访问路由（无需修改）
 @app.route('/audio/<filename>')
 def serve_audio(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True, host='0.0.0.0', port=5001)  # 用5001端口避免冲突
+    app.run(debug=True, host='0.0.0.0', port=5001)
