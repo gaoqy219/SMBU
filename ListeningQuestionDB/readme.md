@@ -38,7 +38,18 @@ pip install flask werkzeug pydub
 验证：重启 CMD/PowerShell，执行 ffmpeg -version，显示版本信息即成功。
 
 运行步骤
-步骤 1：放置项目文件将所有项目文件（app.py、templates 文件夹、static 文件夹）放在同一目录下，目录结构如下：HSK 听力题库 /├── app.py├── database.db（运行后自动生成）├── static/│ ├── audio/（上传的音频自动存储）│ ├── generated/（生成的拼接音频存储）│ └── ordersfile/（需手动放入序号提示音和结束音）└── templates/├── upload.html├── view.html└── generate.html
+步骤 1：放置项目文件将所有项目文件（app.py、templates 文件夹、static 文件夹）放在同一目录下，目录结构如下：
+HSK 听力题库 /
+├── app.py
+├── database.db（运行后自动生成）
+├── static/
+│├── audio/（上传的音频自动存储）
+│├── generated/（生成的拼接音频存储）
+│└── ordersfile/（需手动放入序号提示音和结束音）
+└── templates/
+  ├── upload.html
+  ├── view.html
+  └── generate.html
 步骤 2：准备提示音文件（可选但建议）在 static/ordersfile/ 目录下放入：
 序号提示音：01.mp3、02.mp3...30.mp3（对应第 1-30 题的提示音）
 结束音：over.mp3（音频结尾的结束提示音）
