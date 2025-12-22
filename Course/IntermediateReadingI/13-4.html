@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>为什么二月天数少 - 互动阅读</title>
+    <style>
+        /* 全局样式重置与基础设置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f9ff;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        /* 头部样式 */
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(135deg, #4299e1, #38b2ac);
+            border-radius: 12px;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        /* 字号控制区 */
+        .font-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .font-control label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .font-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background-color: #4299e1;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .font-btn:hover {
+            background-color: #3182ce;
+            transform: translateY(-2px);
+        }
+        .font-btn:active {
+            transform: translateY(0);
+        }
+        /* 阅读文本样式 */
+        .reading-text {
+            font-size: 18px;
+            line-height: 2;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        /* 生词样式 */
+        .word {
+            color: #4299e1;
+            text-decoration: underline dotted;
+            cursor: pointer;
+            position: relative;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            display: inline-block;
+        }
+        .word:hover {
+            color: #3182ce;
+            background-color: #e8f4f8;
+            padding: 0 3px;
+            border-radius: 4px;
+        }
+        .explanation {
+            display: none;
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            z-index: 999;
+            width: 240px;
+            font-size: 14px;
+            color: #2d3748;
+            border-top: 3px solid #4299e1;
+        }
+        .explanation::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 10px 10px 10px;
+            border-style: solid;
+            border-color: transparent transparent #4299e1 transparent;
+        }
+        /* 练习题样式 */
+        .exercise-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f4f8;
+        }
+        .question {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #4299e1;
+        }
+        .question p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        /* 选择题选项美化（调整为正常字号） */
+        .options {
+            display: flex;
+            flex-direction: column; /* 纵向排列更紧凑 */
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .option {
+            padding: 5px 10px; /* 缩小内边距 */
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            color: #4a5568;
+            font-size: 1rem; /* 与正文字号一致 */
+            width: fit-content; /* 宽度自适应内容 */
+        }
+        .option:hover {
+            background: #e8f4f8;
+            border-color: #4299e1;
+            color: #2d3748;
+        }
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            font-weight: 600;
+        }
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        /* 反馈样式 */
+        .feedback {
+            padding: 12px 15px;
+            border-radius: 6px;
+            display: none;
+            font-size: 0.95rem;
+            margin-top: 8px;
+        }
+        .correct-feedback {
+            background: #e8f5e9;
+            color: #2c6e31;
+            border: 1px solid #c3e6cb;
+        }
+        .incorrect-feedback {
+            background: #fef2f2;
+            color: #842029;
+            border: 1px solid #f5c6cb;
+        }
+        /* 按钮样式 */
+        .btn {
+            padding: 12px 25px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto 0;
+        }
+        .btn:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(66, 153, 225, 0.3);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        /* 生词表样式 */
+        .vocab-list {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: none;
+        }
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .vocab-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .vocab-item:hover {
+            background: #e8f4f8;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .vocab-item strong {
+            font-size: 1.1rem;
+            color: #2d3748;
+            margin-right: 10px;
+        }
+        .vocab-pinyin {
+            color: #718096;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+        .vocab-eng {
+            color: #4a5568;
+            margin-bottom: 3px;
+        }
+        .vocab-rus {
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            .reading-text {
+                padding: 20px;
+                font-size: 16px;
+            }
+            .option {
+                width: 100%; /* 移动端选项占满宽度 */
+            }
+            .vocab-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部区域 -->
+        <div class="header">
+            <h1>为什么二月天数少</h1>
+            <p>日历与月份天数 · 互动阅读练习</p>
+        </div>
+        
+        <!-- 字号控制区 -->
+        <div class="font-control">
+            <label>阅读字号调整：</label>
+            <button class="font-btn" id="fontSmaller">缩小</button>
+            <button class="font-btn" id="fontReset">默认</button>
+            <button class="font-btn" id="fontLarger">放大</button>
+        </div>
+        
+        <!-- 阅读文本（补充/拆分生词） -->
+        <div class="reading-text" id="readingContent">
+            翻开<span class="word" id="日历">日历
+                <div class="explanation">
+                    拆字解释：<br>
+                    日：日子、日期<br>
+                    历：记录、编排<br>
+                    组合猜测：记录日期的本子或表格
+                </div>
+            </span>（calendar），人们会看到，无论哪一年，大月都是三十一天，小月都是三十天，只有二月天数最少，二十八天，这是为什么呢？
+            <br><br>
+            大家知道，地球绕太阳转一周，需要三百六十五天五小时四十八分四十六秒，为了计算方便，每年定为三百六十五天，叫做<span class="word" id="平年">平年
+                <div class="explanation">
+                    拆字解释：<br>
+                    平：平常、普通<br>
+                    年：年份<br>
+                    组合猜测：没有额外天数的普通年份
+                </div>
+            </span>；每年多出的五小时四十八分四十六秒，需要四年才能<span class="word" id="凑足">凑足
+                <div class="explanation">
+                    拆字解释：<br>
+                    凑：聚集、拼凑<br>
+                    足：足够、充足<br>
+                    组合猜测：聚集到足够的数量
+                </div>
+            </span>（make up）一天，这一天就加在二月份，所以这一年就有三百六十六天，叫做<span class="word" id="闰年">闰年
+                <div class="explanation">
+                    拆字解释：<br>
+                    闰：多余的、额外的<br>
+                    年：年份<br>
+                    组合猜测：有额外一天的年份
+                </div>
+            </span>（rùnnián）。说到这里，人们一定要问：那为什么二月的天数<span class="word" id="反倒">反倒
+                <div class="explanation">
+                    拆字解释：<br>
+                    反：相反、反而<br>
+                    倒：反倒、反而<br>
+                    组合猜测：反而、出乎意料地
+                </div>
+            </span>最少了呢？这里有一段故事。
+            <br><br>
+            传说，公元前（BC）46年，一个<span class="word" id="皇帝">皇帝
+                <div class="explanation">
+                    拆字解释：<br>
+                    皇：君主、最高统治者<br>
+                    帝：帝王、君主<br>
+                    组合猜测：古代国家的最高君主
+                </div>
+            </span>在修改历法时，规定每年为十二个月，一、三、五、七、十、十二月定为大月，每月三十一天；其他月份定为小月，每月三十天。这样，大小各六个月，使人很容易记住，应用起来也很方便。
+            <br><br>
+            但是，照这样规定，一年就不是三百六十五天，而是三百六十六天了，因此必须找出一个月减去一天。减哪个月合适呢？那个时候被<span class="word" id="判处">判处
+                <div class="explanation">
+                    拆字解释：<br>
+                    判：判定、判决<br>
+                    处：给予、施加<br>
+                    组合猜测：判定后给予（刑罚）
+                </div>
+            </span><span class="word" id="死刑">死刑
+                <div class="explanation">
+                    拆字解释：<br>
+                    死：死亡<br>
+                    刑：刑罚<br>
+                    组合猜测：剥夺生命的刑罚
+                </div>
+            </span>的<span class="word" id="犯人">犯人
+                <div class="explanation">
+                    拆字解释：<br>
+                    犯：违犯、犯法<br>
+                    人：人物<br>
+                    组合猜测：违犯法律的人
+                </div>
+            </span>（prisoner）都在二月份<span class="word" id="处死">处死
+                <div class="explanation">
+                    拆字解释：<br>
+                    处：施加<br>
+                    死：死亡<br>
+                    组合猜测：施加死亡刑罚（执行死刑）
+                </div>
+            </span>，所以人们都希望二月这个月能快点儿过去。于是，就把二月减去了一天。这样，二月就剩下二十九天了。
+            <br><br>
+            后来，另一个人做了<span class="word" id="皇帝2">皇帝</span>。他发现老皇帝是七月份生的，七月是大月，而他自己是八月份生的，八月却是小月。为了显示自己和前一位皇帝有同样<span class="word" id="尊严">尊严
+                <div class="explanation">
+                    拆字解释：<br>
+                    尊：尊敬、尊贵<br>
+                    严：庄重、威严<br>
+                    组合猜测：受人尊敬的庄重地位
+                </div>
+            </span>（dignity），他就把八月也定为大月，改为三十一天。而八月多出的这一天仍然是从二月份减去。这样，二月就只剩下二十八天了。
+            <br><br>
+            只是每过四年，也就是闰年，二月才是二十九天。这就是二月份天数少的来历。
+        </div>
+
+        <!-- 练习题部分 -->
+        <div class="exercise-section">
+            <h2 class="section-title">练习题</h2>
+            
+            <!-- 选择题 -->
+            <div class="question">
+                <h3>根据文章内容选择正确答案（从A、B、C、D四个选项中选择一个最佳答案）</h3>
+                
+                <!-- 第1题 -->
+                <div class="question-item">
+                    <p>1. 文章的主要内容是：（）</p>
+                    <div class="options">
+                        <div class="option" data-correct="false" data-question="q1">A. 一年的天数</div>
+                        <div class="option" data-correct="false" data-question="q1">B. 一个月的天数</div>
+                        <div class="option" data-correct="true" data-question="q1">C. 二月份的天数</div>
+                        <div class="option" data-correct="false" data-question="q1">D. 日历的来历</div>
+                    </div>
+                    <div class="feedback correct-feedback" id="q1-correct">正确！文章围绕“二月天数少的原因”展开，核心是二月份的天数。</div>
+                    <div class="feedback incorrect-feedback" id="q1-incorrect">错误！正确答案是“C. 二月份的天数”。</div>
+                </div>
+                
+                <!-- 第2题 -->
+                <div class="question-item">
+                    <p>2. 一年有366天是：（）</p>
+                    <div class="options">
+                        <div class="option" data-correct="false" data-question="q2">A. 平年</div>
+                        <div class="option" data-correct="true" data-question="q2">B. 闰年</div>
+                        <div class="option" data-correct="false" data-question="q2">C. 大年</div>
+                        <div class="option" data-correct="false" data-question="q2">D. 小年</div>
+                    </div>
+                    <div class="feedback correct-feedback" id="q2-correct">正确！文章提到“有三百六十六天，叫做闰年”。</div>
+                    <div class="feedback incorrect-feedback" id="q2-incorrect">错误！正确答案是“B. 闰年”。</div>
+                </div>
+                
+                <!-- 第3题 -->
+                <div class="question-item">
+                    <p>3. 根据文章内容，二月天数少与下面哪一项有关系？（）</p>
+                    <div class="options">
+                        <div class="option" data-correct="false" data-question="q3">A. 月亮</div>
+                        <div class="option" data-correct="false" data-question="q3">B. 地球</div>
+                        <div class="option" data-correct="false" data-question="q3">C. 太阳</div>
+                        <div class="option" data-correct="true" data-question="q3">D. 皇帝</div>
+                    </div>
+                    <div class="feedback correct-feedback" id="q3-correct">正确！文章说明二月天数减少是两位皇帝修改历法的结果。</div>
+                    <div class="feedback incorrect-feedback" id="q3-incorrect">错误！正确答案是“D. 皇帝”。</div>
+                </div>
+            </div>
+            
+            <button class="btn" id="showVocab">查看生词表</button>
+        </div>
+        
+        <!-- 生词表（补充新拆分的生词） -->
+        <div class="vocab-list" id="vocabList">
+            <h2 class="section-title">生词表</h2>
+            
+            <div class="vocab-grid">
+                <div class="vocab-item">
+                    <strong>日历</strong>
+                    <div class="vocab-pinyin">rì lì</div>
+                    <div class="vocab-eng">English: calendar</div>
+                    <div class="vocab-rus">Русский: календарь</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>平年</strong>
+                    <div class="vocab-pinyin">píng nián</div>
+                    <div class="vocab-eng">English: common year</div>
+                    <div class="vocab-rus">Русский: обычный год</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>凑足</strong>
+                    <div class="vocab-pinyin">còu zú</div>
+                    <div class="vocab-eng">English: make up (a quantity)</div>
+                    <div class="vocab-rus">Русский: набрать (количество)</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>闰年</strong>
+                    <div class="vocab-pinyin">rùn nián</div>
+                    <div class="vocab-eng">English: leap year</div>
+                    <div class="vocab-rus">Русский: високосный год</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>反倒</strong>
+                    <div class="vocab-pinyin">fǎn dào</div>
+                    <div class="vocab-eng">English: on the contrary</div>
+                    <div class="vocab-rus">Русский: наоборот</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>皇帝</strong>
+                    <div class="vocab-pinyin">huáng dì</div>
+                    <div class="vocab-eng">English: emperor</div>
+                    <div class="vocab-rus">Русский: император</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>判处</strong>
+                    <div class="vocab-pinyin">pàn chǔ</div>
+                    <div class="vocab-eng">English: sentence (to punishment)</div>
+                    <div class="vocab-rus">Русский: приговорить (к наказанию)</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>死刑</strong>
+                    <div class="vocab-pinyin">sǐ xíng</div>
+                    <div class="vocab-eng">English: death penalty</div>
+                    <div class="vocab-rus">Русский: смертная казнь</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>犯人</strong>
+                    <div class="vocab-pinyin">fàn rén</div>
+                    <div class="vocab-eng">English: prisoner</div>
+                    <div class="vocab-rus">Русский: заключенный</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>处死</strong>
+                    <div class="vocab-pinyin">chǔ sǐ</div>
+                    <div class="vocab-eng">English: execute (a prisoner)</div>
+                    <div class="vocab-rus">Русский: казнить (заключенного)</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>尊严</strong>
+                    <div class="vocab-pinyin">zūn yán</div>
+                    <div class="vocab-eng">English: dignity</div>
+                    <div class="vocab-rus">Русский: достоинство</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 字号调整功能
+        const readingContent = document.getElementById('readingContent');
+        const fontSmaller = document.getElementById('fontSmaller');
+        const fontReset = document.getElementById('fontReset');
+        const fontLarger = document.getElementById('fontLarger');
+        let currentFontSize = 18; // 默认字号18px
+        const minFontSize = 14;
+        const maxFontSize = 24;
+        const fontSizeStep = 2;
+
+        fontSmaller.addEventListener('click', () => {
+            if (currentFontSize > minFontSize) {
+                currentFontSize -= fontSizeStep;
+                readingContent.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        fontReset.addEventListener('click', () => {
+            currentFontSize = 18;
+            readingContent.style.fontSize = `${currentFontSize}px`;
+        });
+
+        fontLarger.addEventListener('click', () => {
+            if (currentFontSize < maxFontSize) {
+                currentFontSize += fontSizeStep;
+                readingContent.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        // 生词点击显示解释弹窗
+        document.addEventListener('click', function(e) {
+            // 关闭所有已打开的解释弹窗
+            document.querySelectorAll('.explanation').forEach(exp => {
+                exp.style.display = 'none';
+            });
+
+            // 点击生词时显示对应弹窗
+            if (e.target.classList.contains('word')) {
+                const explanation = e.target.querySelector('.explanation');
+                if (explanation) {
+                    explanation.style.display = 'block';
+                    e.stopPropagation();
+                }
+            }
+        });
+
+        // 选择题检查功能
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const questionId = this.getAttribute('data-question');
+                const isCorrect = this.getAttribute('data-correct') === 'true';
+                const correctFeedback = document.getElementById(`${questionId}-correct`);
+                const incorrectFeedback = document.getElementById(`${questionId}-incorrect`);
+
+                // 重置当前题的所有选项样式和反馈
+                document.querySelectorAll(`.option[data-question="${questionId}"]`).forEach(opt => {
+                    opt.classList.remove('correct', 'incorrect');
+                });
+                correctFeedback.style.display = 'none';
+                incorrectFeedback.style.display = 'none';
+
+                // 判断并显示结果
+                if (isCorrect) {
+                    this.classList.add('correct');
+                    correctFeedback.style.display = 'block';
+                } else {
+                    this.classList.add('incorrect');
+                    // 标记正确选项
+                    document.querySelector(`.option[data-question="${questionId}"][data-correct="true"]`).classList.add('correct');
+                    incorrectFeedback.style.display = 'block';
+                }
+            });
+        });
+        
+        // 显示/隐藏生词表
+        document.getElementById('showVocab').addEventListener('click', function() {
+            const vocabList = document.getElementById('vocabList');
+            const isVisible = vocabList.style.display === 'block';
+            
+            vocabList.style.display = isVisible ? 'none' : 'block';
+            this.textContent = isVisible ? '查看生词表' : '隐藏生词表';
+            
+            // 平滑滚动到生词表
+            if (!isVisible) {
+                vocabList.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    </script>
+</body>
+</html>

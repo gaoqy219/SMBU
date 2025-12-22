@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心灵的另一扇窗户 - 互动阅读</title>
+    <style>
+        /* 全局样式重置与基础设置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f9ff;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        /* 头部样式 */
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(135deg, #4299e1, #38b2ac);
+            border-radius: 12px;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        /* 字号控制区 */
+        .font-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .font-control label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .font-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background-color: #4299e1;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .font-btn:hover {
+            background-color: #3182ce;
+            transform: translateY(-2px);
+        }
+        .font-btn:active {
+            transform: translateY(0);
+        }
+        /* 阅读文本样式 */
+        .reading-text {
+            font-size: 18px;
+            line-height: 2;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        /* 生词样式 - 确保所有生词都有可点击弹窗 */
+        .word {
+            color: #4299e1;
+            text-decoration: underline dotted;
+            cursor: pointer;
+            position: relative;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            display: inline-block; /* 确保弹窗定位准确 */
+        }
+        .word:hover {
+            color: #3182ce;
+            background-color: #e8f4f8;
+            padding: 0 3px;
+            border-radius: 4px;
+        }
+        .explanation {
+            display: none;
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            z-index: 999; /* 提高层级，确保不被遮挡 */
+            width: 240px;
+            font-size: 14px;
+            color: #2d3748;
+            border-top: 3px solid #4299e1;
+        }
+        .explanation::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 10px 10px 10px;
+            border-style: solid;
+            border-color: transparent transparent #4299e1 transparent;
+        }
+        /* 练习题样式 */
+        .exercise-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f4f8;
+        }
+        .question {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #4299e1;
+        }
+        .question p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        /* 填空题样式 */
+        .fill-input {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            width: 250px;
+            margin: 0 8px;
+            font-size: 1rem;
+        }
+        /* 连线题样式 */
+        .match-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .match-left, .match-right {
+            flex: 1;
+            min-width: 250px;
+        }
+        .match-title {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .match-item {
+            padding: 10px 15px;
+            border: 1px solid #4299e1;
+            border-radius: 6px;
+            background: white;
+            color: #4299e1;
+            cursor: grab;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+        .match-item:active {
+            cursor: grabbing;
+        }
+        .match-item:hover {
+            background: #e8f4f8;
+        }
+        .match-target {
+            padding: 10px 15px;
+            border: 2px dashed #333;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            min-height: 45px;
+            background: #f0f8ff;
+        }
+        .match-target.filled {
+            border-style: solid;
+            border-color: #4299e1;
+            background: #e8f4f8;
+        }
+        .match-target.correct {
+            border-color: #28a745;
+            background: #d4edda;
+            color: #155724;
+        }
+        .match-target.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+            color: #721c24;
+        }
+        /* 按钮样式 */
+        .check-answer-btn {
+            padding: 12px 25px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto 0;
+        }
+        .check-answer-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+        .check-answer-btn:active {
+            transform: translateY(0);
+        }
+        .btn {
+            padding: 12px 25px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto 0;
+        }
+        .btn:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(66, 153, 225, 0.3);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        /* 反馈样式 */
+        .feedback {
+            padding: 12px 15px;
+            border-radius: 6px;
+            display: none;
+            font-size: 0.95rem;
+            margin-top: 8px;
+        }
+        .correct-feedback {
+            background: #e8f5e9;
+            color: #2c6e31;
+            border: 1px solid #c3e6cb;
+        }
+        .incorrect-feedback {
+            background: #fef2f2;
+            color: #842029;
+            border: 1px solid #f5c6cb;
+        }
+        .unfilled-feedback {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        /* 生词表样式 */
+        .vocab-list {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: none;
+        }
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .vocab-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .vocab-item:hover {
+            background: #e8f4f8;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .vocab-item strong {
+            font-size: 1.1rem;
+            color: #2d3748;
+            margin-right: 10px;
+        }
+        .vocab-pinyin {
+            color: #718096;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+        .vocab-eng {
+            color: #4a5568;
+            margin-bottom: 3px;
+        }
+        .vocab-rus {
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            .reading-text {
+                padding: 20px;
+                font-size: 16px;
+            }
+            .fill-input {
+                width: 180px;
+                margin: 8px 0;
+                display: block;
+            }
+            .match-section {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .vocab-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部区域 -->
+        <div class="header">
+            <h1>心灵的另一扇窗户</h1>
+            <p>手部动作与心理 · 互动阅读练习</p>
+        </div>
+        
+        <!-- 字号控制区 -->
+        <div class="font-control">
+            <label>阅读字号调整：</label>
+            <button class="font-btn" id="fontSmaller">缩小</button>
+            <button class="font-btn" id="fontReset">默认</button>
+            <button class="font-btn" id="fontLarger">放大</button>
+        </div>
+        
+        <!-- 阅读文本（确保所有生词都有完整解释弹窗） -->
+        <div class="reading-text" id="readingContent">
+            人们常说，眼睛是心灵的窗户，但能够<span class="word" id="透露">透露
+                <div class="explanation">
+                    拆字解释：<br>
+                    透：透出、露出<br>
+                    露：显露、展现<br>
+                    组合猜测：露出内心的想法
+                </div>
+            </span>（leak out）你思想的，不仅仅只有眼睛，还有你的手。研究发现，手上的小动作<span class="word" id="欺骗性">欺骗性
+                <div class="explanation">
+                    拆字解释：<br>
+                    欺：欺骗、骗人<br>
+                    骗：哄骗、作假<br>
+                    性：性质、特点<br>
+                    组合猜测：骗人的性质
+                </div>
+            </span>（deceive）很小，就像一面<span class="word" id="镜子">镜子
+                <div class="explanation">
+                    拆字解释：<br>
+                    镜：能照出影像的器物<br>
+                    子：名词后缀，无实义<br>
+                    组合猜测：能照出事物样子的工具
+                </div>
+            </span>，把你内心的想法照出来。
+            <br><br>
+            <span class="word" id="搓1">搓
+                <div class="explanation">
+                    拆字解释：<br>
+                    搓：用手掌反复摩擦<br>
+                    组合猜测：双手来回摩擦的动作
+                </div>
+            </span>（rub）手掌：这个动作，从小孩子就可以看出来。拿一块巧克力逗小孩，做出要给他的样子，你会发现，孩子会冲着你笑，并且<span class="word" id="搓2">搓
+                <div class="explanation">
+                    拆字解释：<br>
+                    搓：用手掌反复摩擦<br>
+                    组合猜测：双手来回摩擦的动作
+                </div>
+            </span>搓他的小手掌。
+            <br><br>
+            在成人身上，如果一位老板接到了一份<span class="word" id="大订单">大订单
+                <div class="explanation">
+                    拆字解释：<br>
+                    大：规模大的<br>
+                    订：订购、预订<br>
+                    单：单据、订单<br>
+                    组合猜测：大的订购单据
+                </div>
+            </span>（order for goods），他在<span class="word" id="鼓动">鼓动
+                <div class="explanation">
+                    拆字解释：<br>
+                    鼓：鼓励、推动<br>
+                    动：行动、做事<br>
+                    组合猜测：鼓励别人行动
+                </div>
+            </span>（agitate, incite）员工要努力、要大干时，也常常会<span class="word" id="搓3">搓
+                <div class="explanation">
+                    拆字解释：<br>
+                    搓：用手掌反复摩擦<br>
+                    组合猜测：双手来回摩擦的动作
+                </div>
+            </span>手掌。还有人，在等待运动员出场时也会<span class="word" id="搓4">搓
+                <div class="explanation">
+                    拆字解释：<br>
+                    搓：用手掌反复摩擦<br>
+                    组合猜测：双手来回摩擦的动作
+                </div>
+            </span>手。
+            <br><br>
+            <span class="word" id="搓5">搓
+                <div class="explanation">
+                    拆字解释：<br>
+                    搓：用手掌反复摩擦<br>
+                    组合猜测：双手来回摩擦的动作
+                </div>
+            </span>手掌，最常见的心理是什么呢？就是对事物有<span class="word" id="期待">期待
+                <div class="explanation">
+                    拆字解释：<br>
+                    期：期望、盼望<br>
+                    待：等待、等候<br>
+                    组合猜测：期望着等待
+                </div>
+            </span>，这种期待是自信的。这个动作的另一个含义是<span class="word" id="紧张不安">紧张不安
+                <div class="explanation">
+                    拆字解释：<br>
+                    紧：不放松、绷紧<br>
+                    张：紧张、不安<br>
+                    不：否定<br>
+                    安：安心、平静<br>
+                    组合猜测：不放松、不安心
+                </div>
+            </span>。我们常常看到，那些初次<span class="word" id="登台演讲">登台演讲
+                <div class="explanation">
+                    拆字解释：<br>
+                    登：走上、登上<br>
+                    台：台子、舞台<br>
+                    演：表演、讲述<br>
+                    讲：讲话、发言<br>
+                    组合猜测：走上台子讲话
+                </div>
+            </span>的人，由于紧张，一开始会有点儿不知道该怎么办，也常会<span class="word" id="搓6">搓
+                <div class="explanation">
+                    拆字解释：<br>
+                    搓：用手掌反复摩擦<br>
+                    组合猜测：双手来回摩擦的动作
+                </div>
+            </span>手掌。
+            <br><br>
+            手<span class="word" id="托1">托
+                <div class="explanation">
+                    拆字解释：<br>
+                    托：用手支撑、承托<br>
+                    组合猜测：用手掌向上支撑物体的动作
+                </div>
+            </span>（tuō）<span class="word" id="腮1">腮
+                <div class="explanation">
+                    拆字解释：<br>
+                    腮：脸颊的下半部分，靠近下巴的位置<br>
+                    组合猜测：面部两侧的肌肉部位
+                </div>
+            </span>：千万不要误会，这不是说明这个人想睡觉，它的含义非常丰富。如果手<span class="word" id="托2">托
+                <div class="explanation">
+                    拆字解释：<br>
+                    托：用手支撑、承托<br>
+                    组合猜测：用手掌向上支撑物体的动作
+                </div>
+            </span>腮时，食指和中指紧贴脸，说明他对别人的发言正在进行<span class="word" id="认真思考">认真思考
+                <div class="explanation">
+                    拆字解释：<br>
+                    认：认真、仔细<br>
+                    真：真正、用心<br>
+                    思：思考、想<br>
+                    考：考虑、琢磨<br>
+                    组合猜测：仔细地思考
+                </div>
+            </span>。如果手<span class="word" id="托着">托着
+                <div class="explanation">
+                    拆字解释：<br>
+                    托：用手支撑、承托<br>
+                    着：助词，表动作正在进行或持续<br>
+                    组合猜测：用手持续支撑着某物的状态
+                </div>
+            </span><span class="word" id="下巴1">下巴
+                <div class="explanation">
+                    拆字解释：<br>
+                    下：下方、下部<br>
+                    巴：名词后缀，指面部部位<br>
+                    组合猜测：面部下方的颌部，即下巴
+                </div>
+            </span>，说明这个人对别人的发言，一点儿也没有兴趣。
+            <br><br>
+            手伸进<span class="word" id="口袋">口袋
+                <div class="explanation">
+                    拆字解释：<br>
+                    口：开口、口子<br>
+                    袋：袋子、囊袋<br>
+                    组合猜测：衣服上用来装东西的袋子
+                </div>
+            </span>里玩东西：不少人喜欢将手伸进袋里玩<span class="word" id="硬币">硬币
+                <div class="explanation">
+                    拆字解释：<br>
+                    硬：坚硬、硬质<br>
+                    币：货币、钱币<br>
+                    组合猜测：硬质的圆形货币
+                </div>
+            </span>、<span class="word" id="钥匙1">钥匙
+                <div class="explanation">
+                    拆字解释：<br>
+                    钥：开锁的工具<br>
+                    匙：与“钥”搭配，指开锁器具<br>
+                    组合猜测：用来开启门锁等的工具
+                </div>
+            </span>等。这样的动作，表示的心理有两种：一是把钱看得非常重；二是缺钱，希望马上得到钱财。习惯玩<span class="word" id="钥匙2">钥匙
+                <div class="explanation">
+                    拆字解释：<br>
+                    钥：开锁的工具<br>
+                    匙：与“钥”搭配，指开锁器具<br>
+                    组合猜测：用来开启门锁等的工具
+                </div>
+            </span>等小玩意的人，可能是在<span class="word" id="提醒">提醒
+                <div class="explanation">
+                    拆字解释：<br>
+                    提：提出、指出<br>
+                    醒：叫醒、注意<br>
+                    组合猜测：提出让别人注意
+                </div>
+            </span>别人，意思是说“你应该重视我”。
+        </div>
+
+        <!-- 练习题部分 -->
+        <div class="exercise-section">
+            <h2 class="section-title">练习题</h2>
+            
+            <!-- 第一大题：填空题 -->
+            <div class="question">
+                <h3>一、根据文章内容填空</h3>
+                
+                <div class="blank-item">
+                    <p>1. 能够透露你所思所想的不仅仅只有眼睛，还有 <input type="text" class="fill-input" id="fill1" placeholder="请输入答案"></p>
+                    <div class="feedback correct-feedback" id="fill1-correct">正确！文章提到“能够透露你思想的，不仅仅只有眼睛，还有你的手”。</div>
+                    <div class="feedback incorrect-feedback" id="fill1-incorrect">错误！正确答案是“你的手”。</div>
+                </div>
+                
+                <div class="blank-item">
+                    <p>2. 手上的小动作就像 <input type="text" class="fill-input" id="fill2" placeholder="请输入答案"> 把你内心的想法照出来。</p>
+                    <div class="feedback correct-feedback" id="fill2-correct">正确！文章说“手上的小动作欺骗性很小，就像一面镜子”。</div>
+                    <div class="feedback incorrect-feedback" id="fill2-incorrect">错误！正确答案是“一面镜子”。</div>
+                </div>
+                
+                <div class="blank-item">
+                    <p>3. 当你拿一块巧克力给孩子时，他会 <input type="text" class="fill-input" id="fill3" placeholder="请输入答案">。</p>
+                    <div class="feedback correct-feedback" id="fill3-correct">正确！文章提到孩子会“冲着你笑，并且搓搓他的小手掌”。</div>
+                    <div class="feedback incorrect-feedback" id="fill3-incorrect">错误！正确答案是“冲着你笑，并且搓搓他的小手掌”。</div>
+                </div>
+                
+                <div class="blank-item">
+                    <p>4. 在等待运动员出场时，有人也会 <input type="text" class="fill-input" id="fill4" placeholder="请输入答案">。</p>
+                    <div class="feedback correct-feedback" id="fill4-correct">正确！文章说“在等待运动员出场时也会搓手”。</div>
+                    <div class="feedback incorrect-feedback" id="fill4-incorrect">错误！正确答案是“搓手掌”。</div>
+                </div>
+                
+                <div class="blank-item">
+                    <p>5. 搓手掌的另一个含义是 <input type="text" class="fill-input" id="fill5" placeholder="请输入答案">。</p>
+                    <div class="feedback correct-feedback" id="fill5-correct">正确！文章提到搓手掌的另一个含义是“紧张不安”。</div>
+                    <div class="feedback incorrect-feedback" id="fill5-incorrect">错误！正确答案是“紧张不安”。</div>
+                </div>
+                
+                <button class="check-answer-btn" id="checkFill">检查填空题答案</button>
+            </div>
+            
+            <!-- 第二大题：连线题（右侧随机排序） -->
+            <div class="question">
+                <h3>二、根据文章内容连线（拖拽左侧动作到右侧对应含义）</h3>
+                
+                <div class="match-section">
+                    <!-- 左侧：动作项 -->
+                    <div class="match-left">
+                        <div class="match-title">手部动作</div>
+                        <div class="match-item" draggable="true" data-value="手托腮">手托腮</div>
+                        <div class="match-item" draggable="true" data-value="手托下巴">手托下巴</div>
+                        <div class="match-item" draggable="true" data-value="手伸进兜里摆弄东西">手伸进兜里摆弄东西</div>
+                        <div class="match-item" draggable="true" data-value="习惯玩钥匙等小东西">习惯玩钥匙等小东西</div>
+                    </div>
+                    
+                    <!-- 右侧：含义项（动态随机排序） -->
+                    <div class="match-right">
+                        <div class="match-title">对应心理/含义</div>
+                        <div class="match-target-container" id="matchTargetContainer">
+                            <!-- 动态插入随机排序的目标项 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="check-answer-btn" id="checkMatch">检查连线题答案</button>
+            </div>
+            
+            <button class="btn" id="showVocab">查看生词表</button>
+        </div>
+        
+        <!-- 生词表（同步更新所有生词） -->
+        <div class="vocab-list" id="vocabList">
+            <h2 class="section-title">生词表</h2>
+            
+            <div class="vocab-grid">
+                <div class="vocab-item">
+                    <strong>透露</strong>
+                    <div class="vocab-pinyin">tòu lù</div>
+                    <div class="vocab-eng">English: reveal, disclose</div>
+                    <div class="vocab-rus">Русский: раскрывать, разглашать</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>欺骗性</strong>
+                    <div class="vocab-pinyin">qī piàn xìng</div>
+                    <div class="vocab-eng">English: deceptive nature</div>
+                    <div class="vocab-rus">Русский: обманчивая природа</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>镜子</strong>
+                    <div class="vocab-pinyin">jìng zi</div>
+                    <div class="vocab-eng">English: mirror</div>
+                    <div class="vocab-rus">Русский: зеркало</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>搓</strong>
+                    <div class="vocab-pinyin">cuō</div>
+                    <div class="vocab-eng">English: rub, chafe</div>
+                    <div class="vocab-rus">Русский: трогать, растирать</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>大订单</strong>
+                    <div class="vocab-pinyin">dà dìng dān</div>
+                    <div class="vocab-eng">English: large order</div>
+                    <div class="vocab-rus">Русский: большой заказ</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>鼓动</strong>
+                    <div class="vocab-pinyin">gǔ dòng</div>
+                    <div class="vocab-eng">English: agitate, incite</div>
+                    <div class="vocab-rus">Русский: подстрекать, агитировать</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>期待</strong>
+                    <div class="vocab-pinyin">qī dài</div>
+                    <div class="vocab-eng">English: expect, look forward to</div>
+                    <div class="vocab-rus">Русский: ожидать, надеяться</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>紧张不安</strong>
+                    <div class="vocab-pinyin">jǐn zhāng bù ān</div>
+                    <div class="vocab-eng">English: nervous and uneasy</div>
+                    <div class="vocab-rus">Русский: нервничающий и беспокойный</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>登台演讲</strong>
+                    <div class="vocab-pinyin">dēng tái yǎn jiǎng</div>
+                    <div class="vocab-eng">English: take the stage to give a speech</div>
+                    <div class="vocab-rus">Русский: выйти на сцену, чтобы выступить с речью</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>托</strong>
+                    <div class="vocab-pinyin">tuō</div>
+                    <div class="vocab-eng">English: hold up, support</div>
+                    <div class="vocab-rus">Русский: поддерживать, держать</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>腮</strong>
+                    <div class="vocab-pinyin">sāi</div>
+                    <div class="vocab-eng">English: cheek, jaw</div>
+                    <div class="vocab-rus">Русский: щека, подбородок</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>托着</strong>
+                    <div class="vocab-pinyin">tuō zhe</div>
+                    <div class="vocab-eng">English: holding up, supporting</div>
+                    <div class="vocab-rus">Русский: поддерживая, держа</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>认真思考</strong>
+                    <div class="vocab-pinyin">rèn zhēn sī kǎo</div>
+                    <div class="vocab-eng">English: think carefully</div>
+                    <div class="vocab-rus">Русский: внимательно думать</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>下巴</strong>
+                    <div class="vocab-pinyin">xià bā</div>
+                    <div class="vocab-eng">English: chin, jaw</div>
+                    <div class="vocab-rus">Русский: подбородок, челюсть</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>口袋</strong>
+                    <div class="vocab-pinyin">kǒu dài</div>
+                    <div class="vocab-eng">English: pocket</div>
+                    <div class="vocab-rus">Русский: карман</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>硬币</strong>
+                    <div class="vocab-pinyin">yìng bì</div>
+                    <div class="vocab-eng">English: coin</div>
+                    <div class="vocab-rus">Русский: монета</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>钥匙</strong>
+                    <div class="vocab-pinyin">yào shi</div>
+                    <div class="vocab-eng">English: key</div>
+                    <div class="vocab-rus">Русский: ключ</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>提醒</strong>
+                    <div class="vocab-pinyin">tí xǐng</div>
+                    <div class="vocab-eng">English: remind, alert</div>
+                    <div class="vocab-rus">Русский: напоминать, предупреждать</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 字号调整功能
+        const readingContent = document.getElementById('readingContent');
+        const fontSmaller = document.getElementById('fontSmaller');
+        const fontReset = document.getElementById('fontReset');
+        const fontLarger = document.getElementById('fontLarger');
+        let currentFontSize = 18; // 默认字号18px
+        const minFontSize = 14;
+        const maxFontSize = 24;
+        const fontSizeStep = 2;
+
+        fontSmaller.addEventListener('click', () => {
+            if (currentFontSize > minFontSize) {
+                currentFontSize -= fontSizeStep;
+                readingContent.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        fontReset.addEventListener('click', () => {
+            currentFontSize = 18;
+            readingContent.style.fontSize = `${currentFontSize}px`;
+        });
+
+        fontLarger.addEventListener('click', () => {
+            if (currentFontSize < maxFontSize) {
+                currentFontSize += fontSizeStep;
+                readingContent.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        // 生词点击显示解释弹窗 - 确保所有.word元素都触发
+        document.addEventListener('click', function(e) {
+            // 关闭所有已打开的解释弹窗
+            document.querySelectorAll('.explanation').forEach(exp => {
+                exp.style.display = 'none';
+            });
+
+            // 点击生词时显示对应弹窗
+            if (e.target.classList.contains('word')) {
+                const explanation = e.target.querySelector('.explanation');
+                if (explanation) {
+                    explanation.style.display = 'block';
+                    // 阻止事件冒泡，避免弹窗被立即关闭
+                    e.stopPropagation();
+                }
+            }
+        });
+
+        // 填空题检查功能
+        document.getElementById('checkFill').addEventListener('click', function() {
+            // 正确答案列表
+            const correctAnswers = {
+                fill1: '你的手',
+                fill2: '一面镜子',
+                fill3: '冲着你笑，并且搓搓他的小手掌',
+                fill4: '搓手掌',
+                fill5: '紧张不安'
+            };
+
+            // 遍历所有填空输入框
+            Object.keys(correctAnswers).forEach(key => {
+                const input = document.getElementById(key);
+                const userAnswer = input.value.trim();
+                const correctFeedback = document.getElementById(`${key}-correct`);
+                const incorrectFeedback = document.getElementById(`${key}-incorrect`);
+
+                // 重置反馈
+                correctFeedback.style.display = 'none';
+                incorrectFeedback.style.display = 'none';
+
+                // 判断答案
+                if (userAnswer === correctAnswers[key]) {
+                    correctFeedback.style.display = 'block';
+                    input.style.borderColor = '#28a745';
+                    input.style.backgroundColor = '#d4edda';
+                } else {
+                    incorrectFeedback.style.display = 'block';
+                    input.style.borderColor = '#dc3545';
+                    input.style.backgroundColor = '#f8d7da';
+                }
+            });
+        });
+
+        // 连线题：右侧目标项随机排序
+        const matchTargets = [
+            { id: 'match1', text: '说明他正认真思考', correct: '手托腮' },
+            { id: 'match2', text: '说明这个人对别人的发言没有兴趣', correct: '手托下巴' },
+            { id: 'match3', text: '认为钱很重要/希望很快得到钱', correct: '手伸进兜里摆弄东西' },
+            { id: 'match4', text: '可能是提醒别人“你应该重视我”', correct: '习惯玩钥匙等小东西' }
+        ];
+
+        // 洗牌函数：打乱数组顺序
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // 动态生成随机排序的右侧目标项
+        function renderRandomMatchTargets() {
+            const container = document.getElementById('matchTargetContainer');
+            container.innerHTML = ''; // 清空原有内容
+            const shuffledTargets = shuffleArray(matchTargets);
+            
+            shuffledTargets.forEach(target => {
+                const div = document.createElement('div');
+                div.className = 'match-target';
+                div.id = target.id;
+                div.setAttribute('data-correct', target.correct);
+                div.textContent = target.text;
+                container.appendChild(div);
+            });
+        }
+
+        // 页面加载时渲染随机目标项
+        window.addEventListener('load', renderRandomMatchTargets);
+        
+        // 连线题拖拽功能（事件委托，适配动态元素）
+        let draggedMatchItem = null;
+        const usedMatchItems = new Set();
+
+        // 拖拽开始
+        document.addEventListener('dragstart', function(e) {
+            if (e.target.classList.contains('match-item')) {
+                draggedMatchItem = {
+                    value: e.target.getAttribute('data-value')
+                };
+                e.dataTransfer.setData('text/plain', e.target.getAttribute('data-value'));
+                e.target.style.opacity = '0.6';
+                e.target.style.cursor = 'grabbing';
+            }
+        });
+
+        // 拖拽结束
+        document.addEventListener('dragend', function(e) {
+            if (e.target.classList.contains('match-item')) {
+                e.target.style.opacity = '1';
+                e.target.style.cursor = 'grab';
+            }
+        });
+
+        // 允许放置
+        document.addEventListener('dragover', function(e) {
+            if (e.target.classList.contains('match-target')) {
+                e.preventDefault();
+                e.target.style.borderColor = '#4299e1';
+            }
+        });
+
+        // 离开目标
+        document.addEventListener('dragleave', function(e) {
+            if (e.target.classList.contains('match-target')) {
+                e.target.style.borderColor = '#333';
+            }
+        });
+
+        // 放置处理
+        document.addEventListener('drop', function(e) {
+            if (e.target.classList.contains('match-target')) {
+                e.preventDefault();
+                const target = e.target;
+                target.style.borderColor = '#333';
+
+                if (!draggedMatchItem || usedMatchItems.has(draggedMatchItem.value)) {
+                    return;
+                }
+
+                // 填入动作内容
+                target.innerHTML = `<strong>${draggedMatchItem.value}</strong> → ${target.textContent}`;
+                target.classList.add('filled');
+                usedMatchItems.add(draggedMatchItem.value);
+            }
+        });
+
+        // 连线题检查功能
+        document.getElementById('checkMatch').addEventListener('click', function() {
+            document.querySelectorAll('.match-target').forEach(target => {
+                const correctValue = target.getAttribute('data-correct');
+                // 提取已填入的动作内容
+                const filledValue = target.querySelector('strong')?.textContent || '';
+
+                // 重置样式
+                target.classList.remove('correct', 'incorrect');
+
+                if (filledValue === correctValue) {
+                    target.classList.add('correct');
+                } else if (filledValue) {
+                    target.classList.add('incorrect');
+                }
+            });
+        });
+        
+        // 显示/隐藏生词表
+        document.getElementById('showVocab').addEventListener('click', function() {
+            const vocabList = document.getElementById('vocabList');
+            const isVisible = vocabList.style.display === 'block';
+            
+            vocabList.style.display = isVisible ? 'none' : 'block';
+            this.textContent = isVisible ? '查看生词表' : '隐藏生词表';
+            
+            // 平滑滚动到生词表
+            if (!isVisible) {
+                vocabList.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    </script>
+</body>
+</html>

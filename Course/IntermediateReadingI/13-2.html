@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>“小雪”节气 - 互动阅读</title>
+    <style>
+        /* 全局样式重置与基础设置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f9ff;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        /* 头部样式 */
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(135deg, #4299e1, #38b2ac);
+            border-radius: 12px;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        /* 字号控制区 */
+        .font-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .font-control label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .font-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background-color: #4299e1;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .font-btn:hover {
+            background-color: #3182ce;
+            transform: translateY(-2px);
+        }
+        .font-btn:active {
+            transform: translateY(0);
+        }
+        /* 阅读文本样式 */
+        .reading-text {
+            font-size: 18px;
+            line-height: 2;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        /* 生词样式 */
+        .word {
+            color: #4299e1;
+            text-decoration: underline dotted;
+            cursor: pointer;
+            position: relative;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .word:hover {
+            color: #3182ce;
+            background-color: #e8f4f8;
+            padding: 0 3px;
+            border-radius: 4px;
+        }
+        .explanation {
+            display: none;
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            z-index: 100;
+            width: 240px;
+            font-size: 14px;
+            color: #2d3748;
+            border-top: 3px solid #4299e1;
+        }
+        .explanation::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 10px 10px 10px;
+            border-style: solid;
+            border-color: transparent transparent #4299e1 transparent;
+        }
+        /* 练习题样式 */
+        .exercise-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f4f8;
+        }
+        .question {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #4299e1;
+        }
+        .question p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        /* 拖拽选项区域样式 */
+        .fill-blank-area {
+            margin: 20px 0;
+        }
+        .fill-options-title {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+        .fill-blank-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 15px;
+            background: #f0f8ff;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .fill-btn {
+            padding: 10px 15px;
+            border: 1px solid #4299e1;
+            border-radius: 6px;
+            background: white;
+            color: #4299e1;
+            cursor: grab;
+            transition: all 0.3s ease;
+            white-space: normal; /* 允许文字自动换行 */
+            min-width: 180px; /* 保证选项有足够宽度 */
+            text-align: left;
+            line-height: 1.5;
+        }
+        .fill-btn:active {
+            cursor: grabbing;
+        }
+        .fill-btn:hover {
+            background: #e8f4f8;
+        }
+        /* 拖拽目标区域样式 */
+        .drop-zone {
+            display: inline-block;
+            min-width: 220px; /* 足够宽度避免内容遮挡 */
+            padding: 6px 10px;
+            margin: 0 8px;
+            vertical-align: middle;
+            border-bottom: 2px solid #333;
+            cursor: pointer;
+            background: #fff;
+            line-height: 1.5;
+            border-radius: 4px 4px 0 0;
+        }
+        .drop-zone:hover {
+            background: #f8f9fa;
+        }
+        .drop-zone.filled {
+            border-bottom: none;
+            background: #e8f4f8;
+            border: 1px solid #4299e1;
+            border-radius: 4px;
+        }
+        .drop-zone.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .drop-zone.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        /* 检查答案按钮样式 */
+        .check-answer-btn {
+            padding: 12px 25px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto 0;
+        }
+        .check-answer-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+        .check-answer-btn:active {
+            transform: translateY(0);
+        }
+        /* 未填写反馈样式 */
+        .unfilled-feedback {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            padding: 12px 15px;
+            border-radius: 6px;
+            display: none;
+            font-size: 0.95rem;
+            margin-top: 8px;
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .option {
+            padding: 10px 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            color: #4a5568;
+        }
+        .option:hover {
+            background: #e8f4f8;
+            border-color: #4299e1;
+            color: #2d3748;
+        }
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            font-weight: 600;
+        }
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .feedback {
+            padding: 12px 15px;
+            border-radius: 6px;
+            display: none;
+            font-size: 0.95rem;
+            margin-top: 8px;
+        }
+        .correct-feedback {
+            background: #e8f5e9;
+            color: #2c6e31;
+            border: 1px solid #c3e6cb;
+        }
+        .incorrect-feedback {
+            background: #fef2f2;
+            color: #842029;
+            border: 1px solid #f5c6cb;
+        }
+        /* 按钮样式 */
+        .btn {
+            padding: 12px 25px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto 0;
+        }
+        .btn:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(66, 153, 225, 0.3);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        /* 生词表样式 */
+        .vocab-list {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: none;
+        }
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .vocab-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .vocab-item:hover {
+            background: #e8f4f8;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .vocab-item strong {
+            font-size: 1.1rem;
+            color: #2d3748;
+            margin-right: 10px;
+        }
+        .vocab-pinyin {
+            color: #718096;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+        .vocab-eng {
+            color: #4a5568;
+            margin-bottom: 3px;
+        }
+        .vocab-rus {
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            .reading-text {
+                padding: 20px;
+                font-size: 16px;
+            }
+            .options, .fill-blank-options {
+                flex-direction: column;
+            }
+            .drop-zone {
+                min-width: 180px;
+                margin: 8px 0;
+                display: block;
+            }
+            .vocab-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部区域 -->
+        <div class="header">
+            <h1>“小雪”节气</h1>
+            <p>中国二十四节气 · 互动阅读练习</p>
+        </div>
+        
+        <!-- 字号控制区 -->
+        <div class="font-control">
+            <label>阅读字号调整：</label>
+            <button class="font-btn" id="fontSmaller">缩小</button>
+            <button class="font-btn" id="fontReset">默认</button>
+            <button class="font-btn" id="fontLarger">放大</button>
+        </div>
+        
+        <!-- 阅读文本 -->
+        <div class="reading-text" id="readingContent">
+            11月22日，是中国农历二十四<span class="word" id="节气">节气
+                <div class="explanation">
+                    拆字解释：<br>
+                    节：时节、时段<br>
+                    气：气候、天气<br>
+                    组合猜测：和时节、气候相关的特定时间点
+                </div>
+            </span>的“小雪”。
+            <br><br>
+            小雪<span class="word" id="节气2">节气
+                <div class="explanation">
+                    拆字解释：<br>
+                    节：时节、时段<br>
+                    气：气候、天气<br>
+                    组合猜测：和时节、气候相关的特定时间点
+                </div>
+            </span>，是强烈的<span class="word" id="冷空气">冷空气
+                <div class="explanation">
+                    拆字解释：<br>
+                    冷：寒冷的<br>
+                    空：空气<br>
+                    气：气体<br>
+                    组合猜测：寒冷的空气团
+                </div>
+            </span>活动较多的节气。<span class="text-blank" id="textBlank1">____1____</span>，常有大<span class="word" id="大规模">规模
+                <div class="explanation">
+                    拆字解释：<br>
+                    大：范围广<br>
+                    规：范围、标准<br>
+                    模：样式、范围<br>
+                    组合猜测：范围很大的
+                </div>
+            </span>的冷空气<span class="word" id="南下">南下
+                <div class="explanation">
+                    拆字解释：<br>
+                    南：南方<br>
+                    下：向……移动<br>
+                    组合猜测：向南方移动
+                </div>
+            </span>，中国东部会出现大面积的大风、<span class="word" id="降温">降温
+                <div class="explanation">
+                    拆字解释：<br>
+                    降：下降<br>
+                    温：温度<br>
+                    组合猜测：温度降低
+                </div>
+            </span>天气。强烈的冷空气到来时，<span class="text-blank" id="textBlank2">____2____</span>。中国地方大，“小雪”反映了北方的黄河中下游地区的气候情况。这时，北方包括东北、华北、西北，已进入<span class="word" id="封冻">封冻
+                <div class="explanation">
+                    拆字解释：<br>
+                    封：封闭、冻结<br>
+                    冻：结冰<br>
+                    组合猜测：因为结冰而封闭起来
+                </div>
+            </span>季节，<span class="word" id="显现">显现
+                <div class="explanation">
+                    拆字解释：<br>
+                    显：明显地<br>
+                    现：出现<br>
+                    组合猜测：明显地表现出来
+                </div>
+            </span>出<span class="text-blank" id="textBlank3">____3____</span>。
+            <br><br>
+            在小雪之前的<span class="word" id="立冬">立冬
+                <div class="explanation">
+                    拆字解释：<br>
+                    立：开始、确立<br>
+                    冬：冬天<br>
+                    组合猜测：表示冬天开始的节气
+                </div>
+            </span>节气，中国的西北、东北的大部分地区，已经有雪，到了小雪节气，华北地区会下雪。<span class="text-blank" id="textBlank4">____4____</span>，那么，到小雪节气，冷空气的直接表现就是，这些地区的<span class="word" id="气温">气温
+                <div class="explanation">
+                    拆字解释：<br>
+                    气：空气<br>
+                    温：温度<br>
+                    组合猜测：空气的温度
+                </div>
+            </span>会达到0℃以下。我们都知道，只有当气温在0℃以下时，<span class="text-blank" id="textBlank5">____5____</span>。所以，小雪时候比初冬时候气温低，是很明显的。
+            <br><br>
+            以长江为<span class="word" id="界限">界限
+                <div class="explanation">
+                    拆字解释：<br>
+                    界：分界、区域<br>
+                    限：限制、边界<br>
+                    组合猜测：区分不同区域的边界线
+                </div>
+            </span>，<span class="word" id="江南">江南
+                <div class="explanation">
+                    拆字解释：<br>
+                    江：长江<br>
+                    南：南方<br>
+                    组合猜测：长江以南的地区
+                </div>
+            </span>的长江中下游地区，到了小雪节气，才进入冬季。虽然，全国下雨的情况，随着冬季的到来会慢慢减少，但是，江南比<span class="word" id="江北">江北
+                <div class="explanation">
+                    拆字解释：<br>
+                    江：长江<br>
+                    北：北方<br>
+                    组合猜测：长江以北的地区
+                </div>
+            </span>雨水还是多一些。这一地区，12月中下旬才有第一场雪，但这时的<span class="word" id="阴雨">阴雨
+                <div class="explanation">
+                    拆字解释：<br>
+                    阴：阴天<br>
+                    雨：下雨<br>
+                    组合猜测：阴天且下雨的天气
+                </div>
+            </span>天气给人们的感受已经不是秋天凉快的感觉，<span class="text-blank" id="textBlank6">____6____</span>，这种感觉很不舒服。相反，北方干冷地区，因为房间有暖气（heater），人的感觉舒服多了。
+        </div>
+
+        <!-- 练习题部分 -->
+        <div class="exercise-section">
+            <h2 class="section-title">练习题</h2>
+            
+            <!-- 第一大题：拖拽填空题 -->
+            <div class="question">
+                <h3>一、将下面句子拖拽到文中对应的横线位置</h3>
+                
+                <div class="fill-blank-area">
+                    <div class="fill-options-title">请拖拽下方选项到对应横线处：</div>
+                    <!-- 拖拽选项区 -->
+                    <div class="fill-blank-options">
+                        <button class="fill-btn" draggable="true" data-value="A. 常有入冬第一场雪" id="optA">A. 常有入冬第一场雪</button>
+                        <button class="fill-btn" draggable="true" data-value="B. 初冬景象" id="optB">B. 初冬景象</button>
+                        <button class="fill-btn" draggable="true" data-value="C. 如果说立冬节气是中国北方地区进入冬季的开始" id="optC">C. 如果说立冬节气是中国北方地区进入冬季的开始</button>
+                        <button class="fill-btn" draggable="true" data-value="D. 小雪节气后" id="optD">D. 小雪节气后</button>
+                        <button class="fill-btn" draggable="true" data-value="E. 而是又湿又冷" id="optE">E. 而是又湿又冷</button>
+                        <button class="fill-btn" draggable="true" data-value="F. 降水才由下雨变成下雪" id="optF">F. 降水才由下雨变成下雪</button>
+                    </div>
+                    
+                    <!-- 拖拽目标区 -->
+                    <div class="blank-item">
+                        <p>1. <span class="drop-zone" id="blank1" data-correct="D. 小雪节气后">__请拖拽选项到这里__</span></p>
+                        <div class="feedback correct-feedback">正确！此处承接“小雪节气是冷空气活动多的节气”，填“小雪节气后”逻辑通顺。</div>
+                        <div class="feedback incorrect-feedback">错误！正确答案是“D. 小雪节气后”。</div>
+                        <div class="unfilled-feedback">提示：尚未填写该空，请先拖拽选项填入。</div>
+                    </div>
+                    
+                    <div class="blank-item">
+                        <p>2. <span class="drop-zone" id="blank2" data-correct="A. 常有入冬第一场雪">__请拖拽选项到这里__</span></p>
+                        <div class="feedback correct-feedback">正确！冷空气南下会带来降雪，“常有入冬第一场雪”符合小雪节气的天气特征。</div>
+                        <div class="feedback incorrect-feedback">错误！正确答案是“A. 常有入冬第一场雪”。</div>
+                        <div class="unfilled-feedback">提示：尚未填写该空，请先拖拽选项填入。</div>
+                    </div>
+                    
+                    <div class="blank-item">
+                        <p>3. <span class="drop-zone" id="blank3" data-correct="B. 初冬景象">__请拖拽选项到这里__</span></p>
+                        <div class="feedback correct-feedback">正确！北方进入封冻季节后呈现的状态是“初冬景象”，贴合语境。</div>
+                        <div class="feedback incorrect-feedback">错误！正确答案是“B. 初冬景象”。</div>
+                        <div class="unfilled-feedback">提示：尚未填写该空，请先拖拽选项填入。</div>
+                    </div>
+                    
+                    <div class="blank-item">
+                        <p>4. <span class="drop-zone" id="blank4" data-correct="C. 如果说立冬节气是中国北方地区进入冬季的开始">__请拖拽选项到这里__</span></p>
+                        <div class="feedback correct-feedback">正确！“如果说立冬是冬季开始”与后文“到小雪节气”形成承接关系，逻辑清晰。</div>
+                        <div class="feedback incorrect-feedback">错误！正确答案是“C. 如果说立冬节气是中国北方地区进入冬季的开始”。</div>
+                        <div class="unfilled-feedback">提示：尚未填写该空，请先拖拽选项填入。</div>
+                    </div>
+                    
+                    <div class="blank-item">
+                        <p>5. <span class="drop-zone" id="blank5" data-correct="F. 降水才由下雨变成下雪">__请拖拽选项到这里__</span></p>
+                        <div class="feedback correct-feedback">正确！气温0℃以下时，降水形式会从雨转为雪，这是科学的气候规律。</div>
+                        <div class="feedback incorrect-feedback">错误！正确答案是“F. 降水才由下雨变成下雪”。</div>
+                        <div class="unfilled-feedback">提示：尚未填写该空，请先拖拽选项填入。</div>
+                    </div>
+                    
+                    <div class="blank-item">
+                        <p>6. <span class="drop-zone" id="blank6" data-correct="E. 而是又湿又冷">__请拖拽选项到这里__</span></p>
+                        <div class="feedback correct-feedback">正确！前文“不是秋天凉快的感觉”与“而是又湿又冷”形成转折，贴合江南冬季的体感。</div>
+                        <div class="feedback incorrect-feedback">错误！正确答案是“E. 而是又湿又冷”。</div>
+                        <div class="unfilled-feedback">提示：尚未填写该空，请先拖拽选项填入。</div>
+                    </div>
+                    
+                    <!-- 检查答案按钮 -->
+                    <button class="check-answer-btn" id="checkFillAnswers">检查答案</button>
+                </div>
+            </div>
+            
+            <!-- 第二大题：选择题 -->
+            <div class="question">
+                <h3>二、根据文章内容选择正确答案（从ABCD四个选项中选择一个最佳答案）</h3>
+                
+                <div class="question-item">
+                    <p>1. 文章的主要内容是关于：（）</p>
+                    <div class="options">
+                        <div class="option" data-correct="false">A. 立冬节气的气候特征</div>
+                        <div class="option" data-correct="true">B. 小雪节气的气候特征</div>
+                        <div class="option" data-correct="false">C. 北方气候</div>
+                        <div class="option" data-correct="false">D. 南方气候</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！文章围绕“小雪”节气的时间、天气、南北地区表现展开，核心是小雪节气的气候特征。</div>
+                    <div class="feedback incorrect-feedback">错误！文章核心是“小雪节气”的气候特征，正确答案是B。</div>
+                </div>
+                
+                <div class="question-item">
+                    <p>2. 文章中北方指的是：（）</p>
+                    <div class="options">
+                        <div class="option" data-correct="false">A. 长江中下游地区</div>
+                        <div class="option" data-correct="false">B. 黄河中下游地区</div>
+                        <div class="option" data-correct="true">C. 东北、华北、西北</div>
+                        <div class="option" data-correct="false">D. 华北</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！文章明确提到“北方包括东北、华北、西北”。</div>
+                    <div class="feedback incorrect-feedback">错误！文章中北方指“东北、华北、西北”，正确答案是C。</div>
+                </div>
+                
+                <div class="question-item">
+                    <p>3. 文章中江南江北的分界线是什么？（）</p>
+                    <div class="options">
+                        <div class="option" data-correct="true">A. 长江</div>
+                        <div class="option" data-correct="false">B. 黄河</div>
+                        <div class="option" data-correct="false">C. 长江南</div>
+                        <div class="option" data-correct="false">D. 黄河北</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！文章提到“以长江为界限，江南的长江中下游地区……”，所以分界线是长江。</div>
+                    <div class="feedback incorrect-feedback">错误！江南江北的分界线是长江，正确答案是A。</div>
+                </div>
+                
+                <div class="question-item">
+                    <p>4. 在中国，哪里的冬天不舒服？（）</p>
+                    <div class="options">
+                        <div class="option" data-correct="false">A. 北方干冷地区</div>
+                        <div class="option" data-correct="false">B. 农村没有暖气地区</div>
+                        <div class="option" data-correct="false">C. 江北的长江中下游地区</div>
+                        <div class="option" data-correct="true">D. 江南的长江中下游地区</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！文章提到江南长江中下游地区冬季是“又湿又冷”的阴雨天，感觉不舒服；北方干冷地区有暖气更舒服。</div>
+                    <div class="feedback incorrect-feedback">错误！江南的长江中下游地区冬季又湿又冷不舒服，正确答案是D。</div>
+                </div>
+            </div>
+            
+            <button class="btn" id="showVocab">查看生词表</button>
+        </div>
+        
+        <!-- 生词表 -->
+        <div class="vocab-list" id="vocabList">
+            <h2 class="section-title">生词表</h2>
+            
+            <div class="vocab-grid">
+                <div class="vocab-item">
+                    <strong>节气</strong>
+                    <div class="vocab-pinyin">jié qì</div>
+                    <div class="vocab-eng">English: solar term (traditional Chinese time division)</div>
+                    <div class="vocab-rus">Русский: солнечный период (традиционное китайское деление времени)</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>冷空气</strong>
+                    <div class="vocab-pinyin">lěng kōng qì</div>
+                    <div class="vocab-eng">English: cold air mass</div>
+                    <div class="vocab-rus">Русский: холодный воздушный массив</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>大规模</strong>
+                    <div class="vocab-pinyin">dà guī mó</div>
+                    <div class="vocab-eng">English: large-scale</div>
+                    <div class="vocab-rus">Русский: крупномасштабный</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>南下</strong>
+                    <div class="vocab-pinyin">nán xià</div>
+                    <div class="vocab-eng">English: move southward</div>
+                    <div class="vocab-rus">Русский: двигаться на юг</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>降温</strong>
+                    <div class="vocab-pinyin">jiàng wēn</div>
+                    <div class="vocab-eng">English: temperature drop</div>
+                    <div class="vocab-rus">Русский: падение температуры</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>封冻</strong>
+                    <div class="vocab-pinyin">fēng dòng</div>
+                    <div class="vocab-eng">English: freeze-up (of water bodies, ground)</div>
+                    <div class="vocab-rus">Русский: замерзание (водоемов, земли)</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>显现</strong>
+                    <div class="vocab-pinyin">xiǎn xiàn</div>
+                    <div class="vocab-eng">English: appear, manifest</div>
+                    <div class="vocab-rus">Русский: появляться, проявляться</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>立冬</strong>
+                    <div class="vocab-pinyin">lì dōng</div>
+                    <div class="vocab-eng">English: Start of Winter (one of the 24 solar terms)</div>
+                    <div class="vocab-rus">Русский: Начало Зимы (один из 24 солнечных периодов)</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>气温</strong>
+                    <div class="vocab-pinyin">qì wēn</div>
+                    <div class="vocab-eng">English: air temperature</div>
+                    <div class="vocab-rus">Русский: температура воздуха</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>界限</strong>
+                    <div class="vocab-pinyin">jiè xiàn</div>
+                    <div class="vocab-eng">English: boundary, dividing line</div>
+                    <div class="vocab-rus">Русский: граница, разделяющая линия</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>江南</strong>
+                    <div class="vocab-pinyin">jiāng nán</div>
+                    <div class="vocab-eng">English: regions south of the Yangtze River</div>
+                    <div class="vocab-rus">Русский: регионы к югу от реки Янцзы</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>江北</strong>
+                    <div class="vocab-pinyin">jiāng běi</div>
+                    <div class="vocab-eng">English: regions north of the Yangtze River</div>
+                    <div class="vocab-rus">Русский: регионы к северу от реки Янцзы</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>阴雨</strong>
+                    <div class="vocab-pinyin">yīn yǔ</div>
+                    <div class="vocab-eng">English: overcast and rainy</div>
+                    <div class="vocab-rus">Русский: пасмурно и дождливо</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 字号调整功能
+        const readingContent = document.getElementById('readingContent');
+        const fontSmaller = document.getElementById('fontSmaller');
+        const fontReset = document.getElementById('fontReset');
+        const fontLarger = document.getElementById('fontLarger');
+        let currentFontSize = 18; // 默认字号18px
+        const minFontSize = 14;
+        const maxFontSize = 24;
+        const fontSizeStep = 2;
+
+        fontSmaller.addEventListener('click', () => {
+            if (currentFontSize > minFontSize) {
+                currentFontSize -= fontSizeStep;
+                readingContent.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        fontReset.addEventListener('click', () => {
+            currentFontSize = 18;
+            readingContent.style.fontSize = `${currentFontSize}px`;
+        });
+
+        fontLarger.addEventListener('click', () => {
+            if (currentFontSize < maxFontSize) {
+                currentFontSize += fontSizeStep;
+                readingContent.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        // 生词点击显示拆字解释
+        document.querySelectorAll('.word').forEach(word => {
+            word.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const explanation = this.querySelector('.explanation');
+                
+                // 关闭其他所有解释弹窗
+                document.querySelectorAll('.explanation').forEach(exp => {
+                    if (exp !== explanation) exp.style.display = 'none';
+                });
+                
+                explanation.style.display = explanation.style.display === 'block' ? 'none' : 'block';
+            });
+        });
+
+        // 点击其他地方关闭解释
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.explanation').forEach(exp => {
+                exp.style.display = 'none';
+            });
+        });
+
+        // 阻止解释框冒泡
+        document.querySelectorAll('.explanation').forEach(exp => {
+            exp.addEventListener('click', e => {
+                e.stopPropagation();
+            });
+        });
+        
+        // 拖拽填空功能
+        let draggedOption = null;
+        const usedOptions = new Set(); // 记录已使用的选项，避免重复拖拽
+
+        // 拖拽开始：记录选项信息
+        document.querySelectorAll('.fill-btn').forEach(btn => {
+            btn.addEventListener('dragstart', function(e) {
+                draggedOption = {
+                    id: this.id,
+                    value: this.getAttribute('data-value')
+                };
+                e.dataTransfer.setData('text/plain', this.getAttribute('data-value'));
+                this.style.opacity = '0.6';
+                this.style.cursor = 'grabbing';
+            });
+
+            // 拖拽结束：恢复样式
+            btn.addEventListener('dragend', function() {
+                this.style.opacity = '1';
+                this.style.cursor = 'grab';
+            });
+        });
+
+        // 允许放置：阻止默认行为
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.backgroundColor = '#f0f8ff';
+            });
+
+            // 离开目标区：恢复背景
+            zone.addEventListener('dragleave', function() {
+                this.style.backgroundColor = '';
+            });
+
+            // 放置处理：填入内容
+            zone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.backgroundColor = '';
+
+                // 若未选择选项或选项已使用，不处理
+                if (!draggedOption || usedOptions.has(draggedOption.id)) {
+                    return;
+                }
+
+                // 填入选项内容
+                const optionValue = draggedOption.value;
+                this.textContent = optionValue;
+                this.classList.add('filled');
+
+                // 同步修改原文中的横线内容
+                const textBlankId = `textBlank${this.id.slice(-1)}`;
+                document.getElementById(textBlankId).textContent = optionValue;
+
+                // 标记选项为已使用（隐藏选项）
+                usedOptions.add(draggedOption.id);
+                document.getElementById(draggedOption.id).style.display = 'none';
+
+                // 重置拖拽变量
+                draggedOption = null;
+            });
+        });
+        
+        // 检查填空题答案功能
+        document.getElementById('checkFillAnswers').addEventListener('click', function() {
+            // 遍历所有填空区域，逐个判断
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                const zoneId = zone.id;
+                const currentValue = zone.textContent.trim();
+                const correctValue = zone.getAttribute('data-correct');
+                const blankItem = zone.closest('.blank-item');
+                const correctFeedback = blankItem.querySelector('.correct-feedback');
+                const incorrectFeedback = blankItem.querySelector('.incorrect-feedback');
+                const unfilledFeedback = blankItem.querySelector('.unfilled-feedback');
+
+                // 重置所有样式和反馈
+                zone.classList.remove('correct', 'incorrect');
+                correctFeedback.style.display = 'none';
+                incorrectFeedback.style.display = 'none';
+                unfilledFeedback.style.display = 'none';
+
+                // 判断三种情况：未填写、正确、错误
+                if (currentValue === '__请拖拽选项到这里__' || currentValue === '') {
+                    // 未填写
+                    unfilledFeedback.style.display = 'block';
+                } else if (currentValue === correctValue) {
+                    // 正确
+                    zone.classList.add('correct', 'filled');
+                    correctFeedback.style.display = 'block';
+                } else {
+                    // 错误
+                    zone.classList.add('incorrect', 'filled');
+                    incorrectFeedback.style.display = 'block';
+                }
+            });
+        });
+        
+        // 选择题选项点击判断
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const questionItem = this.closest('.question-item');
+                const options = questionItem.querySelectorAll('.option');
+                const correct = this.getAttribute('data-correct') === 'true';
+                const correctFeedback = questionItem.querySelector('.correct-feedback');
+                const incorrectFeedback = questionItem.querySelector('.incorrect-feedback');
+                
+                // 重置所有选项样式和反馈
+                options.forEach(opt => {
+                    opt.classList.remove('correct', 'incorrect');
+                });
+                correctFeedback.style.display = 'none';
+                incorrectFeedback.style.display = 'none';
+                
+                // 显示当前选项结果
+                if (correct) {
+                    this.classList.add('correct');
+                    correctFeedback.style.display = 'block';
+                } else {
+                    this.classList.add('incorrect');
+                    incorrectFeedback.style.display = 'block';
+                    
+                    // 显示正确答案
+                    options.forEach(opt => {
+                        if (opt.getAttribute('data-correct') === 'true') {
+                            opt.classList.add('correct');
+                        }
+                    });
+                }
+            });
+        });
+        
+        // 显示/隐藏生词表
+        document.getElementById('showVocab').addEventListener('click', function() {
+            const vocabList = document.getElementById('vocabList');
+            const isVisible = vocabList.style.display === 'block';
+            
+            vocabList.style.display = isVisible ? 'none' : 'block';
+            this.textContent = isVisible ? '查看生词表' : '隐藏生词表';
+            
+            // 平滑滚动到生词表
+            if (!isVisible) {
+                vocabList.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    </script>
+</body>
+</html>

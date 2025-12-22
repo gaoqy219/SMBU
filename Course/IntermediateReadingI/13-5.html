@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>你对北京知多少 - 互动阅读</title>
+    <style>
+        /* 全局样式重置与基础设置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f9ff;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        /* 头部样式 */
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(135deg, #4299e1, #38b2ac);
+            border-radius: 12px;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        /* 字号控制区 */
+        .font-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .font-control label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .font-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background-color: #4299e1;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .font-btn:hover {
+            background-color: #3182ce;
+            transform: translateY(-2px);
+        }
+        .font-btn:active {
+            transform: translateY(0);
+        }
+        /* 阅读文本样式 */
+        .reading-text {
+            font-size: 18px;
+            line-height: 2;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .reading-text img {
+            max-width: 400px;
+            float: right;
+            margin-left: 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+        /* 生词样式 */
+        .word {
+            color: #4299e1;
+            text-decoration: underline dotted;
+            cursor: pointer;
+            position: relative;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            display: inline-block;
+        }
+        .word:hover {
+            color: #3182ce;
+            background-color: #e8f4f8;
+            padding: 0 3px;
+            border-radius: 4px;
+        }
+        .explanation {
+            display: none;
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            z-index: 999;
+            width: 240px;
+            font-size: 14px;
+            color: #2d3748;
+            border-top: 3px solid #4299e1;
+        }
+        .explanation::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 10px 10px 10px;
+            border-style: solid;
+            border-color: transparent transparent #4299e1 transparent;
+        }
+        /* 练习题样式 */
+        .exercise-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f4f8;
+        }
+        .question {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #4299e1;
+        }
+        .question p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        /* 填空题样式 */
+        .fill-input {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            width: 250px;
+            margin: 0 8px;
+            font-size: 1rem;
+        }
+        /* 反馈样式 */
+        .feedback {
+            padding: 12px 15px;
+            border-radius: 6px;
+            display: none;
+            font-size: 0.95rem;
+            margin-top: 8px;
+        }
+        .correct-feedback {
+            background: #e8f5e9;
+            color: #2c6e31;
+            border: 1px solid #c3e6cb;
+        }
+        .incorrect-feedback {
+            background: #fef2f2;
+            color: #842029;
+            border: 1px solid #f5c6cb;
+        }
+        /* 按钮样式 */
+        .check-answer-btn {
+            padding: 12px 25px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto 0;
+        }
+        .check-answer-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+        .check-answer-btn:active {
+            transform: translateY(0);
+        }
+        .btn {
+            padding: 12px 25px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto 0;
+        }
+        .btn:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(66, 153, 225, 0.3);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        /* 生词表样式 */
+        .vocab-list {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: none;
+        }
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .vocab-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .vocab-item:hover {
+            background: #e8f4f8;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .vocab-item strong {
+            font-size: 1.1rem;
+            color: #2d3748;
+            margin-right: 10px;
+        }
+        .vocab-pinyin {
+            color: #718096;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+        .vocab-eng {
+            color: #4a5568;
+            margin-bottom: 3px;
+        }
+        .vocab-rus {
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            .reading-text {
+                padding: 20px;
+                font-size: 16px;
+            }
+            .reading-text img {
+                float: none;
+                max-width: 100%;
+                margin: 0 auto 15px;
+                display: block;
+            }
+            .fill-input {
+                width: 180px;
+                margin: 8px 0;
+                display: block;
+            }
+            .vocab-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部区域 -->
+        <div class="header">
+            <h1>你对北京知多少</h1>
+            <p>北京的概况与文化 · 互动阅读练习</p>
+        </div>
+        
+        <!-- 字号控制区 -->
+        <div class="font-control">
+            <label>阅读字号调整：</label>
+            <button class="font-btn" id="fontSmaller">缩小</button>
+            <button class="font-btn" id="fontReset">默认</button>
+            <button class="font-btn" id="fontLarger">放大</button>
+        </div>
+        
+        <!-- 阅读文本（优化生词：拆分+补充） -->
+        <div class="reading-text" id="readingContent">
+            <img src="13-5.jpg" alt="北京天安门与华表">
+            北京是中华人民共和国的<span class="word" id="首都">首都
+                <div class="explanation">
+                    拆字解释：<br>
+                    首：首要、第一<br>
+                    都：都市、城市<br>
+                    组合猜测：国家最重要的城市（中央政府所在地）
+                </div>
+            </span>，总面积16,808平方公里，市区面积1040平方公里。北京是中国的政治、文化和国际交往中心，也是世界历史文化名城和<span class="word" id="古都">古都
+                <div class="explanation">
+                    拆字解释：<br>
+                    古：古代、久远<br>
+                    都：首都、都市<br>
+                    组合猜测：古代国家的首都
+                </div>
+            </span>之一。
+            <br><br>
+            公元938年，统治中国北方的辽以北京（时称燕京）为<span class="word" id="陪都">陪都
+                <div class="explanation">
+                    拆字解释：<br>
+                    陪：陪伴、辅助<br>
+                    都：首都、都市<br>
+                    组合猜测：辅助性的首都（次于主首都）
+                </div>
+            </span>（auxiliary capital）；以后，金、元、明、清各代都以此地为首都，前后达650多年。1949年10月1日中华人民共和国成立，北京成为新中国的首都。
+            <br><br>
+            北京北面有军都山，西面有西山，与河北交界的东灵山，<span class="word" id="海拔">海拔
+                <div class="explanation">
+                    拆字解释：<br>
+                    海：海平面<br>
+                    拔：高度、超出<br>
+                    组合猜测：地面某个地点高出海平面的高度
+                </div>
+            </span>（height above sea level）是2303米，是北京的最高峰。北京有密云水库、怀柔水库和十三陵水库等三大水库；有潮白河、北运河、永定河、拒马河和汤河五大河。
+            <br><br>
+            北京的气候属于<span class="word" id="温带季风气候">温带季风气候
+                <div class="explanation">
+                    拆字解释：<br>
+                    温：温暖、温度<br>
+                    带：区域、地带<br>
+                    季：季节<br>
+                    风：风向<br>
+                    气候：长期天气状况<br>
+                    组合猜测：温带地区随季节变化风向的气候类型
+                </div>
+            </span>（monsoon），<span class="word" id="季节">季节
+                <div class="explanation">
+                    拆字解释：<br>
+                    季：季度、时节<br>
+                    节：时段、节气<br>
+                    组合猜测：一年中按气候划分的不同时段（如春、夏、秋、冬）
+                </div>
+            </span><span class="word" id="分明">分明
+                <div class="explanation">
+                    拆字解释：<br>
+                    分：区分、分开<br>
+                    明：清楚、明显<br>
+                    组合猜测：界限清晰、容易区分
+                </div>
+            </span>（clear, distinct）：春季有风沙，气温比较低；夏季炎热，多阵雨；秋季天气晴朗、温和，天高云淡，是旅游的黄金季节，但深秋早晚较凉，中午较热；冬季气候<span class="word" id="干燥">干燥
+                <div class="explanation">
+                    拆字解释：<br>
+                    干：缺少水分<br>
+                    燥：干燥、燥热<br>
+                    组合猜测：缺乏水分、空气湿度低
+                </div>
+            </span>寒冷，较少下雪。
+            <br><br>
+            北京拥有众多的<span class="word" id="历史文化遗迹">历史文化遗迹
+                <div class="explanation">
+                    拆字解释：<br>
+                    历：历史<br>
+                    史：史实<br>
+                    文：文化<br>
+                    化：成果<br>
+                    遗：遗留<br>
+                    迹：痕迹<br>
+                    组合猜测：历史和文化遗留下来的痕迹（如建筑、遗址等）
+                </div>
+            </span>（historical sites），如长城、故宫、颐和园等。
+            <br><br>
+            长城是世界上最长的建筑，<span class="word" id="绵延">绵延
+                <div class="explanation">
+                    拆字解释：<br>
+                    绵：连续不断<br>
+                    延：延伸、延展<br>
+                    组合猜测：连续不断地延伸
+                </div>
+            </span>（stretch long and unbroken）万里，因此被称为“万里长城”。
+            <br><br>
+            故宫原名紫禁城（Forbidden City），是明、清两代24位皇帝的皇宫，是中国保存最大最完整的<span class="word" id="帝王">帝王
+                <div class="explanation">
+                    拆字解释：<br>
+                    帝：皇帝、帝王<br>
+                    王：君王、君主<br>
+                    组合猜测：封建时代的最高统治者（皇帝）
+                </div>
+            </span><span class="word" id="宫殿">宫殿
+                <div class="explanation">
+                    拆字解释：<br>
+                    宫：皇宫、宫室<br>
+                    殿：大殿、殿堂<br>
+                    组合猜测：帝王居住和处理政务的大型建筑
+                </div>
+            </span>群，也是中国<span class="word" id="现存">现存
+                <div class="explanation">
+                    拆字解释：<br>
+                    现：现在、当前<br>
+                    存：存在、留存<br>
+                    组合猜测：当前仍然存在、留存下来的
+                </div>
+            </span>最大最完整的古建筑群。
+            <br><br>
+            <span class="word" id="皇家园林">皇家园林
+                <div class="explanation">
+                    拆字解释：<br>
+                    皇：皇帝、皇家<br>
+                    家：家族<br>
+                    园：园子、园林<br>
+                    林：树林<br>
+                    组合猜测：皇帝家族专用的园林
+                </div>
+            </span>是中国现存规模最大、保存最完整的皇家园林，被誉为皇家园林博物馆。北京的天安门广场面积44万平方米，南北长880米，东西宽500米，是世界上最大的<span class="word" id="广场">广场
+                <div class="explanation">
+                    拆字解释：<br>
+                    广：宽阔、广大<br>
+                    场：平坦的场地<br>
+                    组合猜测：宽阔平坦的公共场地
+                </div>
+            </span>。
+        </div>
+
+        <!-- 练习题部分 -->
+        <div class="exercise-section">
+            <h2 class="section-title">练习题</h2>
+            
+            <!-- 填空题 -->
+            <div class="question">
+                <h3>根据文章内容填空</h3>
+                
+                <div class="blank-item">
+                    <p>1. 北京的最高峰是 <input type="text" class="fill-input" id="fill1" placeholder="请输入答案"></p>
+                    <div class="feedback correct-feedback" id="fill1-correct">正确！文章提到“与河北交界的东灵山……是北京的最高峰”。</div>
+                    <div class="feedback incorrect-feedback" id="fill1-incorrect">错误！正确答案是“东灵山”。</div>
+                </div>
+                
+                <div class="blank-item">
+                    <p>2. 北京最好的季节是 <input type="text" class="fill-input" id="fill2" placeholder="请输入答案">，特点是 <input type="text" class="fill-input" id="fill3" placeholder="请输入答案"></p>
+                    <div class="feedback correct-feedback" id="fill2-correct">正确！文章说明北京秋季“天气晴朗、温和，天高云淡，是旅游的黄金季节”。</div>
+                    <div class="feedback incorrect-feedback" id="fill2-incorrect">错误！正确答案是“秋季”；特点是“天气晴朗、温和，天高云淡”。</div>
+                </div>
+                
+                <div class="blank-item">
+                    <p>3. 中国现存最大最完整的古建筑群是 <input type="text" class="fill-input" id="fill4" placeholder="请输入答案"></p>
+                    <div class="feedback correct-feedback" id="fill4-correct">正确！文章提到“故宫……是中国现存最大最完整的古建筑群”。</div>
+                    <div class="feedback incorrect-feedback" id="fill4-incorrect">错误！正确答案是“故宫（紫禁城）”。</div>
+                </div>
+                
+                <button class="check-answer-btn" id="checkFill">检查填空题答案</button>
+            </div>
+            
+            <button class="btn" id="showVocab">查看生词表</button>
+        </div>
+        
+        <!-- 生词表（同步更新拆分+补充生词） -->
+        <div class="vocab-list" id="vocabList">
+            <h2 class="section-title">生词表</h2>
+            
+            <div class="vocab-grid">
+                <div class="vocab-item">
+                    <strong>首都</strong>
+                    <div class="vocab-pinyin">shǒu dū</div>
+                    <div class="vocab-eng">English: capital (city)</div>
+                    <div class="vocab-rus">Русский: столица</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>古都</strong>
+                    <div class="vocab-pinyin">gǔ dū</div>
+                    <div class="vocab-eng">English: ancient capital</div>
+                    <div class="vocab-rus">Русский: древняя столица</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>陪都</strong>
+                    <div class="vocab-pinyin">péi dū</div>
+                    <div class="vocab-eng">English: auxiliary capital</div>
+                    <div class="vocab-rus">Русский: вспомогательная столица</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>海拔</strong>
+                    <div class="vocab-pinyin">hǎi bá</div>
+                    <div class="vocab-eng">English: altitude (height above sea level)</div>
+                    <div class="vocab-rus">Русский: высота над уровнем моря</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>温带季风气候</strong>
+                    <div class="vocab-pinyin">wēn dài jì fēng qì hòu</div>
+                    <div class="vocab-eng">English: temperate monsoon climate</div>
+                    <div class="vocab-rus">Русский: умеренный монsoonный климат</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>季节</strong>
+                    <div class="vocab-pinyin">jì jié</div>
+                    <div class="vocab-eng">English: season</div>
+                    <div class="vocab-rus">Русский: сезон</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>分明</strong>
+                    <div class="vocab-pinyin">fēn míng</div>
+                    <div class="vocab-eng">English: distinct, clear</div>
+                    <div class="vocab-rus">Русский: четкий, отчетливый</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>干燥</strong>
+                    <div class="vocab-pinyin">gān zào</div>
+                    <div class="vocab-eng">English: dry, arid</div>
+                    <div class="vocab-rus">Русский: сухой</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>历史文化遗迹</strong>
+                    <div class="vocab-pinyin">lì shǐ wén huà yí jì</div>
+                    <div class="vocab-eng">English: historical and cultural sites</div>
+                    <div class="vocab-rus">Русский: исторические и культурные памятники</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>绵延</strong>
+                    <div class="vocab-pinyin">mián yán</div>
+                    <div class="vocab-eng">English: stretch long and unbroken</div>
+                    <div class="vocab-rus">Русский: протягиваться без прерывания</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>帝王</strong>
+                    <div class="vocab-pinyin">dì wáng</div>
+                    <div class="vocab-eng">English: emperor, monarch</div>
+                    <div class="vocab-rus">Русский: император, монарх</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>宫殿</strong>
+                    <div class="vocab-pinyin">gōng diàn</div>
+                    <div class="vocab-eng">English: palace</div>
+                    <div class="vocab-rus">Русский: дворец</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>现存</strong>
+                    <div class="vocab-pinyin">xiàn cún</div>
+                    <div class="vocab-eng">English: existing, extant</div>
+                    <div class="vocab-rus">Русский: существующий, сохранившийся</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>皇家园林</strong>
+                    <div class="vocab-pinyin">huáng jiā yuán lín</div>
+                    <div class="vocab-eng">English: imperial garden</div>
+                    <div class="vocab-rus">Русский: императорский сад</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>广场</strong>
+                    <div class="vocab-pinyin">guǎng chǎng</div>
+                    <div class="vocab-eng">English: square (public open area)</div>
+                    <div class="vocab-rus">Русский: площадь</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 字号调整功能
+        const readingContent = document.getElementById('readingContent');
+        const fontSmaller = document.getElementById('fontSmaller');
+        const fontReset = document.getElementById('fontReset');
+        const fontLarger = document.getElementById('fontLarger');
+        let currentFontSize = 18; // 默认字号18px
+        const minFontSize = 14;
+        const maxFontSize = 24;
+        const fontSizeStep = 2;
+
+        fontSmaller.addEventListener('click', () => {
+            if (currentFontSize > minFontSize) {
+                currentFontSize -= fontSizeStep;
+                readingContent.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        fontReset.addEventListener('click', () => {
+            currentFontSize = 18;
+            readingContent.style.fontSize = `${currentFontSize}px`;
+        });
+
+        fontLarger.addEventListener('click', () => {
+            if (currentFontSize < maxFontSize) {
+                currentFontSize += fontSizeStep;
+                readingContent.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        // 生词点击显示解释弹窗
+        document.addEventListener('click', function(e) {
+            // 关闭所有已打开的解释弹窗
+            document.querySelectorAll('.explanation').forEach(exp => {
+                exp.style.display = 'none';
+            });
+
+            // 点击生词时显示对应弹窗
+            if (e.target.classList.contains('word')) {
+                const explanation = e.target.querySelector('.explanation');
+                if (explanation) {
+                    explanation.style.display = 'block';
+                    e.stopPropagation();
+                }
+            }
+        });
+
+        // 填空题检查功能
+        document.getElementById('checkFill').addEventListener('click', function() {
+            // 正确答案列表
+            const correctAnswers = {
+                fill1: '东灵山',
+                fill2: '秋季',
+                fill3: '天气晴朗、温和，天高云淡',
+                fill4: '故宫（紫禁城）'
+            };
+
+            // 遍历所有填空输入框
+            Object.keys(correctAnswers).forEach(key => {
+                const input = document.getElementById(key);
+                const userAnswer = input.value.trim();
+                const correctFeedback = document.getElementById(`${key}-correct`);
+                const incorrectFeedback = document.getElementById(`${key}-incorrect`);
+
+                // 重置反馈
+                correctFeedback.style.display = 'none';
+                incorrectFeedback.style.display = 'none';
+
+                // 判断答案（第2题包含两个输入框，统一反馈）
+                if (key === 'fill2' || key === 'fill3') {
+                    const fill2Val = document.getElementById('fill2').value.trim();
+                    const fill3Val = document.getElementById('fill3').value.trim();
+                    if (fill2Val === correctAnswers['fill2'] && fill3Val === correctAnswers['fill3']) {
+                        document.getElementById('fill2-correct').style.display = 'block';
+                        document.getElementById('fill2').style.borderColor = '#28a745';
+                        document.getElementById('fill2').style.backgroundColor = '#d4edda';
+                        document.getElementById('fill3').style.borderColor = '#28a745';
+                        document.getElementById('fill3').style.backgroundColor = '#d4edda';
+                    } else {
+                        document.getElementById('fill2-incorrect').style.display = 'block';
+                        document.getElementById('fill2').style.borderColor = '#dc3545';
+                        document.getElementById('fill2').style.backgroundColor = '#f8d7da';
+                        document.getElementById('fill3').style.borderColor = '#dc3545';
+                        document.getElementById('fill3').style.backgroundColor = '#f8d7da';
+                    }
+                } else {
+                    // 其他题单独判断
+                    if (userAnswer === correctAnswers[key]) {
+                        correctFeedback.style.display = 'block';
+                        input.style.borderColor = '#28a745';
+                        input.style.backgroundColor = '#d4edda';
+                    } else {
+                        incorrectFeedback.style.display = 'block';
+                        input.style.borderColor = '#dc3545';
+                        input.style.backgroundColor = '#f8d7da';
+                    }
+                }
+            });
+        });
+        
+        // 显示/隐藏生词表
+        document.getElementById('showVocab').addEventListener('click', function() {
+            const vocabList = document.getElementById('vocabList');
+            const isVisible = vocabList.style.display === 'block';
+            
+            vocabList.style.display = isVisible ? 'none' : 'block';
+            this.textContent = isVisible ? '查看生词表' : '隐藏生词表';
+            
+            // 平滑滚动到生词表
+            if (!isVisible) {
+                vocabList.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    </script>
+</body>
+</html>

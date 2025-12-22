@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知音的来历 - 互动阅读</title>
+    <style>
+        /* 全局样式重置与基础设置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f9ff;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        /* 头部样式 */
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(135deg, #4299e1, #38b2ac);
+            border-radius: 12px;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        /* 字号控制区 */
+        .font-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .font-control label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .font-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background-color: #4299e1;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .font-btn:hover {
+            background-color: #3182ce;
+            transform: translateY(-2px);
+        }
+        .font-btn:active {
+            transform: translateY(0);
+        }
+        /* 阅读文本样式 */
+        .reading-text {
+            font-size: 18px;
+            line-height: 2;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        /* 生词样式 */
+        .word {
+            color: #4299e1;
+            text-decoration: underline dotted;
+            cursor: pointer;
+            position: relative;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .word:hover {
+            color: #3182ce;
+            background-color: #e8f4f8;
+            padding: 0 3px;
+            border-radius: 4px;
+        }
+        .explanation {
+            display: none;
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            z-index: 100;
+            width: 240px;
+            font-size: 14px;
+            color: #2d3748;
+            border-top: 3px solid #4299e1;
+        }
+        .explanation::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 10px 10px 10px;
+            border-style: solid;
+            border-color: transparent transparent #4299e1 transparent;
+        }
+        /* 练习题样式 */
+        .exercise-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f4f8;
+        }
+        .question {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #4299e1;
+        }
+        .question p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .option {
+            padding: 10px 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            color: #4a5568;
+        }
+        .option:hover {
+            background: #e8f4f8;
+            border-color: #4299e1;
+            color: #2d3748;
+        }
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            font-weight: 600;
+        }
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .feedback {
+            padding: 12px 15px;
+            border-radius: 6px;
+            display: none;
+            font-size: 0.95rem;
+        }
+        .correct-feedback {
+            background: #e8f5e9;
+            color: #2c6e31;
+            border: 1px solid #c3e6cb;
+        }
+        .incorrect-feedback {
+            background: #fef2f2;
+            color: #842029;
+            border: 1px solid #f5c6cb;
+        }
+        /* 按钮样式 */
+        .btn {
+            padding: 12px 25px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto 0;
+        }
+        .btn:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(66, 153, 225, 0.3);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        /* 生词表样式 */
+        .vocab-list {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: none;
+        }
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .vocab-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .vocab-item:hover {
+            background: #e8f4f8;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .vocab-item strong {
+            font-size: 1.1rem;
+            color: #2d3748;
+            margin-right: 10px;
+        }
+        .vocab-pinyin {
+            color: #718096;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+        .vocab-eng {
+            color: #4a5568;
+            margin-bottom: 3px;
+        }
+        .vocab-rus {
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            .reading-text {
+                padding: 20px;
+                font-size: 16px;
+            }
+            .options {
+                flex-direction: column;
+            }
+            .vocab-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部区域 -->
+        <div class="header">
+            <h1>知音的来历</h1>
+            <p>中国经典音乐故事 · 互动阅读练习</p>
+        </div>
+        
+        <!-- 字号控制区 -->
+        <div class="font-control">
+            <label>阅读字号调整：</label>
+            <button class="font-btn" id="fontSmaller">缩小</button>
+            <button class="font-btn" id="fontReset">默认</button>
+            <button class="font-btn" id="fontLarger">放大</button>
+        </div>
+        
+        <!-- 阅读文本 -->
+        <div class="reading-text" id="readingContent">
+            中国,在三千年以前,音乐就已经非常<span class="word" id="发达">发达
+                <div class="explanation">
+                    拆字解释：<br>
+                    发：发展、产生<br>
+                    达：达到、完备<br>
+                    组合猜测：发展到完备的状态
+                </div>
+            </span>。有一个小故事:
+            <br><br>
+            周朝时候,有一个<span class="word" id="学者">学者
+                <div class="explanation">
+                    拆字解释：<br>
+                    学：学习、学问<br>
+                    者：指人<br>
+                    组合猜测：有学问的人
+                </div>
+            </span>, 后人称他为列子。他告诉我们一个 "伯牙鼓琴"的音乐故事:
+            <br><br>
+            有一个人叫伯牙, <span class="word" id="善于">善于
+                <div class="explanation">
+                    拆字解释：<br>
+                    善：好、擅长<br>
+                    于：在……方面<br>
+                    组合猜测：在某方面做得好
+                </div>
+            </span>弹琴。他有一个好朋友,叫钟子期,善于<span class="word" id="欣赏">欣赏
+                <div class="explanation">
+                    拆字解释：<br>
+                    欣：高兴、喜爱<br>
+                    赏：观看、品味<br>
+                    组合猜测：带着喜爱的心情品味
+                </div>
+            </span> 音乐。
+            <br><br>
+            有一天,伯牙弹了一个<span class="word" id="即兴曲">即兴曲
+                <div class="explanation">
+                    拆字解释：<br>
+                    即：当下、立刻<br>
+                    兴：兴致、灵感<br>
+                    曲：曲子、音乐<br>
+                    组合猜测：凭当下灵感创作的曲子
+                </div>
+            </span>,也就是<span class="word" id="临时">临时
+                <div class="explanation">
+                    拆字解释：<br>
+                    临：面对、当下<br>
+                    时：时间、时候<br>
+                    组合猜测：当下的、短时间的
+                </div>
+            </span> 作曲表演的 曲子, 曲子的<span class="word" id="主题">主题
+                <div class="explanation">
+                    拆字解释：<br>
+                    主：主要的<br>
+                    题：题目、核心<br>
+                    组合猜测：曲子的主要核心
+                </div>
+            </span>是"<span class="word" id="泰山">泰山
+                <div class="explanation">
+                    拆字解释：<br>
+                    泰：安宁、高大<br>
+                    山：山脉、大山<br>
+                    组合猜测：著名的高大山脉（中国五大名山之一）
+                </div>
+            </span>", 他用音乐表达了他对高山的<span class="word" id="感想">感想
+                <div class="explanation">
+                    拆字解释：<br>
+                    感：感受、觉得<br>
+                    想：想法、思考<br>
+                    组合猜测：内心的感受和想法
+                </div>
+            </span>。钟子期听 他弹完了,说:"你这乐曲, <span class="word" id="峨峨然">峨峨然
+                <div class="explanation">
+                    拆字解释：<br>
+                    峨：高大的样子<br>
+                    然：……的样子<br>
+                    组合猜测：非常高大的样子
+                </div>
+            </span>若泰山。"这就是说, 乐曲听起来,好像泰山一般<span class="word" id="高大雄伟">高大雄伟
+                <div class="explanation">
+                    拆字解释：<br>
+                    高：高度高<br>
+                    大：体积大<br>
+                    雄：雄壮、有气势<br>
+                    伟：伟大、宏伟<br>
+                    组合猜测：又高又大，很有气势
+                </div>
+            </span>。
+            <br><br>
+            后来, 伯牙又弹了一个即兴曲, 表达了他对流水的感想。钟子期听他弹 完了,说:"你这乐曲, <span class="word" id="洋洋然">洋洋然
+                <div class="explanation">
+                    拆字解释：<br>
+                    洋：广阔、众多<br>
+                    然：……的样子<br>
+                    组合猜测：水流广阔不断的样子
+                </div>
+            </span>若江河。"这就是说,乐 曲听起来,好像江河<span class="word" id="长远">长远
+                <div class="explanation">
+                    拆字解释：<br>
+                    长：长度长<br>
+                    远：距离远<br>
+                    组合猜测：又长又远，不停息
+                </div>
+            </span>地流着。
+            <br><br>
+            这两个人,一个是<span class="word" id="优秀">优秀
+                <div class="explanation">
+                    拆字解释：<br>
+                    优：好、优良<br>
+                    秀：出众、突出<br>
+                    组合猜测：非常好，很出众
+                </div>
+            </span>的作曲家,一个是<span class="word" id="高明">高明
+                <div class="explanation">
+                    拆字解释：<br>
+                    高：水平高<br>
+                    明：明白、精通<br>
+                    组合猜测：水平高，很精通
+                </div>
+            </span>的音乐家,因为音乐, 他 们成了特别好的朋友。后来, 钟子期死了, 伯牙把琴<span class="word" id="摔破">摔破
+                <div class="explanation">
+                    拆字解释：<br>
+                    摔：用力扔、碰<br>
+                    破：破碎、损坏<br>
+                    组合猜测：用力扔使琴破碎
+                </div>
+            </span>了,从 此,不再弹琴,因为再也没有"<span class="word" id="知音">知音
+                <div class="explanation">
+                    拆字解释：<br>
+                    知：了解、懂得<br>
+                    音：音乐、心声<br>
+                    组合猜测：能懂得自己音乐和心声的人
+                </div>
+            </span>"了,也就是再也没有人懂得欣赏他 的曲子了。
+            <br><br>
+            这故事是说:"知音难得"。所以后人就常常<span class="word" id="比喻">比喻
+                <div class="explanation">
+                    拆字解释：<br>
+                    比：比较、比作<br>
+                    喻：说明、比方<br>
+                    组合猜测：用一个事物比作另一个事物
+                </div>
+            </span>互相了解 很深的<span class="word" id="知心朋友">知心朋友
+                <div class="explanation">
+                    拆字解释：<br>
+                    知：了解、知道<br>
+                    心：内心、心意<br>
+                    朋：朋友<br>
+                    友：伙伴<br>
+                    组合猜测：能了解彼此内心的好朋友
+                </div>
+            </span>。
+        </div>
+
+        <!-- 练习题部分 -->
+        <div class="exercise-section">
+            <h2 class="section-title">练习题</h2>
+            
+            <!-- 第一大题：判断正误 -->
+            <div class="question">
+                <h3>一、根据文章内容判断正误（正确的画"√"，错误的画"×"）</h3>
+                
+                <div class="question-item">
+                    <p>1. 中国在三千年之前音乐就已非常发达。</p>
+                    <div class="options">
+                        <div class="option" data-correct="true">√</div>
+                        <div class="option" data-correct="false">×</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！文章开头明确提到"中国在三千年以前，音乐就已经非常发达"。</div>
+                    <div class="feedback incorrect-feedback">错误！文章开头明确提到"中国在三千年以前，音乐就已经非常发达"。</div>
+                </div>
+                
+                <div class="question-item">
+                    <p>2. 伯牙善于欣赏音乐，他的好朋友钟子期善于弹琴。</p>
+                    <div class="options">
+                        <div class="option" data-correct="true">√</div>
+                        <div class="option" data-correct="false">×</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！文章中说"伯牙善于弹琴，钟子期善于欣赏音乐"，题干表述相反。</div>
+                    <div class="feedback incorrect-feedback">错误！文章中说"伯牙善于弹琴，钟子期善于欣赏音乐"，题干表述相反。</div>
+                </div>
+                
+                <div class="question-item">
+                    <p>3. 即兴曲，就是临时作曲而演奏的乐曲。</p>
+                    <div class="options">
+                        <div class="option" data-correct="true">√</div>
+                        <div class="option" data-correct="false">×</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！文章明确解释"即兴曲，也就是临时作曲表演的曲子"。</div>
+                    <div class="feedback incorrect-feedback">错误！文章明确解释"即兴曲，也就是临时作曲表演的曲子"。</div>
+                </div>
+                
+                <div class="question-item">
+                    <p>4. 钟子期死了，伯牙从此不再弹琴。</p>
+                    <div class="options">
+                        <div class="option" data-correct="true">√</div>
+                        <div class="option" data-correct="false">×</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！文章中说"钟子期死了，伯牙把琴摔破了，从此不再弹琴"。</div>
+                    <div class="feedback incorrect-feedback">错误！文章中说"钟子期死了，伯牙把琴摔破了，从此不再弹琴"。</div>
+                </div>
+                
+                <div class="question-item">
+                    <p>5. 没有"知音"，谁都不能弹琴。</p>
+                    <div class="options">
+                        <div class="option" data-correct="true">√</div>
+                        <div class="option" data-correct="false">×</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！文章中是伯牙因为没有知音而不弹琴，并不是"谁都不能弹琴"，说法太绝对。</div>
+                    <div class="feedback incorrect-feedback">错误！文章中是伯牙因为没有知音而不弹琴，并不是"谁都不能弹琴"，说法太绝对。</div>
+                </div>
+                
+                <div class="question-item">
+                    <p>6. 伯牙和钟子期是知音。</p>
+                    <div class="options">
+                        <div class="option" data-correct="true">√</div>
+                        <div class="option" data-correct="false">×</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！文章中说他们因为音乐成为好朋友，钟子期能懂伯牙的曲子，是知音。</div>
+                    <div class="feedback incorrect-feedback">错误！文章中说他们因为音乐成为好朋友，钟子期能懂伯牙的曲子，是知音。</div>
+                </div>
+                
+                <div class="question-item">
+                    <p>7. 知音不容易遇到。</p>
+                    <div class="options">
+                        <div class="option" data-correct="true">√</div>
+                        <div class="option" data-correct="false">×</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！文章结尾提到"知音难得"，意思就是知音不容易遇到。</div>
+                    <div class="feedback incorrect-feedback">错误！文章结尾提到"知音难得"，意思就是知音不容易遇到。</div>
+                </div>
+            </div>
+            
+            <!-- 第二大题：选择解释 -->
+            <div class="question">
+                <h3>二、为下列句中画线部分选择合适的解释</h3>
+                
+                <div class="question-item">
+                    <p>1. 他有一个好朋友，叫钟子期，善于欣赏音乐。</p>
+                    <div class="options">
+                        <div class="option" data-correct="false">A. 爱好</div>
+                        <div class="option" data-correct="false">B. 喜欢</div>
+                        <div class="option" data-correct="false">C. 善良</div>
+                        <div class="option" data-correct="true">D. 擅长</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！"善于"的意思是"擅长、在某方面做得好"。</div>
+                    <div class="feedback incorrect-feedback">错误！"善于"的意思是"擅长、在某方面做得好"，正确答案是D。</div>
+                </div>
+                
+                <div class="question-item">
+                    <p>2. 曲子的主题是"高山"。</p>
+                    <div class="options">
+                        <div class="option" data-correct="true">A. 乐曲表达的意思</div>
+                        <div class="option" data-correct="false">B. 乐曲的题目</div>
+                        <div class="option" data-correct="false">C. 有意思的乐曲</div>
+                        <div class="option" data-correct="false">D. 乐曲让人感兴趣</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！"主题"在这里指乐曲想要表达的核心意思。</div>
+                    <div class="feedback incorrect-feedback">错误！"主题"在这里指乐曲想要表达的核心意思，正确答案是A。</div>
+                </div>
+                
+                <div class="question-item">
+                    <p>3. 这两个人，一个是优秀的作曲家，一个是高明的音乐家。</p>
+                    <div class="options">
+                        <div class="option" data-correct="false">A. 高大聪明</div>
+                        <div class="option" data-correct="false">B. 高傲</div>
+                        <div class="option" data-correct="true">C. 有水平</div>
+                        <div class="option" data-correct="false">D. 高尚有道德</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！"高明"在这里指水平高、技艺精通。</div>
+                    <div class="feedback incorrect-feedback">错误！"高明"在这里指水平高、技艺精通，正确答案是C。</div>
+                </div>
+                
+                <div class="question-item">
+                    <p>4. 因为再也没有"知音"了，也就是再也没有人懂得欣赏他的曲子了。</p>
+                    <div class="options">
+                        <div class="option" data-correct="true">A. 互相深切了解的好朋友</div>
+                        <div class="option" data-correct="false">B. 知道音乐</div>
+                        <div class="option" data-correct="false">C. 互相听得懂</div>
+                        <div class="option" data-correct="false">D. 同行</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！"知音"指能互相深切了解的知心朋友。</div>
+                    <div class="feedback incorrect-feedback">错误！"知音"指能互相深切了解的知心朋友，正确答案是A。</div>
+                </div>
+            </div>
+            
+            <!-- 第三大题：选择正确答案 -->
+            <div class="question">
+                <h3>三、根据文章内容选择正确答案（从ABCD四个选项中选择一个最佳答案）</h3>
+                
+                <div class="question-item">
+                    <p>1. "即兴曲"是什么意思？</p>
+                    <div class="options">
+                        <div class="option" data-correct="false">A. 临时写的曲子</div>
+                        <div class="option" data-correct="false">B. 临时演奏的曲子</div>
+                        <div class="option" data-correct="true">C. 临时作曲而演奏的曲子</div>
+                        <div class="option" data-correct="false">D. 高兴演奏的曲子</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！文章中说"即兴曲，也就是临时作曲表演的曲子"。</div>
+                    <div class="feedback incorrect-feedback">错误！文章中说"即兴曲，也就是临时作曲表演的曲子"，正确答案是C。</div>
+                </div>
+                
+                <div class="question-item">
+                    <p>2. "伯牙鼓琴"的"鼓"意思是：</p>
+                    <div class="options">
+                        <div class="option" data-correct="true">A. 弹琴</div>
+                        <div class="option" data-correct="false">B. 打击</div>
+                        <div class="option" data-correct="false">C. 敲鼓</div>
+                        <div class="option" data-correct="false">D. 摔破</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！"鼓琴"在古代指弹琴，"鼓"在这里是"弹奏"的意思。</div>
+                    <div class="feedback incorrect-feedback">错误！"鼓琴"在古代指弹琴，"鼓"在这里是"弹奏"的意思，正确答案是A。</div>
+                </div>
+                
+                <div class="question-item">
+                    <p>3. "知音难得"的意思是：</p>
+                    <div class="options">
+                        <div class="option" data-correct="false">A. 知道音乐不容易</div>
+                        <div class="option" data-correct="false">B. 了解朋友不容易</div>
+                        <div class="option" data-correct="true">C. 知心朋友很难遇到</div>
+                        <div class="option" data-correct="false">D. 好人难得</div>
+                    </div>
+                    <div class="feedback correct-feedback">正确！"知音难得"的意思是能互相深切了解的知心朋友很难遇到。</div>
+                    <div class="feedback incorrect-feedback">错误！"知音难得"的意思是能互相深切了解的知心朋友很难遇到，正确答案是C。</div>
+                </div>
+            </div>
+            
+            <button class="btn" id="showVocab">查看生词表</button>
+        </div>
+        
+        <!-- 生词表 -->
+        <div class="vocab-list" id="vocabList">
+            <h2 class="section-title">生词表</h2>
+            
+            <div class="vocab-grid">
+                <div class="vocab-item">
+                    <strong>发达</strong>
+                    <div class="vocab-pinyin">fā dá</div>
+                    <div class="vocab-eng">English: developed, advanced</div>
+                    <div class="vocab-rus">Русский: развитый, прогрессивный</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>学者</strong>
+                    <div class="vocab-pinyin">xué zhě</div>
+                    <div class="vocab-eng">English: scholar, learned person</div>
+                    <div class="vocab-rus">Русский: учёный, ученый человек</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>善于</strong>
+                    <div class="vocab-pinyin">shàn yú</div>
+                    <div class="vocab-eng">English: be good at, be skilled in</div>
+                    <div class="vocab-rus">Русский: быть сильным в, владеть</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>欣赏</strong>
+                    <div class="vocab-pinyin">xīn shǎng</div>
+                    <div class="vocab-eng">English: appreciate, enjoy</div>
+                    <div class="vocab-rus">Русский: ценить, восхищаться</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>即兴曲</strong>
+                    <div class="vocab-pinyin">jí xìng qǔ</div>
+                    <div class="vocab-eng">English: impromptu, extemporaneous piece</div>
+                    <div class="vocab-rus">Русский: импровизация, экстремпоральная композиция</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>临时</strong>
+                    <div class="vocab-pinyin">lín shí</div>
+                    <div class="vocab-eng">English: temporary, provisional</div>
+                    <div class="vocab-rus">Русский: временной, προσωρινный</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>主题</strong>
+                    <div class="vocab-pinyin">zhǔ tí</div>
+                    <div class="vocab-eng">English: theme, subject</div>
+                    <div class="vocab-rus">Русский: тема, предмет</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>泰山</strong>
+                    <div class="vocab-pinyin">Tài Shān</div>
+                    <div class="vocab-eng">English: Mount Tai (one of China's Five Great Mountains)</div>
+                    <div class="vocab-rus">Русский: Гора Тай (одна из Пяти Великих гор Китая)</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>感想</strong>
+                    <div class="vocab-pinyin">gǎn xiǎng</div>
+                    <div class="vocab-eng">English: feeling, impression</div>
+                    <div class="vocab-rus">Русский: чувство, впечатление</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>峨峨然</strong>
+                    <div class="vocab-pinyin">é é rán</div>
+                    <div class="vocab-eng">English: towering, lofty</div>
+                    <div class="vocab-rus">Русский: возвышающийся, высокий</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>高大雄伟</strong>
+                    <div class="vocab-pinyin">gāo dà xióng wěi</div>
+                    <div class="vocab-eng">English: tall and majestic</div>
+                    <div class="vocab-rus">Русский: высокий и величественный</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>洋洋然</strong>
+                    <div class="vocab-pinyin">yáng yáng rán</div>
+                    <div class="vocab-eng">English: vast and flowing</div>
+                    <div class="vocab-rus">Русский: обширный и текущий</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>长远</strong>
+                    <div class="vocab-pinyin">cháng yuǎn</div>
+                    <div class="vocab-eng">English: long-term, far-reaching</div>
+                    <div class="vocab-rus">Русский: долгосрочный, дальний</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>优秀</strong>
+                    <div class="vocab-pinyin">yōu xiù</div>
+                    <div class="vocab-eng">English: excellent, outstanding</div>
+                    <div class="vocab-rus">Русский: отличный, выдающийся</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>高明</strong>
+                    <div class="vocab-pinyin">gāo míng</div>
+                    <div class="vocab-eng">English: brilliant, masterly</div>
+                    <div class="vocab-rus">Русский: блестящий, искусный</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>摔破</strong>
+                    <div class="vocab-pinyin">shuāi pò</div>
+                    <div class="vocab-eng">English: break by dropping, smash</div>
+                    <div class="vocab-rus">Русский: разбить падением, расколоть</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>知音</strong>
+                    <div class="vocab-pinyin">zhī yīn</div>
+                    <div class="vocab-eng">English: bosom friend, soulmate</div>
+                    <div class="vocab-rus">Русский: близкий друг, душевный друг</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>比喻</strong>
+                    <div class="vocab-pinyin">bǐ yù</div>
+                    <div class="vocab-eng">English: metaphor, compare to</div>
+                    <div class="vocab-rus">Русский: метафора, сравнивать с</div>
+                </div>
+                <div class="vocab-item">
+                    <strong>知心朋友</strong>
+                    <div class="vocab-pinyin">zhī xīn péng yǒu</div>
+                    <div class="vocab-eng">English: bosom friend, intimate friend</div>
+                    <div class="vocab-rus">Русский: близкий друг, интимный друг</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 字号调整功能
+        const readingContent = document.getElementById('readingContent');
+        const fontSmaller = document.getElementById('fontSmaller');
+        const fontReset = document.getElementById('fontReset');
+        const fontLarger = document.getElementById('fontLarger');
+        let currentFontSize = 18; // 默认字号18px
+        const minFontSize = 14;
+        const maxFontSize = 24;
+        const fontSizeStep = 2;
+
+        fontSmaller.addEventListener('click', () => {
+            if (currentFontSize > minFontSize) {
+                currentFontSize -= fontSizeStep;
+                readingContent.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        fontReset.addEventListener('click', () => {
+            currentFontSize = 18;
+            readingContent.style.fontSize = `${currentFontSize}px`;
+        });
+
+        fontLarger.addEventListener('click', () => {
+            if (currentFontSize < maxFontSize) {
+                currentFontSize += fontSizeStep;
+                readingContent.style.fontSize = `${currentFontSize}px`;
+            }
+        });
+
+        // 生词点击显示拆字解释
+        document.querySelectorAll('.word').forEach(word => {
+            word.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const explanation = this.querySelector('.explanation');
+                
+                // 关闭其他所有解释
+                document.querySelectorAll('.explanation').forEach(exp => {
+                    if (exp !== explanation) exp.style.display = 'none';
+                });
+                
+                explanation.style.display = explanation.style.display === 'block' ? 'none' : 'block';
+            });
+        });
+
+        // 点击其他地方关闭解释
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.explanation').forEach(exp => {
+                exp.style.display = 'none';
+            });
+        });
+
+        // 阻止解释框冒泡
+        document.querySelectorAll('.explanation').forEach(exp => {
+            exp.addEventListener('click', e => {
+                e.stopPropagation();
+            });
+        });
+        
+        // 选择题选项点击判断
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const questionItem = this.closest('.question-item');
+                const options = questionItem.querySelectorAll('.option');
+                const correct = this.getAttribute('data-correct') === 'true';
+                const correctFeedback = questionItem.querySelector('.correct-feedback');
+                const incorrectFeedback = questionItem.querySelector('.incorrect-feedback');
+                
+                // 重置所有选项样式和反馈
+                options.forEach(opt => {
+                    opt.classList.remove('correct', 'incorrect');
+                });
+                correctFeedback.style.display = 'none';
+                incorrectFeedback.style.display = 'none';
+                
+                // 显示当前选项结果
+                if (correct) {
+                    this.classList.add('correct');
+                    correctFeedback.style.display = 'block';
+                } else {
+                    this.classList.add('incorrect');
+                    incorrectFeedback.style.display = 'block';
+                    
+                    // 显示正确答案
+                    options.forEach(opt => {
+                        if (opt.getAttribute('data-correct') === 'true') {
+                            opt.classList.add('correct');
+                        }
+                    });
+                }
+            });
+        });
+        
+        // 显示/隐藏生词表
+        document.getElementById('showVocab').addEventListener('click', function() {
+            const vocabList = document.getElementById('vocabList');
+            const isVisible = vocabList.style.display === 'block';
+            
+            vocabList.style.display = isVisible ? 'none' : 'block';
+            this.textContent = isVisible ? '查看生词表' : '隐藏生词表';
+            
+            // 平滑滚动到生词表
+            if (!isVisible) {
+                vocabList.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    </script>
+</body>
+</html>
