@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生词互动练习</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4299e1',
+                        secondary: '#3182ce',
+                        success: '#28a745',
+                        danger: '#dc3545',
+                        neutral: '#f8fafc',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .transition-custom {
+                transition: all 0.3s ease;
+            }
+            .card-shadow {
+                box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-5xl">
+        <!-- 页面标题 -->
+        <header class="text-center mb-10">
+            <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-gray-800 mb-2">生词互动练习</h1>
+            <p class="text-gray-600 text-lg">通过不同题型巩固生词知识，每次练习题目顺序随机</p>
+        </header>
+
+        <!-- 练习选择区 -->
+        <div class="bg-white rounded-xl p-6 mb-8 card-shadow">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">选择练习类型</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button id="btnMatching" class="practice-btn bg-primary hover:bg-secondary text-white py-3 px-4 rounded-lg transition-custom flex items-center justify-center">
+                    <i class="fa fa-exchange mr-2"></i> 连线匹配
+                </button>
+                <button id="btnFillBlanks" class="practice-btn bg-primary hover:bg-secondary text-white py-3 px-4 rounded-lg transition-custom flex items-center justify-center">
+                    <i class="fa fa-pencil mr-2"></i> 选词填空
+                </button>
+                <button id="btnMultipleChoice" class="practice-btn bg-primary hover:bg-secondary text-white py-3 px-4 rounded-lg transition-custom flex items-center justify-center">
+                    <i class="fa fa-list-ul mr-2"></i> 选择解释
+                </button>
+            </div>
+        </div>
+
+        <!-- 练习区域 -->
+        <div id="exerciseArea" class="bg-white rounded-xl p-6 mb-8 card-shadow hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="exerciseTitle" class="text-xl font-semibold text-gray-800"></h2>
+                <button id="refreshBtn" class="text-primary hover:text-secondary transition-custom">
+                    <i class="fa fa-refresh mr-1"></i> 重新出题
+                </button>
+            </div>
+            
+            <div id="matchingExercise" class="exercise-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-700 mb-3">生词</h3>
+                        <div id="wordsList" class="space-y-3"></div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-700 mb-3">解释</h3>
+                        <div id="definitionsList" class="space-y-3"></div>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-center">
+                    <button id="checkMatching" class="bg-primary hover:bg-secondary text-white py-2 px-6 rounded-lg transition-custom">
+                        检查答案
+                    </button>
+                </div>
+                <div id="matchingResult" class="mt-4 text-center hidden"></div>
+            </div>
+            
+            <div id="fillBlanksExercise" class="exercise-content hidden">
+                <div id="sentencesContainer" class="space-y-8"></div>
+                <div class="mt-6 flex justify-center">
+                    <button id="checkFillBlanks" class="bg-primary hover:bg-secondary text-white py-2 px-6 rounded-lg transition-custom">
+                        检查答案
+                    </button>
+                </div>
+                <div id="fillBlanksResult" class="mt-4 text-center hidden"></div>
+            </div>
+            
+            <div id="multipleChoiceExercise" class="exercise-content hidden">
+                <div id="choicesContainer" class="space-y-6"></div>
+                <div class="mt-6 flex justify-center">
+                    <button id="checkChoices" class="bg-primary hover:bg-secondary text-white py-2 px-6 rounded-lg transition-custom">
+                        检查答案
+                    </button>
+                </div>
+                <div id="choicesResult" class="mt-4 text-center hidden"></div>
+            </div>
+        </div>
+
+        <!-- 结果统计 -->
+        <div id="resultSummary" class="bg-white rounded-xl p-6 card-shadow hidden">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">练习结果</h2>
+            <div class="flex flex-col md:flex-row justify-around items-center text-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-gray-600">总题数</p>
+                    <p id="totalQuestions" class="text-2xl font-bold text-gray-800">0</p>
+                </div>
+                <div class="mb-4 md:mb-0">
+                    <p class="text-gray-600">做对</p>
+                    <p id="correctAnswers" class="text-2xl font-bold text-success">0</p>
+                </div>
+                <div>
+                    <p class="text-gray-600">做错</p>
+                    <p id="wrongAnswers" class="text-2xl font-bold text-danger">0</p>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-center">
+                <button id="newExerciseBtn" class="bg-primary hover:bg-secondary text-white py-2 px-6 rounded-lg transition-custom">
+                    开始新练习
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 生词数据库
+        const vocabulary = [
+            {
+                word: "首都",
+                pinyin: "shǒu dū",
+                english: "capital",
+                russian: "столица",
+                explanation: "国家的政治中心，最高政权机关所在地",
+                splitExplanation: "都：首都、都市；组合猜测：辅助性的首都（次于主首都）"
+            },
+            {
+                word: "海拔",
+                pinyin: "hǎi bá",
+                english: "height above sea level",
+                russian: "высота над уровнем моря",
+                explanation: "地面某个地点高出海平面的高度",
+                splitExplanation: "海：海平面；拔：高度、超出；组合猜测：地面某个地点高出海平面的高度"
+            },
+            {
+                word: "温带季风气候",
+                pinyin: "wēndài jīfēng qìhòu",
+                english: "temperate monsoon climate",
+                russian: "умеренный монsoonный климат",
+                explanation: "温带地区随季节变化风向的气候类型",
+                splitExplanation: "温：温暖、温度；带：区域、地带；季：季节；风：风向；气候：长期天气状况；组合猜测：温带地区随季节变化风向的气候类型"
+            },
+            {
+                word: "宫殿",
+                pinyin: "gōng diàn",
+                english: "palace",
+                russian: "дворец",
+                explanation: "帝王居住和处理政务的大型建筑",
+                splitExplanation: "宫：皇宫、宫室；殿：大殿、殿堂；组合猜测：帝王居住和处理政务的大型建筑"
+            },
+            {
+                word: "现存",
+                pinyin: "xiàn cún",
+                english: "existing, extant",
+                russian: "существующий, сохранившийся",
+                explanation: "当前仍然存在、留存下来的",
+                splitExplanation: "现：现在、当前；存：存在、留存；组合猜测：当前仍然存在、留存下来的"
+            },
+            {
+                word: "皇家园林",
+                pinyin: "huángjiā yuánlín",
+                english: "imperial garden",
+                russian: "имперский сад",
+                explanation: "皇帝家族专用的园林",
+                splitExplanation: "皇：皇帝、皇家；家：家族；园：园子、园林；林：树林；组合猜测：皇帝家族专用的园林"
+            },
+            {
+                word: "广场",
+                pinyin: "guǎngchǎng",
+                english: "square",
+                russian: "площадь",
+                explanation: "宽阔平坦的公共场地",
+                splitExplanation: "广：宽阔、广大；场：平坦的场地；组合猜测：宽阔平坦的公共场地"
+            },
+            {
+                word: "紧张不安",
+                pinyin: "jǐnzhāng bù'ān",
+                english: "nervous and uneasy",
+                russian: "напряженный и неуютный",
+                explanation: "不放松、不安心的状态",
+                splitExplanation: "紧：不放松、绷紧；张：紧张、不安；不：否定；安：安心、平静；组合猜测：不放松、不安心"
+            },
+            {
+                word: "登台演讲",
+                pinyin: "dēngtái yǎnjiǎng",
+                english: "take the stage to speak",
+                russian: "выйти на сцену и выступить",
+                explanation: "走上台子发表讲话",
+                splitExplanation: "登：走上、登上；台：台子、舞台；演：表演、讲述；讲：讲话、发言；组合猜测：走上台子讲话"
+            },
+            {
+                word: "搓",
+                pinyin: "cuō",
+                english: "rub, chafe",
+                russian: "трогать, растирать",
+                explanation: "双手来回摩擦的动作",
+                splitExplanation: "搓：用手掌反复摩擦；组合猜测：双手来回摩擦的动作"
+            },
+            {
+                word: "临时",
+                pinyin: "línshí",
+                english: "temporary",
+                russian: "временный",
+                explanation: "当下的、短时间的",
+                splitExplanation: "临：面对、当下；时：时间、时候；组合猜测：当下的、短时间的"
+            },
+            {
+                word: "主题",
+                pinyin: "zhǔtí",
+                english: "theme",
+                russian: "тема",
+                explanation: "事物的主要核心或题目",
+                splitExplanation: "主：主要的；题：题目、核心；组合猜测：曲子的主要核心"
+            },
+            {
+                word: "泰山",
+                pinyin: "Tàishān",
+                english: "Mount Tai",
+                russian: "гора Тай",
+                explanation: "中国著名的高大山脉，五大名山之一",
+                splitExplanation: "泰：安宁、高大；山：山脉、大山；组合猜测：著名的高大山脉（中国五大名山之一）"
+            },
+            {
+                word: "钥匙",
+                pinyin: "yàoshi",
+                english: "key",
+                russian: "ключ",
+                explanation: "开锁或上锁的工具",
+                splitExplanation: ""
+            },
+            {
+                word: "提醒",
+                pinyin: "tíxǐng",
+                english: "remind, alert",
+                russian: "напоминать, предупреждать",
+                explanation: "从旁指点，促使注意",
+                splitExplanation: ""
+            },
+            {
+                word: "平年",
+                pinyin: "píng nián",
+                english: "common year",
+                russian: "обычный год",
+                explanation: "没有额外天数的普通年份",
+                splitExplanation: "平：平常、普通；年：年份；组合猜测：没有额外天数的普通年份"
+            },
+            {
+                word: "闰年",
+                pinyin: "rùn nián",
+                english: "leap year",
+                russian: "високосный год",
+                explanation: "有额外一天的年份",
+                splitExplanation: "闰：多余的、额外的；年：年份；组合猜测：有额外一天的年份"
+            },
+            {
+                word: "处死",
+                pinyin: "chǔ sǐ",
+                english: "execute (a prisoner)",
+                russian: "казнить (заключенного)",
+                explanation: "施加死亡刑罚（执行死刑）",
+                splitExplanation: "处：施加；死：死亡；组合猜测：施加死亡刑罚（执行死刑）"
+            }
+        ];
+
+        // 句子库（用于选词填空）
+        const sentences = [
+            {
+                sentence: "北京是中国的______。",
+                word: "首都"
+            },
+            {
+                sentence: "这座山的______是2303米。",
+                word: "海拔"
+            },
+            {
+                sentence: "北京的气候属于______。",
+                word: "温带季风气候"
+            },
+            {
+                sentence: "故宫是中国著名的______建筑。",
+                word: "宫殿"
+            },
+            {
+                sentence: "这是______最完整的古建筑群。",
+                word: "现存"
+            },
+            {
+                sentence: "颐和园是著名的______。",
+                word: "皇家园林"
+            },
+            {
+                sentence: "天安门______是世界上最大的城市广场。",
+                word: "广场"
+            },
+            {
+                sentence: "第一次上台的人通常会______。",
+                word: "紧张不安"
+            },
+            {
+                sentence: "他将在会议上______。",
+                word: "登台演讲"
+            },
+            {
+                sentence: "天气冷的时候，人们会______手取暖。",
+                word: "搓"
+            },
+            {
+                sentence: "这只是一个______方案，后续会修改。",
+                word: "临时"
+            },
+            {
+                sentence: "这篇文章的______是“热爱祖国”。",
+                word: "主题"
+            },
+            {
+                sentence: "______是中国五大名山之一，位于山东省。",
+                word: "泰山"
+            },
+            {
+                sentence: "我找不到______了，打不开家门。",
+                word: "钥匙"
+            },
+            {
+                sentence: "谢谢你______我，不然我就忘记约会了。",
+                word: "提醒"
+            }
+        ];
+
+        // 工具函数：随机打乱数组顺序
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // 生成连线匹配题
+        function generateMatchingExercise() {
+            // 随机选择8个生词
+            const shuffledVocab = shuffleArray(vocabulary);
+            const selectedVocab = shuffledVocab.slice(0, 8);
+            
+            // 生词列表
+            const wordsList = document.getElementById('wordsList');
+            wordsList.innerHTML = '';
+            selectedVocab.forEach((item, index) => {
+                const wordDiv = document.createElement('div');
+                wordDiv.className = 'p-3 border border-gray-200 rounded-lg bg-gray-50 cursor-move hover:bg-blue-50 transition-custom';
+                wordDiv.draggable = true;
+                wordDiv.dataset.id = index;
+                wordDiv.innerHTML = `
+                    <strong>${item.word}</strong>
+                    <div class="text-sm text-gray-500">${item.pinyin}</div>
+                `;
+                wordDiv.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', index);
+                    setTimeout(() => wordDiv.classList.add('opacity-50'), 0);
+                });
+                wordDiv.addEventListener('dragend', () => {
+                    wordDiv.classList.remove('opacity-50');
+                });
+                wordsList.appendChild(wordDiv);
+            });
+            
+            // 解释列表（打乱顺序）
+            const definitionsList = document.getElementById('definitionsList');
+            definitionsList.innerHTML = '';
+            const shuffledDefinitions = shuffleArray([...selectedVocab]);
+            shuffledDefinitions.forEach((item, index) => {
+                const defDiv = document.createElement('div');
+                defDiv.className = 'p-3 border border-gray-200 rounded-lg bg-gray-50 transition-custom min-h-[60px]';
+                defDiv.dataset.correctId = selectedVocab.findIndex(v => v.word === item.word);
+                defDiv.innerHTML = `<div class="text-sm">${item.explanation}</div>`;
+                
+                defDiv.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    defDiv.classList.add('bg-green-50', 'border-green-200');
+                });
+                defDiv.addEventListener('dragleave', () => {
+                    defDiv.classList.remove('bg-green-50', 'border-green-200');
+                });
+                defDiv.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    defDiv.classList.remove('bg-green-50', 'border-green-200');
+                    const wordId = e.dataTransfer.getData('text/plain');
+                    
+                    // 清除已有匹配
+                    document.querySelectorAll('#definitionsList > div').forEach(div => {
+                        if (div.dataset.matchedId === wordId) {
+                            div.removeAttribute('data-matchedId');
+                            div.classList.remove('bg-blue-50', 'border-blue-200');
+                            div.innerHTML = `<div class="text-sm">${shuffledDefinitions[Array.from(div.parentNode.children).indexOf(div)].explanation}</div>`;
+                        }
+                    });
+                    
+                    // 设置新匹配
+                    defDiv.dataset.matchedId = wordId;
+                    defDiv.classList.add('bg-blue-50', 'border-blue-200');
+                    const matchedWord = selectedVocab[wordId];
+                    defDiv.innerHTML = `
+                        <div><strong>${matchedWord.word}</strong> <span class="text-sm text-gray-500">${matchedWord.pinyin}</span></div>
+                        <div class="text-sm">${item.explanation}</div>
+                    `;
+                });
+                
+                definitionsList.appendChild(defDiv);
+            });
+            
+            // 检查答案按钮事件
+            document.getElementById('checkMatching').onclick = function() {
+                let correctCount = 0;
+                const totalCount = selectedVocab.length;
+                
+                document.querySelectorAll('#definitionsList > div').forEach(div => {
+                    if (div.dataset.matchedId === div.dataset.correctId) {
+                        correctCount++;
+                        div.classList.remove('bg-blue-50', 'border-blue-200');
+                        div.classList.add('bg-green-50', 'border-green-200');
+                    } else if (div.dataset.matchedId) {
+                        div.classList.remove('bg-blue-50', 'border-blue-200');
+                        div.classList.add('bg-red-50', 'border-red-200');
+                    }
+                });
+                
+                const resultDiv = document.getElementById('matchingResult');
+                resultDiv.className = correctCount === totalCount ? 'mt-4 text-center text-success' : 'mt-4 text-center text-danger';
+                resultDiv.innerHTML = `
+                    <p>你答对了 ${correctCount} 题，共 ${totalCount} 题</p>
+                    ${correctCount === totalCount ? '<p class="text-green-600"><i class="fa fa-check-circle"></i> 太棒了，全部正确！</p>' : ''}
+                `;
+                resultDiv.classList.remove('hidden');
+                
+                // 更新结果统计
+                document.getElementById('totalQuestions').textContent = totalCount;
+                document.getElementById('correctAnswers').textContent = correctCount;
+                document.getElementById('wrongAnswers').textContent = totalCount - correctCount;
+                document.getElementById('resultSummary').classList.remove('hidden');
+            };
+        }
+
+        // 优化后的：生成选词填空题（每个空白处自带下拉选项）
+        function generateFillBlanksExercise() {
+            // 随机选择5个句子
+            const shuffledSentences = shuffleArray(sentences);
+            const selectedSentences = shuffledSentences.slice(0, 5);
+            const allWords = vocabulary.map(v => v.word); // 所有生词（用于生成干扰项）
+            
+            // 生成句子（每个空白处带下拉选项）
+            const sentencesContainer = document.getElementById('sentencesContainer');
+            sentencesContainer.innerHTML = '';
+            
+            selectedSentences.forEach((item, index) => {
+                const correctWord = item.word;
+                // 生成干扰项：3个非正确答案的生词
+                const distractors = shuffleArray(allWords.filter(w => w !== correctWord)).slice(0, 3);
+                // 合并正确答案和干扰项，打乱顺序
+                const options = shuffleArray([correctWord, ...distractors]);
+                
+                // 替换句子中的空白为下拉框
+                const sentenceWithSelect = item.sentence.replace('______', `
+                    <select class="fill-select px-3 py-1 border border-gray-300 rounded-md mx-1 focus:outline-none focus:ring-2 focus:ring-primary">
+                        <option value="" selected disabled>请选择...</option>
+                        ${options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                    </select>
+                `);
+                
+                // 创建题目容器
+                const sentenceDiv = document.createElement('div');
+                sentenceDiv.className = 'p-4 border border-gray-200 rounded-lg';
+                sentenceDiv.innerHTML = `
+                    <p class="mb-2">${index + 1}. ${sentenceWithSelect}</p>
+                    <div class="fill-feedback mt-2 text-sm hidden"></div>
+                `;
+                // 存储正确答案到元素上
+                sentenceDiv.dataset.correct = correctWord;
+                sentencesContainer.appendChild(sentenceDiv);
+            });
+            
+            // 检查答案按钮事件
+            document.getElementById('checkFillBlanks').onclick = function() {
+                let correctCount = 0;
+                const totalCount = selectedSentences.length;
+                
+                // 遍历所有题目
+                document.querySelectorAll('#sentencesContainer > div').forEach(sentenceDiv => {
+                    const select = sentenceDiv.querySelector('.fill-select');
+                    const feedback = sentenceDiv.querySelector('.fill-feedback');
+                    const correctWord = sentenceDiv.dataset.correct;
+                    const selectedWord = select.value;
+                    
+                    // 重置样式和反馈
+                    select.classList.remove('border-green-500', 'bg-green-50', 'border-red-500', 'bg-red-50');
+                    feedback.classList.add('hidden');
+                    
+                    if (!selectedWord) {
+                        // 未选择答案
+                        feedback.className = 'fill-feedback mt-2 text-sm text-orange-600';
+                        feedback.textContent = '请选择一个答案';
+                        feedback.classList.remove('hidden');
+                    } else if (selectedWord === correctWord) {
+                        // 回答正确
+                        correctCount++;
+                        select.classList.add('border-green-500', 'bg-green-50');
+                        feedback.className = 'fill-feedback mt-2 text-sm text-success';
+                        feedback.textContent = `✓ 正确！`;
+                        feedback.classList.remove('hidden');
+                    } else {
+                        // 回答错误
+                        select.classList.add('border-red-500', 'bg-red-50');
+                        feedback.className = 'fill-feedback mt-2 text-sm text-danger';
+                        feedback.textContent = `✗ 错误，正确答案是：${correctWord}`;
+                        feedback.classList.remove('hidden');
+                    }
+                });
+                
+                // 显示整体结果
+                const resultDiv = document.getElementById('fillBlanksResult');
+                resultDiv.className = correctCount === totalCount ? 'mt-4 text-center text-success' : 'mt-4 text-center text-danger';
+                resultDiv.innerHTML = `
+                    <p>你答对了 ${correctCount} 题，共 ${totalCount} 题</p>
+                    ${correctCount === totalCount ? '<p class="text-green-600"><i class="fa fa-check-circle"></i> 太棒了，全部正确！</p>' : ''}
+                `;
+                resultDiv.classList.remove('hidden');
+                
+                // 更新结果统计
+                document.getElementById('totalQuestions').textContent = totalCount;
+                document.getElementById('correctAnswers').textContent = correctCount;
+                document.getElementById('wrongAnswers').textContent = totalCount - correctCount;
+                document.getElementById('resultSummary').classList.remove('hidden');
+                
+                // 禁用下拉框（防止修改）
+                document.querySelectorAll('.fill-select').forEach(select => {
+                    select.disabled = true;
+                });
+            };
+        }
+
+        // 生成选择题
+        function generateMultipleChoiceExercise() {
+            // 随机选择6个生词
+            const shuffledVocab = shuffleArray(vocabulary);
+            const selectedVocab = shuffledVocab.slice(0, 6);
+            
+            const choicesContainer = document.getElementById('choicesContainer');
+            choicesContainer.innerHTML = '';
+            
+            selectedVocab.forEach((item, index) => {
+                // 为每个词生成干扰项
+                const allExplanations = vocabulary.map(v => v.explanation);
+                const otherExplanations = allExplanations.filter(e => e !== item.explanation);
+                const shuffledExplanations = shuffleArray(otherExplanations);
+                const distractors = shuffledExplanations.slice(0, 3); // 3个干扰项
+                
+                // 合并正确答案和干扰项并打乱顺序
+                const options = shuffleArray([item.explanation, ...distractors]);
+                
+                // 创建题目
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'p-4 border border-gray-200 rounded-lg';
+                questionDiv.innerHTML = `
+                    <p class="mb-3 font-medium">${index + 1}. "${item.word}"（${item.pinyin}）的意思是：</p>
+                    <div class="options space-y-2">
+                        ${options.map((opt, i) => `
+                            <div class="option p-2 border border-gray-200 rounded cursor-pointer hover:bg-blue-50 transition-custom" 
+                                 data-correct="${opt === item.explanation}">
+                                ${String.fromCharCode(65 + i)}. ${opt}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback mt-2 hidden"></div>
+                `;
+                choicesContainer.appendChild(questionDiv);
+                
+                // 为选项添加点击事件
+                questionDiv.querySelectorAll('.option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        // 清除同题其他选项的选中状态
+                        questionDiv.querySelectorAll('.option').forEach(opt => {
+                            opt.classList.remove('bg-blue-100', 'border-blue-300', 'bg-green-100', 'border-green-300', 'bg-red-100', 'border-red-300');
+                        });
+                        // 设置当前选项为选中状态
+                        this.classList.add('bg-blue-100', 'border-blue-300');
+                    });
+                });
+            });
+            
+            // 检查答案按钮事件
+            document.getElementById('checkChoices').onclick = function() {
+                let correctCount = 0;
+                const totalCount = selectedVocab.length;
+                
+                document.querySelectorAll('#choicesContainer > div').forEach((question, index) => {
+                    const selectedOption = question.querySelector('.option.bg-blue-100');
+                    const feedbackDiv = question.querySelector('.feedback');
+                    
+                    if (selectedOption) {
+                        if (selectedOption.dataset.correct === 'true') {
+                            correctCount++;
+                            selectedOption.classList.remove('bg-blue-100', 'border-blue-300');
+                            selectedOption.classList.add('bg-green-100', 'border-green-300');
+                            feedbackDiv.className = 'feedback mt-2 text-green-600';
+                            feedbackDiv.textContent = '正确！';
+                        } else {
+                            selectedOption.classList.remove('bg-blue-100', 'border-blue-300');
+                            selectedOption.classList.add('bg-red-100', 'border-red-300');
+                            // 显示正确答案
+                            question.querySelector('.option[data-correct="true"]').classList.add('bg-green-100', 'border-green-300');
+                            feedbackDiv.className = 'feedback mt-2 text-red-600';
+                            feedbackDiv.textContent = `错误，正确答案是：${question.querySelector('.option[data-correct="true"]').textContent}`;
+                        }
+                        feedbackDiv.classList.remove('hidden');
+                    } else {
+                        // 未选择答案
+                        feedbackDiv.className = 'feedback mt-2 text-orange-600';
+                        feedbackDiv.textContent = '请选择一个答案';
+                        feedbackDiv.classList.remove('hidden');
+                    }
+                });
+                
+                const resultDiv = document.getElementById('choicesResult');
+                resultDiv.className = correctCount === totalCount ? 'mt-4 text-center text-success' : 'mt-4 text-center text-danger';
+                resultDiv.innerHTML = `
+                    <p>你答对了 ${correctCount} 题，共 ${totalCount} 题</p>
+                    ${correctCount === totalCount ? '<p class="text-green-600"><i class="fa fa-check-circle"></i> 太棒了，全部正确！</p>' : ''}
+                `;
+                resultDiv.classList.remove('hidden');
+                
+                // 更新结果统计
+                document.getElementById('totalQuestions').textContent = totalCount;
+                document.getElementById('correctAnswers').textContent = correctCount;
+                document.getElementById('wrongAnswers').textContent = totalCount - correctCount;
+                document.getElementById('resultSummary').classList.remove('hidden');
+                
+                // 禁用所有选项
+                document.querySelectorAll('.option').forEach(option => {
+                    option.style.pointerEvents = 'none';
+                });
+            };
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 练习类型按钮事件
+            document.getElementById('btnMatching').addEventListener('click', function() {
+                document.getElementById('exerciseArea').classList.remove('hidden');
+                document.getElementById('exerciseTitle').textContent = '连线匹配：将生词与正确解释连接起来';
+                document.querySelectorAll('.exercise-content').forEach(el => el.classList.add('hidden'));
+                document.getElementById('matchingExercise').classList.remove('hidden');
+                document.getElementById('resultSummary').classList.add('hidden');
+                generateMatchingExercise();
+            });
+            
+            document.getElementById('btnFillBlanks').addEventListener('click', function() {
+                document.getElementById('exerciseArea').classList.remove('hidden');
+                document.getElementById('exerciseTitle').textContent = '选词填空：从下拉框中选择合适的词填入空白处';
+                document.querySelectorAll('.exercise-content').forEach(el => el.classList.add('hidden'));
+                document.getElementById('fillBlanksExercise').classList.remove('hidden');
+                document.getElementById('resultSummary').classList.add('hidden');
+                generateFillBlanksExercise();
+            });
+            
+            document.getElementById('btnMultipleChoice').addEventListener('click', function() {
+                document.getElementById('exerciseArea').classList.remove('hidden');
+                document.getElementById('exerciseTitle').textContent = '选择解释：为每个生词选择正确的解释';
+                document.querySelectorAll('.exercise-content').forEach(el => el.classList.add('hidden'));
+                document.getElementById('multipleChoiceExercise').classList.remove('hidden');
+                document.getElementById('resultSummary').classList.add('hidden');
+                generateMultipleChoiceExercise();
+            });
+            
+            // 重新出题按钮事件
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                if (!document.getElementById('matchingExercise').classList.contains('hidden')) {
+                    generateMatchingExercise();
+                } else if (!document.getElementById('fillBlanksExercise').classList.contains('hidden')) {
+                    generateFillBlanksExercise();
+                } else if (!document.getElementById('multipleChoiceExercise').classList.contains('hidden')) {
+                    generateMultipleChoiceExercise();
+                }
+                document.getElementById('resultSummary').classList.add('hidden');
+            });
+            
+            // 开始新练习按钮事件
+            document.getElementById('newExerciseBtn').addEventListener('click', function() {
+                document.getElementById('exerciseArea').classList.add('hidden');
+                document.getElementById('resultSummary').classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
