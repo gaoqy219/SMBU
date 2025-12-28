@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>中国人的虚岁 - HSK中级阅读</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.8;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin: 30px 0;
+        }
+        .vocab-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+        .vocab-word {
+            flex: 0 0 150px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #e74c3c;
+            padding: 15px;
+            border-right: 2px dashed #bdc3c7;
+        }
+        .vocab-explain {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #ecf0f1;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .text-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+        .exercise-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+        .question {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            background-color: #f1f8fe;
+            border-radius: 0 5px 5px 0;
+        }
+        .options {
+            margin: 10px 0 0 20px;
+        }
+        .option {
+            margin: 8px 0;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 3px;
+        }
+        button {
+            display: block;
+            margin: 30px auto;
+            padding: 12px 30px;
+            font-size: 18px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #27ae60;
+        }
+        #result {
+            text-align: center;
+            font-size: 20px;
+            margin: 20px 0;
+            color: #e74c3c;
+            font-weight: bold;
+            padding: 10px;
+        }
+        /* 新增：课文中生词样式 - 可点击 */
+        .text-vocab {
+            color: #2980b9;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 500;
+            position: relative;
+        }
+        /* 新增：生词翻译悬浮弹窗样式 */
+        .vocab-tooltip {
+            position: absolute;
+            top: 25px;
+            left: 0;
+            background: #fff;
+            border: 1px solid #3498db;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #2c3e50;
+            z-index: 9999;
+            min-width: 200px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .text-vocab:hover .vocab-tooltip {
+            display: block;
+        }
+        /* 新增：答对/答错样式 */
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .correct::after {
+            content: " ✔";
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .wrong {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .wrong::after {
+            content: " ✘";
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        /* 新增：错题线索提示样式 */
+        .clue {
+            font-size: 14px;
+            color: #e74c3c;
+            margin-top: 6px;
+            padding-left: 10px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <h1>中国人的虚岁</h1>
+
+    <!-- 第一部分：生词讲解 -->
+    <h2>一、生词讲解</h2>
+
+    <div class="vocab-container">
+        <div class="vocab-word">虚岁</div>
+        <div class="vocab-explain">
+            1. 英语翻译：virtual age (Chinese traditional age calculation)<br>
+            2. 俄语翻译：традиционный китайский возраст<br>
+            3. 中文解释：中国人的传统年龄计算方式，一出生就算1岁，每过一个农历春节就再加1岁。<br>
+            4. 例句：他周岁20岁，虚岁22岁。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">周岁</div>
+        <div class="vocab-explain">
+            1. 英语翻译：legal age (calculated from birth date)<br>
+            2. 俄语翻译：юридический возраст<br>
+            3. 中文解释：按照出生日期计算的年龄，每过一次生日就长1岁。<br>
+            4. 例句：这个孩子今天满周岁，家人给他办了生日派对。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">概念</div>
+        <div class="vocab-explain">
+            1. 英语翻译：concept; idea<br>
+            2. 俄语翻译：понятие; идея<br>
+            3. 中文解释：对事物的基本认识或想法。<br>
+            4. 例句：“虚岁”是中国特有的年龄概念。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">计算</div>
+        <div class="vocab-explain">
+            1. 英语翻译：calculate; compute<br>
+            2. 俄语翻译：рассчитывать; считать<br>
+            3. 中文解释：根据一定的方法算出数量或结果。<br>
+            4. 例句：我们需要按照规则计算虚岁。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">迷惑</div>
+        <div class="vocab-explain">
+            1. 英语翻译：confused; puzzled<br>
+            2. 俄语翻译：запутанный; озадаченный<br>
+            3. 中文解释：心里不明白，不知道怎么回事。<br>
+            4. 例句：很多人对虚岁的计算方法感到迷惑。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">似是而非</div>
+        <div class="vocab-explain">
+            1. 英语翻译：apparently true but actually false<br>
+            2. 俄语翻译：похожий на правду, но ложный<br>
+            3. 中文解释：看起来好像是对的，实际上是错的。<br>
+            4. 例句：“虚岁就是周岁加一岁”是似是而非的说法。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">农历</div>
+        <div class="vocab-explain">
+            1. 英语翻译：lunar calendar<br>
+            2. 俄语翻译：лунный календарь<br>
+            3. 中文解释：中国传统的历法，根据月亮的运行制定，有春节、除夕等节日。<br>
+            4. 例句：春节是农历的正月初一。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">除夕</div>
+        <div class="vocab-explain">
+            1. 英语翻译：New Year's Eve (lunar calendar)<br>
+            2. 俄语翻译：последний день лунного года<br>
+            3. 中文解释：农历一年的最后一天，是中国重要的传统节日。<br>
+            4. 例句：他出生在除夕，一出生就算1岁，大年初一就2岁了。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">大年初一</div>
+        <div class="vocab-explain">
+            1. 英语翻译：the first day of the lunar New Year<br>
+            2. 俄语翻译：первый день лунного Нового года<br>
+            3. 中文解释：农历正月初一，也就是春节的当天。<br>
+            4. 例句：大年初一这一天，很多人会给长辈拜年。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">春节</div>
+        <div class="vocab-explain">
+            1. 英语翻译：Spring Festival (lunar New Year)<br>
+            2. 俄语翻译：Весенний фестиваль<br>
+            3. 中文解释：中国最重要的传统节日，在农历正月初一，是计算虚岁的重要时间点。<br>
+            4. 例句：每过一个春节，虚岁就会增加1岁。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">下旬</div>
+        <div class="vocab-explain">
+            1. 英语翻译：last ten days of a month<br>
+            2. 俄语翻译：последние десять дней месяца<br>
+            3. 中文解释：一个月的最后十天。<br>
+            4. 例句：他的生日在农历十二月下旬，还没满月虚岁就2岁了。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">满月</div>
+        <div class="vocab-explain">
+            1. 英语翻译：one month old (baby)<br>
+            2. 俄语翻译：одномесячный малыш<br>
+            3. 中文解释：这里指婴儿出生满一个月。<br>
+            4. 例句：这个宝宝还没满月，虚岁已经2岁了。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">大寿</div>
+        <div class="vocab-explain">
+            1. 英语翻译：grand birthday (for elderly people)<br>
+            2. 俄语翻译：великая годовщина рождения<br>
+            3. 中文解释：年长的人重要的生日，比如七十大寿、八十大寿。<br>
+            4. 例句：爷爷今年过七十大寿，全家都很热闹。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">提前</div>
+        <div class="vocab-explain">
+            1. 英语翻译：in advance; ahead of time<br>
+            2. 俄语翻译：заранее; раньше времени<br>
+            3. 中文解释：比预定的时间早。<br>
+            4. 例句：很多老人会提前两年过自己的大寿。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">显然</div>
+        <div class="vocab-explain">
+            1. 英语翻译：obviously; clearly<br>
+            2. 俄语翻译：очевидно; явно<br>
+            3. 中文解释：很容易看出来，非常清楚。<br>
+            4. 例句：那种说法显然是不完全正确的。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">实际</div>
+        <div class="vocab-explain">
+            1. 英语翻译：actual; practical<br>
+            2. 俄语翻译：фактический; практический<br>
+            3. 中文解释：真实存在的，不是想象的。<br>
+            4. 例句：在实际计算中，虚岁不只是周岁加一岁。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">或许</div>
+        <div class="vocab-explain">
+            1. 英语翻译：maybe; perhaps<br>
+            2. 俄语翻译：может быть; возможно<br>
+            3. 中文解释：有可能，也许。<br>
+            4. 例句：或许只有中国人有两个年龄。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">其实</div>
+        <div class="vocab-explain">
+            1. 英语翻译：in fact; actually<br>
+            2. 俄语翻译：на самом деле<br>
+            3. 中文解释：表示真实的情况，和表面看起来不一样。<br>
+            4. 例句：其实，虚岁不只是周岁加一岁。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">并且</div>
+        <div class="vocab-explain">
+            1. 英语翻译：and; besides<br>
+            2. 俄语翻译：и; кроме того<br>
+            3. 中文解释：表示进一步的情况，连接两个句子。<br>
+            4. 例句：他出生在除夕，一出生就算1岁，并且大年初一又加1岁。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">因此</div>
+        <div class="vocab-explain">
+            1. 英语翻译：therefore; so<br>
+            2. 俄语翻译：следовательно; поэтому<br>
+            3. 中文解释：因为前面的情况，所以有后面的结果。<br>
+            4. 例句：春节是计算虚岁的重要时间点，因此每过春节虚岁就加1岁。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">理解</div>
+        <div class="vocab-explain">
+            1. 英语翻译：understand; comprehend<br>
+            2. 俄语翻译：понимать<br>
+            3. 中文解释：明白别人的意思或事情的道理。<br>
+            4. 例句：知道了虚岁的计算方法，我们就理解老人为什么提前过寿了。
+        </div>
+    </div>
+
+    <!-- 第二部分：课文 - 核心优化：所有生词可点击，悬浮显示英俄翻译 -->
+    <h2>二、课文</h2>
+    <div class="text-section">
+        <p>有人说，在全世界，<span class="text-vocab">或许<span class="vocab-tooltip">英语：maybe; perhaps | 俄语：может быть; возможно</span></span>只有中国人有两个<span class="text-vocab">年龄<span class="vocab-tooltip">英语：age | 俄语：возраст</span></span>，一个<span class="text-vocab">周岁<span class="vocab-tooltip">英语：legal age | 俄语：юридический возраст</span></span>，一个<span class="text-vocab">虚岁<span class="vocab-tooltip">英语：virtual age | 俄语：традиционный китайский возраст</span></span>。对于“周岁”是怎么回事，可能一般人还能说得清楚。而虚岁怎么“虚”，可是件很容易让人<span class="text-vocab">迷惑<span class="vocab-tooltip">英语：confused; puzzled | 俄语：запутанный; озадаченный</span></span>的事情。很多人认为，周岁加一岁得出的结果就是虚岁。这是一个<span class="text-vocab">似是而非<span class="vocab-tooltip">英语：apparently true but actually false | 俄语：похожий на правду, но ложный</span></span>的说法。</p>
+        <p><span class="text-vocab">其实<span class="vocab-tooltip">英语：in fact; actually | 俄语：на самом деле</span></span>，很多时候，“虚岁”这个<span class="text-vocab">概念<span class="vocab-tooltip">英语：concept; idea | 俄语：понятие; идея</span></span>一般只用于男人，也就是“男进女满”，意思是，男人用虚岁<span class="text-vocab">计算<span class="vocab-tooltip">英语：calculate; compute | 俄语：рассчитывать; считать</span></span>年龄，女人用实岁计算年龄。而且，在<span class="text-vocab">实际<span class="vocab-tooltip">英语：actual; practical | 俄语：фактический; практический</span></span>的计算中，虚岁也不只是周岁加一岁那么简单。</p>
+        <p>虚岁的计算方法是这样：一个人一出生就算一岁；如果一个人正好出生在<span class="text-vocab">农历<span class="vocab-tooltip">英语：lunar calendar | 俄语：лунный календарь</span></span>年最后一天（<span class="text-vocab">除夕<span class="vocab-tooltip">英语：New Year's Eve | 俄语：последний день лунного года</span></span>），那么不但一出生就算一岁，<span class="text-vocab">并且<span class="vocab-tooltip">英语：and; besides | 俄语：и; кроме того</span></span>一到<span class="text-vocab">大年初一<span class="vocab-tooltip">英语：the first day of lunar New Year | 俄语：первый день лунного Нового года</span></span>就又要加一岁，这样算的话，这个孩子到了满实岁一岁时，他的虚岁就已经是三岁了。</p>
+        <p><span class="text-vocab">因此<span class="vocab-tooltip">英语：therefore; so | 俄语：следовательно; поэтому</span></span>，在计算虚岁时，<span class="text-vocab">春节<span class="vocab-tooltip">英语：Spring Festival | 俄语：Весенний фестиваль</span></span>是个特别重要的时间点，每过一个春节，虚岁就应该加上一岁。如果一个人的生日是农历的12月<span class="text-vocab">下旬<span class="vocab-tooltip">英语：last ten days of a month | 俄语：последние десять дней месяца</span></span>，那他还没有<span class="text-vocab">满月<span class="vocab-tooltip">英语：one month old | 俄语：одномесячный малыш</span></span>，虚岁就到两岁了。那种认为虚岁就是周岁加一岁的看法<span class="text-vocab">显然<span class="vocab-tooltip">英语：obviously; clearly | 俄语：очевидно; явно</span></span>是不完全正确的。</p>
+        <p>知道了这个道理，我们就会<span class="text-vocab">理解<span class="vocab-tooltip">英语：understand; comprehend | 俄语：понимать</span></span>，为什么很多老人常常会<span class="text-vocab">提前<span class="vocab-tooltip">英语：in advance | 俄语：заранее</span></span>两年，过自己的七十<span class="text-vocab">大寿<span class="vocab-tooltip">英语：grand birthday | 俄语：великая годовщина рождения</span></span>、八十大寿了。</p>
+    </div>
+
+    <!-- 第三部分：课后练习 -->
+    <h2>三、课后练习</h2>
+    <div class="exercise-section">
+        <!-- 选择题 -->
+        <div class="question">
+            （一）为下列词语选择正确的解释。<br>
+            1. 迷惑（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q1" value="A"> A. 好像正确实际上是错误的</div>
+                <div class="option"><input type="radio" name="q1" value="B"> B. 感到不明白</div>
+                <div class="option"><input type="radio" name="q1" value="C"> C. 男人按虚岁计算年龄，女人按实岁计算年龄</div>
+                <div class="option"><input type="radio" name="q1" value="D"> D. 年长的人的重要的生日</div>
+            </div>
+            <br>
+            2. 似是而非（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q2" value="A"> A. 好像正确实际上是错误的</div>
+                <div class="option"><input type="radio" name="q2" value="B"> B. 感到不明白</div>
+                <div class="option"><input type="radio" name="q2" value="C"> C. 男人按虚岁计算年龄，女人按实岁计算年龄</div>
+                <div class="option"><input type="radio" name="q2" value="D"> D. 年长的人的重要的生日</div>
+            </div>
+            <br>
+            3. 男进女满（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q3" value="A"> A. 好像正确实际上是错误的</div>
+                <div class="option"><input type="radio" name="q3" value="B"> B. 感到不明白</div>
+                <div class="option"><input type="radio" name="q3" value="C"> C. 男人按虚岁计算年龄，女人按实岁计算年龄</div>
+                <div class="option"><input type="radio" name="q3" value="D"> D. 年长的人的重要的生日</div>
+            </div>
+            <br>
+            4. 大寿（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q4" value="A"> A. 好像正确实际上是错误的</div>
+                <div class="option"><input type="radio" name="q4" value="B"> B. 感到不明白</div>
+                <div class="option"><input type="radio" name="q4" value="C"> C. 男人按虚岁计算年龄，女人按实岁计算年龄</div>
+                <div class="option"><input type="radio" name="q4" value="D"> D. 年长的人的重要的生日</div>
+            </div>
+        </div>
+
+        <!-- 判断题 -->
+        <div class="question">
+            （二）根据文章内容判断正误。（正确的选“√”，错误的选“×”）<br>
+            1. 全世界的中国人都有两个年龄（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q5" value="√"> √</div>
+                <div class="option"><input type="radio" name="q5" value="×"> ×</div>
+            </div>
+            <br>
+            2. 周岁加一岁得出的结果就是虚岁（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q6" value="√"> √</div>
+                <div class="option"><input type="radio" name="q6" value="×"> ×</div>
+            </div>
+            <br>
+            3. 一般只有中国年轻男人有虚岁（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q7" value="√"> √</div>
+                <div class="option"><input type="radio" name="q7" value="×"> ×</div>
+            </div>
+            <br>
+            4. 在中国，一个人一出生就已经是三岁（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q8" value="√"> √</div>
+                <div class="option"><input type="radio" name="q8" value="×"> ×</div>
+            </div>
+            <br>
+            5. 计算虚岁时春节是个特别重要的时间点（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q9" value="√"> √</div>
+                <div class="option"><input type="radio" name="q9" value="×"> ×</div>
+            </div>
+        </div>
+
+        <!-- 单选题 -->
+        <div class="question">
+            （三）根据文章内容选择正确答案。（从ABCD四个选项中选择一个最佳答案）<br>
+            1. 对于“周岁”是怎么回事，一般中国人能说明白吗？（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q10" value="A"> A. 非常明白</div>
+                <div class="option"><input type="radio" name="q10" value="B"> B. 不太明白</div>
+                <div class="option"><input type="radio" name="q10" value="C"> C. 比较清楚</div>
+                <div class="option"><input type="radio" name="q10" value="D"> D. 不大清楚</div>
+            </div>
+            <br>
+            2. “周岁加一岁得出的结果就是虚岁。这是一个似是而非的说法。”这句话的意思是：（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q11" value="A"> A. 虚岁等于周岁加一岁其实是错误的</div>
+                <div class="option"><input type="radio" name="q11" value="B"> B. 虚岁等于周岁加一岁其实是正确的</div>
+                <div class="option"><input type="radio" name="q11" value="C"> C. 虚岁等于周岁加一岁好像是错误的</div>
+                <div class="option"><input type="radio" name="q11" value="D"> D. 虚岁等于周岁加一岁好像是正确的</div>
+            </div>
+            <br>
+            3. “男人用虚岁计算年龄，女人用实岁计算年龄。”这句话的意思是：（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q12" value="A"> A. 男人有虚岁，女人有周岁</div>
+                <div class="option"><input type="radio" name="q12" value="B"> B. 男人只有虚岁</div>
+                <div class="option"><input type="radio" name="q12" value="C"> C. 女人只有周岁</div>
+                <div class="option"><input type="radio" name="q12" value="D"> D. 男人女人年龄的计算方法不同</div>
+            </div>
+            <br>
+            4. 一个孩子出生在农历年最后一天，他到满实岁一岁时：（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q13" value="A"> A. 虚岁是两岁</div>
+                <div class="option"><input type="radio" name="q13" value="B"> B. 虚岁是三岁</div>
+                <div class="option"><input type="radio" name="q13" value="C"> C. 周岁是两岁</div>
+                <div class="option"><input type="radio" name="q13" value="D"> D. 周岁是一岁</div>
+            </div>
+            <br>
+            5. 很多老人会提前两年过自己的七十大寿、八十大寿是因为：（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q14" value="A"> A. 老人按照周岁过生日</div>
+                <div class="option"><input type="radio" name="q14" value="B"> B. 老人按照虚岁过生日</div>
+                <div class="option"><input type="radio" name="q14" value="C"> C. 老人希望自己看起来老一点儿</div>
+                <div class="option"><input type="radio" name="q14" value="D"> D. 老人希望自己年轻一点儿</div>
+            </div>
+        </div>
+
+        <!-- 填空题 -->
+        <div class="question">
+            （四）按照中国人计算年龄的方法，算一算自己的虚岁。<br>
+            我的虚岁是：<input type="text" id="q15" placeholder="请输入数字"> 岁
+        </div>
+
+        <button onclick="checkAnswers()">提交答案</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // 正确答案
+        const correctAnswers = {
+            q1: "B", q2: "A", q3: "C", q4: "D",
+            q5: "×", q6: "×", q7: "×", q8: "×", q9: "√",
+            q10: "C", q11: "A", q12: "D", q13: "B", q14: "B"
+        };
+
+        // 核心新增：每道错题对应的原文线索提示，精准定位答案依据
+        const answerClues = {
+            q1: "线索：课文生词中『迷惑』的解释为『心里不明白，不知道怎么回事』",
+            q2: "线索：课文生词中『似是而非』的解释为『看起来好像是对的，实际上是错的』",
+            q3: "线索：课文第二段『男进女满，意思是，男人用虚岁计算年龄，女人用实岁计算年龄』",
+            q4: "线索：课文生词中『大寿』的解释为『年长的人重要的生日，比如七十大寿、八十大寿』",
+            q5: "线索：课文第一段第一句『或许只有中国人有两个年龄』，『或许』表示不是全部人",
+            q6: "线索：课文第一段最后一句『周岁加一岁得出的结果就是虚岁，这是一个似是而非的说法』",
+            q7: "线索：课文第二段『虚岁这个概念一般只用于男人』，没有『年轻』的限定",
+            q8: "线索：课文第三段『出生在除夕的孩子，满实岁一岁时虚岁三岁』，不是所有人一出生就三岁",
+            q9: "线索：课文第四段第一句『在计算虚岁时，春节是个特别重要的时间点』",
+            q10: "线索：课文第一段『对于周岁是怎么回事，可能一般人还能说得清楚』",
+            q11: "线索：『似是而非』的含义是看起来对实际错，所以这句话的意思是该说法错误",
+            q12: "线索：这句话的核心是男女计算年龄的方式不同，并非只有单一年龄",
+            q13: "线索：课文第三段明确说明『出生在除夕的孩子，满实岁一岁时虚岁就已经是三岁了』",
+            q14: "线索：课文最后一句『知道了虚岁的道理，就理解老人为什么提前过寿』"
+        };
+
+        // 优化后的批改答案函数 - 核心功能全部实现
+        function checkAnswers() {
+            let score = 0;
+            let total = Object.keys(correctAnswers).length;
+            let wrongQuestions = [];
+
+            // 第一步：清除之前的所有标注和线索，避免重复显示
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('correct', 'wrong');
+            });
+            document.querySelectorAll('.clue').forEach(clue => {
+                clue.remove();
+            });
+
+            // 第二步：遍历所有题目，判断对错并添加标注
+            for (let key in correctAnswers) {
+                const selected = document.querySelector(`input[name="${key}"]:checked`);
+                const allOptions = document.querySelectorAll(`input[name="${key}"]`);
+                
+                if (selected) {
+                    // 答对了：绿色背景+对勾
+                    if (selected.value === correctAnswers[key]) {
+                        score++;
+                        selected.parentElement.classList.add('correct');
+                    } 
+                    // 答错了：红色背景+叉号 + 显示线索
+                    else {
+                        wrongQuestions.push(key);
+                        selected.parentElement.classList.add('wrong');
+                        // 找到正确选项并标绿
+                        allOptions.forEach(opt => {
+                            if(opt.value === correctAnswers[key]){
+                                opt.parentElement.classList.add('correct');
+                            }
+                        });
+                        // 添加错题线索
+                        const clueDiv = document.createElement('div');
+                        clueDiv.className = 'clue';
+                        clueDiv.innerHTML = answerClues[key];
+                        selected.parentElement.parentElement.after(clueDiv);
+                    }
+                } else {
+                    // 未作答也算错
+                    wrongQuestions.push(key);
+                    const emptyTip = document.createElement('div');
+                    emptyTip.className = 'clue';
+                    emptyTip.innerHTML = `【${key}】未作答，正确答案是：${correctAnswers[key]}`;
+                    document.querySelector(`input[name="${key}"]`).parentElement.parentElement.after(emptyTip);
+                }
+            }
+
+            // 第三步：显示最终得分结果
+            const resultDiv = document.getElementById("result");
+            if (wrongQuestions.length === 0) {
+                resultDiv.textContent = `恭喜！你得了满分${total}分，全部正确！🎉`;
+                resultDiv.style.color = "#27ae60";
+                resultDiv.style.backgroundColor = "#d4edda";
+                resultDiv.style.borderRadius = "5px";
+            } else {
+                resultDiv.textContent = `你的得分是${score}/${total}分，错题编号：${wrongQuestions.join("、")}，请查看红色线索提示订正！`;
+                resultDiv.style.color = "#e74c3c";
+                resultDiv.style.backgroundColor = "#f8d7da";
+                resultDiv.style.borderRadius = "5px";
+            }
+        }
+    </script>
+</body>
+</html>

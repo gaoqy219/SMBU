@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>令人担忧的汉字书写 - HSK中级阅读</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.8;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin: 30px 0;
+        }
+        .vocab-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+        .vocab-word {
+            flex: 0 0 150px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #e74c3c;
+            padding: 15px;
+            border-right: 2px dashed #bdc3c7;
+        }
+        .vocab-explain {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #ecf0f1;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .text-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+        .exercise-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+        .question {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            background-color: #f1f8fe;
+            border-radius: 0 5px 5px 0;
+        }
+        .options {
+            margin: 10px 0 0 20px;
+        }
+        .option {
+            margin: 8px 0;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 3px;
+        }
+        button {
+            display: block;
+            margin: 30px auto;
+            padding: 12px 30px;
+            font-size: 18px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #27ae60;
+        }
+        #result {
+            text-align: center;
+            font-size: 20px;
+            margin: 20px 0;
+            color: #e74c3c;
+            font-weight: bold;
+            padding: 10px;
+        }
+        /* 课文中生词样式 - 可点击 */
+        .text-vocab {
+            color: #2980b9;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 500;
+            position: relative;
+        }
+        /* 生词翻译悬浮弹窗样式 */
+        .vocab-tooltip {
+            position: absolute;
+            top: 25px;
+            left: 0;
+            background: #fff;
+            border: 1px solid #3498db;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #2c3e50;
+            z-index: 9999;
+            min-width: 200px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .text-vocab:hover .vocab-tooltip {
+            display: block;
+        }
+        /* 答对/答错样式 */
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .correct::after {
+            content: " ✔";
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .wrong {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .wrong::after {
+            content: " ✘";
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        /* 错题线索提示样式 */
+        .clue {
+            font-size: 14px;
+            color: #e74c3c;
+            margin-top: 6px;
+            padding-left: 10px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <h1>令人担忧的汉字书写</h1>
+
+    <!-- 第一部分：生词讲解 -->
+    <h2>一、生词讲解</h2>
+
+    <div class="vocab-container">
+        <div class="vocab-word">教育部</div>
+        <div class="vocab-explain">
+            1. 英语翻译：Ministry of Education<br>
+            2. 俄语翻译：Министерство образования<br>
+            3. 中文解释：中国管理教育事务的政府部门。<br>
+            4. 例句：教育部发布了新的课程标准。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">全日制</div>
+        <div class="vocab-explain">
+            1. 英语翻译：full-time<br>
+            2. 俄语翻译：полный рабочий день (в образовании)<br>
+            3. 中文解释：整个白天都进行的学习或工作形式，比如全日制学校。<br>
+            4. 例句：他在一所全日制中学读书。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">课程标准</div>
+        <div class="vocab-explain">
+            1. 英语翻译：curriculum standard<br>
+            2. 俄语翻译：стандарт учебного плана<br>
+            3. 中文解释：规定课程内容、要求的官方文件。<br>
+            4. 例句：老师按照课程标准准备教学内容。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">规范</div>
+        <div class="vocab-explain">
+            1. 英语翻译：standard; normative<br>
+            2. 俄语翻译：стандарт; нормативный<br>
+            3. 中文解释：符合规定的、正确的样子。<br>
+            4. 例句：我们要写规范的汉字。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">端正</div>
+        <div class="vocab-explain">
+            1. 英语翻译：upright; neat<br>
+            2. 俄语翻译：прямой; аккуратный<br>
+            3. 中文解释：（字或姿势）整齐、不歪斜。<br>
+            4. 例句：他写的字很端正。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">整洁</div>
+        <div class="vocab-explain">
+            1. 英语翻译：neat; tidy<br>
+            2. 俄语翻译：аккуратный; порядочный<br>
+            3. 中文解释：干净、整齐。<br>
+            4. 例句：他的作业本页面很整洁。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">下降</div>
+        <div class="vocab-explain">
+            1. 英语翻译：decline; drop<br>
+            2. 俄语翻译：падение; снижение<br>
+            3. 中文解释：（水平、数量等）变低。<br>
+            4. 例句：最近气温在持续下降。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">制定</div>
+        <div class="vocab-explain">
+            1. 英语翻译：formulate; establish<br>
+            2. 俄语翻译：разрабатывать; устанавливать<br>
+            3. 中文解释：做出（规则、计划等）。<br>
+            4. 例句：我们需要制定新的班级规则。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">等级</div>
+        <div class="vocab-explain">
+            1. 英语翻译：rank; level<br>
+            2. 俄语翻译：ранг; уровень<br>
+            3. 中文解释：按高低分的级别。<br>
+            4. 例句：这个考试设置了不同的等级。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">合格</div>
+        <div class="vocab-explain">
+            1. 英语翻译：qualified; up to standard<br>
+            2. 俄语翻译：квалифицированный; соответствующий стандарту<br>
+            3. 中文解释：符合规定的要求。<br>
+            4. 例句：他的汉字书写测试成绩合格了。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">提笔忘字</div>
+        <div class="vocab-explain">
+            1. 英语翻译：forget how to write a character when holding a pen<br>
+            2. 俄语翻译：забыть, как написать знак, беря ручку<br>
+            3. 中文解释：拿着笔想写字，却忘了字的写法。<br>
+            4. 例句：现在很多人都有提笔忘字的问题。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">错别字</div>
+        <div class="vocab-explain">
+            1. 英语翻译：wrong or misspelled characters<br>
+            2. 俄语翻译：неправильно написанные знаки<br>
+            3. 中文解释：写错的字或用错的字。<br>
+            4. 例句：写作文要避免写错别字。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">网友</div>
+        <div class="vocab-explain">
+            1. 英语翻译：netizen; online friend<br>
+            2. 俄语翻译：сетевой пользователь; интернет-друг<br>
+            3. 中文解释：在网络上交流的人。<br>
+            4. 例句：他认识了很多志同道合的网友。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">测试</div>
+        <div class="vocab-explain">
+            1. 英语翻译：test; quiz<br>
+            2. 俄语翻译：тест; проверка<br>
+            3. 中文解释：检查知识或能力的小型考试。<br>
+            4. 例句：学校对新生进行了汉字书写测试。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">负责</div>
+        <div class="vocab-explain">
+            1. 英语翻译：be responsible for; in charge of<br>
+            2. 俄语翻译：быть ответственным за; руководить<br>
+            3. 中文解释：承担某项工作的责任。<br>
+            4. 例句：李老师负责我们班的语文教学。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">形容</div>
+        <div class="vocab-explain">
+            1. 英语翻译：describe; characterize<br>
+            2. 俄语翻译：описывать; характеризовать<br>
+            3. 中文解释：用语言说出事物的特点。<br>
+            4. 例句：他用“吓人”来形容学生的字迹。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">字迹</div>
+        <div class="vocab-explain">
+            1. 英语翻译：handwriting; script<br>
+            2. 俄语翻译：почерк; рукописный текст<br>
+            3. 中文解释：字的笔画和形状样子。<br>
+            4. 例句：他的字迹清晰易认。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">比例</div>
+        <div class="vocab-explain">
+            1. 英语翻译：proportion; ratio<br>
+            2. 俄语翻译：пропорция; соотношение<br>
+            3. 中文解释：部分和整体之间的数量关系。<br>
+            4. 例句：不及格学生的比例很高。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">方块</div>
+        <div class="vocab-explain">
+            1. 英语翻译：square; block<br>
+            2. 俄语翻译：квадрат; блок<br>
+            3. 中文解释：四方形的形状。<br>
+            4. 例句：中国汉字是方块文字。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">构建系统</div>
+        <div class="vocab-explain">
+            1. 英语翻译：construction system<br>
+            2. 俄语翻译：система конструирования<br>
+            3. 中文解释：指汉字由哪些笔画组成的规则。<br>
+            4. 例句：汉字有自己独特的构建系统。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">笔画</div>
+        <div class="vocab-explain">
+            1. 英语翻译：stroke (of a Chinese character)<br>
+            2. 俄语翻译：штрих (китайского знака)<br>
+            3. 中文解释：写汉字时的一笔。<br>
+            4. 例句：“人”字有两个笔画。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">字形</div>
+        <div class="vocab-explain">
+            1. 英语翻译：character form; glyph<br>
+            2. 俄语翻译：форма знака; глиф<br>
+            3. 中文解释：汉字的形状。<br>
+            4. 例句：我们要记住每个汉字的字形。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">把握</div>
+        <div class="vocab-explain">
+            1. 英语翻译：grasp; master<br>
+            2. 俄语翻译：осваивать; понимать<br>
+            3. 中文解释：掌握、控制。<br>
+            4. 例句：他能很好地把握汉字的结构。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">结构</div>
+        <div class="vocab-explain">
+            1. 英语翻译：structure; composition<br>
+            2. 俄语翻译：структура; композиция<br>
+            3. 中文解释：事物各部分的安排方式。<br>
+            4. 例句：这个字的结构比较复杂。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">信息时代</div>
+        <div class="vocab-explain">
+            1. 英语翻译：information age<br>
+            2. 俄语翻译：информационная эпоха<br>
+            3. 中文解释：以信息为主要资源的时代。<br>
+            4. 例句：我们生活在信息时代。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">代替</div>
+        <div class="vocab-explain">
+            1. 英语翻译：replace; substitute<br>
+            2. 俄语翻译：заменять; подставлять<br>
+            3. 中文解释：用一个事物替换另一个事物。<br>
+            4. 例句：电脑慢慢代替了手写记录。
+        </div>
+    </div>
+
+    <!-- 第二部分：课文 -->
+    <h2>二、课文</h2>
+    <div class="text-section">
+        <p>在中国<span class="text-vocab">教育部<span class="vocab-tooltip">英语：Ministry of Education | 俄语：Министерство образования</span></span>《<span class="text-vocab">全日制<span class="vocab-tooltip">英语：full-time | 俄语：полный рабочий день (в образовании)</span></span>语文<span class="text-vocab">课程标准<span class="vocab-tooltip">英语：curriculum standard | 俄语：стандарт учебного плана</span></span>》中<span class="text-vocab">明确<span class="vocab-tooltip">英语：clearly | 俄语：ясно</span></span><span class="text-vocab">规定<span class="vocab-tooltip">英语：stipulate | 俄语：предписывать</span></span>，<span class="text-vocab">书写<span class="vocab-tooltip">英语：write | 俄语：писать</span></span>汉字的最低要求是：<span class="text-vocab">规范<span class="vocab-tooltip">英语：standard | 俄语：стандарт</span></span>、<span class="text-vocab">端正<span class="vocab-tooltip">英语：upright | 俄语：прямой</span></span>、<span class="text-vocab">整洁<span class="vocab-tooltip">英语：neat | 俄语：аккуратный</span></span>。</p>
+        <p>但是，教育部一项<span class="text-vocab">调查<span class="vocab-tooltip">英语：survey | 俄语：опрос</span></span><span class="text-vocab">显示<span class="vocab-tooltip">英语：show | 俄语：показывать</span></span>，在全国3000多名教师中，60%的人认为，自己学生的汉字书写<span class="text-vocab">水平<span class="vocab-tooltip">英语：level | 俄语：уровень</span></span>在<span class="text-vocab">下降<span class="vocab-tooltip">英语：decline | 俄语：падение</span></span>；这些学生（1.2万余名）中，有65%的人表示，应当赶快<span class="text-vocab">制定<span class="vocab-tooltip">英语：formulate | 俄语：разрабатывать</span></span>汉字书写<span class="text-vocab">等级<span class="vocab-tooltip">英语：rank | 俄语：ранг</span></span>标准，好让自己明确怎样写字才算<span class="text-vocab">合格<span class="vocab-tooltip">英语：qualified | 俄语：квалифицированный</span></span>。</p>
+        <p>“书写<span class="text-vocab">难看<span class="vocab-tooltip">英语：ugly | 俄语：уродливый</span></span>、<span class="text-vocab">提笔忘字<span class="vocab-tooltip">英语：forget how to write a character when holding a pen | 俄语：забыть, как написать знак, беря ручку</span></span>、写<span class="text-vocab">错别字<span class="vocab-tooltip">英语：wrong characters | 俄语：неправильно написанные знаки</span></span>”，是目前常见的三大书写问题。在互联网上，不久前，有一项调查，共有4102名<span class="text-vocab">网友<span class="vocab-tooltip">英语：netizen | 俄语：сетевой пользователь</span></span><span class="text-vocab">参加<span class="vocab-tooltip">英语：participate | 俄语：участвовать</span></span>，结果显示：37%的人<span class="text-vocab">经常<span class="vocab-tooltip">英语：often | 俄语：часто</span></span>提笔忘字，很多不难的字都忘了怎么写；22%的人要写字时，<span class="text-vocab">首先<span class="vocab-tooltip">英语：first | 俄语：сначала</span></span>想到的是用电脑，而不是笔；16%的人觉得，除了名字写得还行，其他字<span class="text-vocab">基本<span class="vocab-tooltip">英语：basically | 俄语：в основном</span></span>难看不能看；13%的人去外面<span class="text-vocab">听课<span class="vocab-tooltip">英语：attend a class | 俄语：посещать занятие</span></span>或者<span class="text-vocab">开会<span class="vocab-tooltip">英语：have a meeting | 俄语：вести совещание</span></span>，<span class="text-vocab">最怕<span class="vocab-tooltip">英语：most afraid | 俄语：наиболее бояться</span></span>的就是记笔记。</p>
+        <p>2009年6月，武汉（Wǔhàn）大学对2100多名大一新生进行了第一次汉字书写<span class="text-vocab">测试<span class="vocab-tooltip">英语：test | 俄语：тест</span></span>，<span class="text-vocab">负责<span class="vocab-tooltip">英语：be responsible for | 俄语：быть ответственным за</span></span>测试的老师用这样的话<span class="text-vocab">形容<span class="vocab-tooltip">英语：describe | 俄语：описывать</span></span>一些学生的<span class="text-vocab">字迹<span class="vocab-tooltip">英语：handwriting | 俄语：почерк</span></span>：“吓人！”测试结果显示，有320名学生写字“不及格”，也就是说，连“规范、端正、整洁”都没有办法达到，<span class="text-vocab">比例<span class="vocab-tooltip">英语：proportion | 俄语：пропорция</span></span>很高，占参加测评<span class="text-vocab">全部<span class="vocab-tooltip">英语：all | 俄语：все</span></span>人数的15%。</p>
+        <p>中国汉字是<span class="text-vocab">方块<span class="vocab-tooltip">英语：square | 俄语：квадрат</span></span>文字，它有自己的“<span class="text-vocab">构建系统<span class="vocab-tooltip">英语：construction system | 俄语：система конструирования</span></span>”（指一个字由什么<span class="text-vocab">笔画<span class="vocab-tooltip">英语：stroke | 俄语：штрих</span></span>组成）和“笔画系统”（指笔画放在什么<span class="text-vocab">位置<span class="vocab-tooltip">英语：position | 俄语：позиция</span></span>）。这就是说，即使你了解了一个字的<span class="text-vocab">字形<span class="vocab-tooltip">英语：character form | 俄语：форма знака</span></span>，也不一定能很好地<span class="text-vocab">把握<span class="vocab-tooltip">英语：grasp | 俄语：осваивать</span></span>它的<span class="text-vocab">结构<span class="vocab-tooltip">英语：structure | 俄语：структура</span></span>。比如明天的“明”，这个字的左边是“日”，右边是“月”；但它的写法不是把这两部分放在一起就可以了，要想写得好看，“日”字要写得靠上面一点儿才会好看。</p>
+        <p>汉字书写是一门<span class="text-vocab">艺术<span class="vocab-tooltip">英语：art | 俄语：искусство</span></span>，但是在<span class="text-vocab">信息时代<span class="vocab-tooltip">英语：information age | 俄语：информационная эпоха</span></span>的今天，它正慢慢被电脑所<span class="text-vocab">代替<span class="vocab-tooltip">英语：replace | 俄语：заменять</span></span>。</p>
+    </div>
+
+    <!-- 第三部分：课后练习 -->
+    <h2>三、课后练习</h2>
+    <div class="exercise-section">
+        <!-- 选择题 -->
+        <div class="question">
+            一、根据文章内容选择正确答案。（从A B C D四个选项中选择一个最佳答案）<br>
+            1. 下面哪一项不是中国教育部《全日制语文课程标准》对汉字书写的要求？（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q1" value="A"> A.规范</div>
+                <div class="option"><input type="radio" name="q1" value="B"> B.端正</div>
+                <div class="option"><input type="radio" name="q1" value="C"> C.漂亮</div>
+                <div class="option"><input type="radio" name="q1" value="D"> D.整洁</div>
+            </div>
+            <br>
+            2. 从文章中我们可以知道什么？（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q2" value="A"> A.教师的汉字书写水平在下降</div>
+                <div class="option"><input type="radio" name="q2" value="B"> B.60%的人汉字书写水平在下降</div>
+                <div class="option"><input type="radio" name="q2" value="C"> C.学生的汉字书写水平在下降</div>
+                <div class="option"><input type="radio" name="q2" value="D"> D.65%的人汉字书写水平在下降</div>
+            </div>
+            <br>
+            3. “好让自己明确怎样写字才算合格”中的“自己”指的是：（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q3" value="A"> A.老师</div>
+                <div class="option"><input type="radio" name="q3" value="B"> B.学生</div>
+                <div class="option"><input type="radio" name="q3" value="C"> C.所有人</div>
+                <div class="option"><input type="radio" name="q3" value="D"> D.普通人</div>
+            </div>
+            <br>
+            4. 目前常见的书写问题有：（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q4" value="A"> A.书写难看</div>
+                <div class="option"><input type="radio" name="q4" value="B"> B.提笔忘字</div>
+                <div class="option"><input type="radio" name="q4" value="C"> C.写错别字</div>
+                <div class="option"><input type="radio" name="q4" value="D"> D.以上各项</div>
+            </div>
+            <br>
+            5. “中国汉字是方块文字，它有自己的‘构建系统’和‘笔画系统’”。这句话的意思是：（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q5" value="A"> A.只要了解字形，就能写好汉字</div>
+                <div class="option"><input type="radio" name="q5" value="B"> B.只要了解字的结构，就能写好汉字</div>
+                <div class="option"><input type="radio" name="q5" value="C"> C.即使了解字形，也不一定能写好汉字</div>
+                <div class="option"><input type="radio" name="q5" value="D"> D.即使不了解字形，也一定能写好汉字</div>
+            </div>
+        </div>
+
+        <!-- 判断题 -->
+        <div class="question">
+            二、根据文章内容判断正误。（正确的画“√”，错误的画“×”，没有提到的画“○”）<br>
+            1. 很多人要写字时首先想到的是电脑，而不是笔。（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q6" value="√"> √</div>
+                <div class="option"><input type="radio" name="q6" value="×"> ×</div>
+                <div class="option"><input type="radio" name="q6" value="○"> ○</div>
+            </div>
+            <br>
+            2. 网上对4102名网友的调查显示，16%的人除了名字会写，其他字都不会写。（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q7" value="√"> √</div>
+                <div class="option"><input type="radio" name="q7" value="×"> ×</div>
+                <div class="option"><input type="radio" name="q7" value="○"> ○</div>
+            </div>
+            <br>
+            3. 武汉大学很多大一新生汉字书写让老师生气。（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q8" value="√"> √</div>
+                <div class="option"><input type="radio" name="q8" value="×"> ×</div>
+                <div class="option"><input type="radio" name="q8" value="○"> ○</div>
+            </div>
+            <br>
+            4. 中国汉字是方块文字意味着很容易书写。（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q9" value="√"> √</div>
+                <div class="option"><input type="radio" name="q9" value="×"> ×</div>
+                <div class="option"><input type="radio" name="q9" value="○"> ○</div>
+            </div>
+            <br>
+            5. 汉字的“构建系统”指的是一个字由多少个笔画组成。（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q10" value="√"> √</div>
+                <div class="option"><input type="radio" name="q10" value="×"> ×</div>
+                <div class="option"><input type="radio" name="q10" value="○"> ○</div>
+            </div>
+            <br>
+            6. 汉字的“笔画系统”指的是笔画放在什么位置。（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q11" value="√"> √</div>
+                <div class="option"><input type="radio" name="q11" value="×"> ×</div>
+                <div class="option"><input type="radio" name="q11" value="○"> ○</div>
+            </div>
+            <br>
+            7. 汉字书写也是一种情感寄托。（ ）<br>
+            <div class="options">
+                <div class="option"><input type="radio" name="q12" value="√"> √</div>
+                <div class="option"><input type="radio" name="q12" value="×"> ×</div>
+                <div class="option"><input type="radio" name="q12" value="○"> ○</div>
+            </div>
+        </div>
+
+        <button onclick="checkAnswers()">提交答案</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // 正确答案
+        const correctAnswers = {
+            q1: "C", q2: "C", q3: "B", q4: "D", q5: "C",
+            q6: "√", q7: "×", q8: "×", q9: "×", q10: "√", q11: "√", q12: "○"
+        };
+
+        // 错题对应的原文线索提示
+        const answerClues = {
+            q1: "线索：课文第一段明确写了“书写汉字的最低要求是：规范、端正、整洁”，没有“漂亮”",
+            q2: "线索：课文第二段“60%的教师认为自己学生的汉字书写水平在下降”",
+            q3: "线索：课文第二段“这些学生（1.2万余名）中，有65%的人表示……好让自己明确怎样写字才算合格”",
+            q4: "线索：课文第三段“书写难看、提笔忘字、写错别字，是目前常见的三大书写问题”",
+            q5: "线索：课文第五段“即使你了解了一个字的字形，也不一定能很好地把握它的结构”",
+            q6: "线索：课文第三段“22%的人要写字时，首先想到的是用电脑，而不是笔”，22%属于“很多人”",
+            q7: "线索：课文第三段“16%的人觉得，除了名字写得还行，其他字基本难看不能看”，不是“不会写”",
+            q8: "线索：课文第四段老师形容字迹是“吓人”，不是“生气”",
+            q9: "线索：课文第五段说明汉字有构建、笔画系统，了解字形也不一定写好，所以不是容易书写",
+            q10: "线索：课文第五段“构建系统（指一个字由什么笔画组成）”",
+            q11: "线索：课文第五段“笔画系统（指笔画放在什么位置）”",
+            q12: "线索：文章未提到“汉字书写是情感寄托”的内容"
+        };
+
+        function checkAnswers() {
+            let score = 0;
+            let total = Object.keys(correctAnswers).length;
+            let wrongQuestions = [];
+
+            // 清除之前的标注和线索
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('correct', 'wrong');
+            });
+            document.querySelectorAll('.clue').forEach(clue => {
+                clue.remove();
+            });
+
+            // 批改题目
+            for (let key in correctAnswers) {
+                const selected = document.querySelector(`input[name="${key}"]:checked`);
+                const allOptions = document.querySelectorAll(`input[name="${key}"]`);
+                
+                if (selected) {
+                    // 答对
+                    if (selected.value === correctAnswers[key]) {
+                        score++;
+                        selected.parentElement.classList.add('correct');
+                    } 
+                    // 答错
+                    else {
+                        wrongQuestions.push(key);
+                        selected.parentElement.classList.add('wrong');
+                        // 标绿正确选项
+                        allOptions.forEach(opt => {
+                            if(opt.value === correctAnswers[key]){
+                                opt.parentElement.classList.add('correct');
+                            }
+                        });
+                        // 添加线索
+                        const clueDiv = document.createElement('div');
+                        clueDiv.className = 'clue';
+                        clueDiv.innerHTML = answerClues[key];
+                        selected.parentElement.parentElement.after(clueDiv);
+                    }
+                } else {
+                    // 未作答
+                    wrongQuestions.push(key);
+                    const emptyTip = document.createElement('div');
+                    emptyTip.className = 'clue';
+                    emptyTip.innerHTML = `【${key}】未作答，正确答案是：${correctAnswers[key]}`;
+                    document.querySelector(`input[name="${key}"]`).parentElement.parentElement.after(emptyTip);
+                }
+            }
+
+            // 显示结果
+            const resultDiv = document.getElementById("result");
+            if (wrongQuestions.length === 0) {
+                resultDiv.textContent = `恭喜！你得了满分${total}分，全部正确！🎉`;
+                resultDiv.style.color = "#27ae60";
+                resultDiv.style.backgroundColor = "#d4edda";
+                resultDiv.style.borderRadius = "5px";
+            } else {
+                resultDiv.textContent = `你的得分是${score}/${total}分，错题编号：${wrongQuestions.join("、")}，请查看红色线索提示订正！`;
+                resultDiv.style.color = "#e74c3c";
+                resultDiv.style.backgroundColor = "#f8d7da";
+                resultDiv.style.borderRadius = "5px";
+            }
+        }
+    </script>
+</body>
+</html>

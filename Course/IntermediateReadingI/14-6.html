@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>微博 - HSK中级阅读</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.8;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin: 30px 0;
+        }
+        .vocab-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+        .vocab-word {
+            flex: 0 0 150px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #e74c3c;
+            padding: 15px;
+            border-right: 2px dashed #bdc3c7;
+        }
+        .vocab-explain {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #ecf0f1;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .text-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+        .text-section img {
+            max-width: 300px;
+            margin: 0 auto 20px;
+            display: block;
+            border: 1px solid #eee;
+        }
+        .text-section ul {
+            margin: 10px 0 10px 20px;
+            padding-left: 10px;
+        }
+        .text-section li {
+            margin: 8px 0;
+        }
+        .exercise-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+        .question {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            background-color: #f1f8fe;
+            border-radius: 0 5px 5px 0;
+        }
+        .answer-input {
+            width: 80%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            display: block;
+            margin: 30px auto;
+            padding: 12px 30px;
+            font-size: 18px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #27ae60;
+        }
+        #result {
+            text-align: center;
+            font-size: 20px;
+            margin: 20px 0;
+            color: #e74c3c;
+            font-weight: bold;
+            padding: 10px;
+        }
+        /* 课文中生词样式 - 可点击 */
+        .text-vocab {
+            color: #2980b9;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 500;
+            position: relative;
+        }
+        /* 生词翻译悬浮弹窗样式 */
+        .vocab-tooltip {
+            position: absolute;
+            top: 25px;
+            left: 0;
+            background: #fff;
+            border: 1px solid #3498db;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #2c3e50;
+            z-index: 9999;
+            min-width: 200px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .text-vocab:hover .vocab-tooltip {
+            display: block;
+        }
+        /* 答对/答错样式 */
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .correct::after {
+            content: " ✔";
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .wrong {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .wrong::after {
+            content: " ✘";
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        /* 错题线索提示样式 */
+        .clue {
+            font-size: 14px;
+            color: #e74c3c;
+            margin-top: 6px;
+            padding-left: 10px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <h1>微博</h1>
+
+    <!-- 第一部分：生词讲解 -->
+    <h2>一、生词讲解</h2>
+
+    <div class="vocab-container">
+        <div class="vocab-word">微博</div>
+        <div class="vocab-explain">
+            1. 英语翻译：microblog<br>
+            2. 俄语翻译：микроблог<br>
+            3. 中文解释：“微型博客”的简称，是可以发一句话、照片的网络分享平台。<br>
+            4. 例句：我每天都会刷微博看新闻。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">简称</div>
+        <div class="vocab-explain">
+            1. 英语翻译：abbreviation<br>
+            2. 俄语翻译：аббревиатура<br>
+            3. 中文解释：把较长的名称简化后的叫法。<br>
+            4. 例句：“微博”是“微型博客”的简称。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">新鲜事</div>
+        <div class="vocab-explain">
+            1. 英语翻译：latest news<br>
+            2. 俄语翻译：последние новости<br>
+            3. 中文解释：最近发生的有趣、新奇的事情。<br>
+            4. 例句：他喜欢在微博分享身边的新鲜事。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">随时随地</div>
+        <div class="vocab-explain">
+            1. 英语翻译：anytime anywhere<br>
+            2. 俄语翻译：в любое время и в любом месте<br>
+            3. 中文解释：不管什么时间、什么地点都可以做。<br>
+            4. 例句：用手机能随时随地发微博。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">流行</div>
+        <div class="vocab-explain">
+            1. 英语翻译：popular<br>
+            2. 俄语翻译：популярный<br>
+            3. 中文解释：很多人喜欢、使用的（说法或事物）。<br>
+            4. 例句：现在网上流行“织围脖”这个词。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">织围脖</div>
+        <div class="vocab-explain">
+            1. 英语翻译：post on microblog (internet term)<br>
+            2. 俄语翻译：писать в микроблог (интернет-термин)<br>
+            3. 中文解释：网上对“写微博”的流行说法。<br>
+            4. 例句：她每天都要织围脖分享生活日常。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">字数限制</div>
+        <div class="vocab-explain">
+            1. 英语翻译：word limit<br>
+            2. 俄语翻译：ограничение по количеству слов<br>
+            3. 中文解释：对内容的文字数量的规定。<br>
+            4. 例句：微博有140字以内的字数限制。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">发表</div>
+        <div class="vocab-explain">
+            1. 英语翻译：post<br>
+            2. 俄语翻译：опубликовать<br>
+            3. 中文解释：把内容放到网络平台上给别人看。<br>
+            4. 例句：我在微博发表了一张旅行照片。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">关注</div>
+        <div class="vocab-explain">
+            1. 英语翻译：follow<br>
+            2. 俄语翻译：подписаться<br>
+            3. 中文解释：在网络平台上订阅他人的动态更新。<br>
+            4. 例句：我在微博关注了喜欢的明星。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">明星</div>
+        <div class="vocab-explain">
+            1. 英语翻译：celebrity<br>
+            2. 俄语翻译：звезда<br>
+            3. 中文解释：有名的演员、歌手等公众人物。<br>
+            4. 例句：很多粉丝会看明星的微博动态。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">参与</div>
+        <div class="vocab-explain">
+            1. 英语翻译：participate<br>
+            2. 俄语翻译：участвовать<br>
+            3. 中文解释：加入到某个活动、讨论中。<br>
+            4. 例句：我喜欢参与微博的热门话题讨论。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">话题</div>
+        <div class="vocab-explain">
+            1. 英语翻译：topic<br>
+            2. 俄语翻译：тема<br>
+            3. 中文解释：大家一起讨论的内容主题。<br>
+            4. 例句：这个话题在微博上很热门。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">邀请</div>
+        <div class="vocab-explain">
+            1. 英语翻译：invite<br>
+            2. 俄语翻译：приглашать<br>
+            3. 中文解释：请别人一起做某事。<br>
+            4. 例句：我邀请朋友一起讨论微博上的新闻。
+        </div>
+    </div>
+
+    <div class="vocab-container">
+        <div class="vocab-word">热门词语</div>
+        <div class="vocab-explain">
+            1. 英语翻译：popular phrase<br>
+            2. 俄语翻译：популярное выражение<br>
+            3. 中文解释：很多人谈论、使用的词语。<br>
+            4. 例句：“织围脖”是当时的热门词语。
+        </div>
+    </div>
+
+    <!-- 第二部分：课文 -->
+    <h2>二、课文</h2>
+    <div class="text-section">
+        <img src="" alt="微博界面截图（显示输入框、内容列表等元素）">
+        
+        <p><span class="text-vocab">微博<span class="vocab-tooltip">英语：microblog | 俄语：микроблог</span></span>是“微型博客（microblog）”的<span class="text-vocab">简称<span class="vocab-tooltip">英语：abbreviation | 俄语：аббревиатура</span></span>，可以理解为“一句话博客”。你可以将身边的<span class="text-vocab">新鲜事<span class="vocab-tooltip">英语：latest news | 俄语：последние новости</span></span>，写成一句话或发一张照片，通过电脑或手机，<span class="text-vocab">随时随地<span class="vocab-tooltip">英语：anytime anywhere | 俄语：в любое время и в любом месте</span></span>发送给朋友。</p>
+
+        <p>现在，网上<span class="text-vocab">流行<span class="vocab-tooltip">英语：popular | 俄语：популярный</span></span>的说法叫“<span class="text-vocab">织围脖<span class="vocab-tooltip">英语：post on microblog | 俄语：писать в микроблог</span></span>”，织围脖就是写微博。微博有<span class="text-vocab">字数限制<span class="vocab-tooltip">英语：word limit | 俄语：ограничение по количеству слов</span></span>，一般要在140个字以内。就像写心情一样，用起来很方便。</p>
+
+        <p>“微博”都可以做什么？</p>
+        <ul>
+            <li>● <span class="text-vocab">发表<span class="vocab-tooltip">英语：post | 俄语：опубликовать</span></span>微博：你可以将你看到的、听到的、想到的事情，写成一句话或拍一张照片，通过电脑或者手机，发表到微博上面；</li>
+            <li>● 查看微博：你可以使用微博中的“<span class="text-vocab">关注<span class="vocab-tooltip">英语：follow | 俄语：подписаться</span></span>”功能，去关注你感兴趣的<span class="text-vocab">明星<span class="vocab-tooltip">英语：celebrity | 俄语：звезда</span></span>、朋友；</li>
+            <li>● <span class="text-vocab">参与<span class="vocab-tooltip">英语：participate | 俄语：участвовать</span></span><span class="text-vocab">话题<span class="vocab-tooltip">英语：topic | 俄语：тема</span></span>：你可以<span class="text-vocab">邀请<span class="vocab-tooltip">英语：invite | 俄语：приглашать</span></span>你的朋友，一起讨论一篇新闻或一个<span class="text-vocab">热门词语<span class="vocab-tooltip">英语：popular phrase | 俄语：популярное выражение</span></span>。</li>
+        </ul>
+
+        <p style="text-align:right; margin-top:20px;">（选自新浪网）</p>
+    </div>
+
+    <!-- 第三部分：课后练习 -->
+    <h2>三、课后练习</h2>
+    <div class="exercise-section">
+        <div class="question">
+            回答问题：<br>
+            1. 微博是什么？<br>
+            <input type="text" class="answer-input" id="q1" placeholder="请输入答案">
+            <div id="clue1" class="clue"></div>
+
+            <br>2. 微博可以用来做些什么？<br>
+            <input type="text" class="answer-input" id="q2" placeholder="请输入答案">
+            <div id="clue2" class="clue"></div>
+        </div>
+
+        <button onclick="checkAnswers()">提交答案</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // 正确答案及判断规则
+        const correctAnswers = {
+            q1: {
+                key: "微型博客的简称|一句话博客|写一句话或发照片|随时随地发送|140字以内",
+                text: "微博是“微型博客”的简称，可理解为“一句话博客”，能将身边新鲜事写成一句话或发照片，通过电脑/手机随时随地发送给朋友，有140字以内的字数限制"
+            },
+            q2: {
+                key: "发表微博|查看微博|参与话题",
+                text: "微博可以用来发表微博、查看微博（关注明星/朋友）、参与话题（和朋友讨论新闻/热门词语）"
+            }
+        };
+
+        // 线索提示
+        const answerClues = {
+            q1: "线索：课文第一段和第二段明确说明了微博的定义、形式及特点",
+            q2: "线索：课文中“‘微博’都可以做什么？”部分列出了三个功能：发表微博、查看微博、参与话题"
+        };
+
+        function checkAnswers() {
+            let score = 0;
+            const total = 2;
+            let wrongQuestions = [];
+
+            // 清除之前的样式和线索
+            document.querySelectorAll('.answer-input').forEach(input => {
+                input.classList.remove('correct', 'wrong');
+            });
+            document.querySelectorAll('.clue').forEach(clue => {
+                clue.innerHTML = "";
+            });
+            document.getElementById('result').innerHTML = "";
+
+            // 检查每道题
+            for (let key in correctAnswers) {
+                const input = document.getElementById(key);
+                const userAnswer = input.value.trim();
+                const keys = correctAnswers[key].key.split('|');
+                let isCorrect = false;
+
+                // 判断是否包含关键信息
+                keys.forEach(k => {
+                    if (userAnswer.includes(k)) {
+                        isCorrect = true;
+                    }
+                });
+
+                if (isCorrect) {
+                    score++;
+                    input.classList.add('correct');
+                } else {
+                    wrongQuestions.push(key);
+                    input.classList.add('wrong');
+                    document.getElementById(`clue${key.slice(1)}`).innerHTML = 
+                        `${answerClues[key]}<br>正确答案参考：${correctAnswers[key].text}`;
+                }
+            }
+
+            // 显示结果
+            const resultDiv = document.getElementById("result");
+            if (wrongQuestions.length === 0) {
+                resultDiv.textContent = `恭喜！你得了满分${total}分，全部正确！🎉`;
+                resultDiv.style.color = "#27ae60";
+                resultDiv.style.backgroundColor = "#d4edda";
+                resultDiv.style.borderRadius = "5px";
+            } else {
+                resultDiv.textContent = `你的得分是${score}/${total}分，错题：${wrongQuestions.join("、")}，请查看线索订正！`;
+                resultDiv.style.color = "#e74c3c";
+                resultDiv.style.backgroundColor = "#f8d7da";
+                resultDiv.style.borderRadius = "5px";
+            }
+        }
+    </script>
+</body>
+</html>
