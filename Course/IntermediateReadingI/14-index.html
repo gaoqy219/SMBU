@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中级阅读1 第十四课</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 15px;
+        }
+        .lesson-menu {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .lesson-item {
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .lesson-item a {
+            display: block;
+            padding: 20px;
+            text-decoration: none;
+            color: #34495e;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+        }
+        .lesson-item:hover {
+            background-color: #3498db;
+            transform: translateY(-3px);
+        }
+        .lesson-item:hover a {
+            color: #fff;
+        }
+        .back-home {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .back-home a {
+            display: inline-block;
+            padding: 10px 25px;
+            background-color: #2ecc71;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .back-home a:hover {
+            background-color: #27ae60;
+        }
+        /* 响应式适配 */
+        @media (max-width: 500px) {
+            .lesson-menu {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>中级阅读1 第十四课</h1>
+        <ul class="lesson-menu">
+            <li class="lesson-item"><a href="14-1.html">文章一</a></li>
+            <li class="lesson-item"><a href="14-2.html">文章二</a></li>
+            <li class="lesson-item"><a href="14-6.html">文章三</a></li>
+            <li class="lesson-item"><a href="15-6.html">文章四</a></li>
+            <li class="lesson-item"><a href="15-7.html">文章五</a></li>
+        </ul>
+
+        <div class="back-home">
+            <a href="index.html">返回课程首页</a>
+        </div>
+    </div>
+</body>
+</html>
