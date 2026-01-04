@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>23级汉语言专业中级汉语阅读1 期末考试（A卷）</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+            line-height: 1.8;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 30px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #2c3e50;
+        }
+        .header h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .exam-info {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .exam-info div {
+            flex: 1;
+            min-width: 200px;
+            margin: 5px 0;
+            color: #34495e;
+        }
+        .exam-info span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .student-info {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .student-info .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .student-info label {
+            display: inline-block;
+            width: 80px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        .student-info input {
+            padding: 10px;
+            width: calc(100% - 90px);
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        /* 章节切换按钮 */
+        .chapter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .chapter-tab {
+            padding: 8px 15px;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .chapter-tab.active {
+            background-color: #3498db;
+            color: #fff;
+        }
+        /* 文章+题目容器 - 上下布局 */
+        .chapter-container {
+            display: none;
+            margin-bottom: 40px;
+        }
+        .chapter-container.active {
+            display: block;
+        }
+        /* 文章区域 - 占3/5高度 */
+        .article-wrapper {
+            height: 45vh; /* 占视口高度3/5，适配不同屏幕 */
+            margin-bottom: 20px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .article h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .article .note {
+            margin-top: 15px;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        /* 题目区域 - 占2/5高度 */
+        .questions-wrapper {
+            height: 30vh; /* 占视口高度2/5 */
+            overflow-y: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        .section-title {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        /* 题目样式 */
+        .question-item {
+            margin-bottom: 15px;
+            padding: 12px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #3498db;
+        }
+        .question-item p {
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .option {
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+        }
+        .option input {
+            margin-right: 8px;
+        }
+        .option label {
+            color: #34495e;
+            cursor: pointer;
+        }
+        .fill-blank input {
+            padding: 8px;
+            width: 220px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-left: 8px;
+        }
+        .textarea-question textarea {
+            padding: 8px;
+            width: 100%;
+            height: 80px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            font-size: 13px;
+            margin-left: 0;
+            margin-top: 8px;
+        }
+        .select-question select {
+            padding: 8px;
+            width: 250px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-left: 8px;
+            color: #34495e;
+        }
+        /* 词汇汇总样式 */
+        .vocab-section {
+            margin-top: 30px;
+            display: none;
+        }
+        .vocab-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 12px;
+        }
+        .vocab-table th, .vocab-table td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        .vocab-table th {
+            background-color: #3498db;
+            color: #fff;
+            font-weight: bold;
+        }
+        .vocab-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        /* 按钮样式 */
+        .btn-group {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 0 8px;
+            transition: all 0.3s;
+        }
+        .btn-check {
+            background-color: #27ae60;
+            color: #fff;
+        }
+        .btn-check:hover {
+            background-color: #219653;
+        }
+        .btn-reset {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+        .btn-reset:hover {
+            background-color: #c0392b;
+        }
+        /* 结果样式 */
+        .result-section {
+            display: none;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #27ae60;
+        }
+        .result-section h3 {
+            color: #27ae60;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .result-section p {
+            margin-bottom: 8px;
+            color: #34495e;
+            font-size: 14px;
+        }
+        .wrong-list {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .wrong-list li {
+            margin-bottom: 6px;
+            color: #e74c3c;
+            font-size: 13px;
+        }
+        .feedback {
+            margin-left: 10px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .correct {
+            color: #27ae60;
+        }
+        .incorrect {
+            color: #e74c3c;
+        }
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            .student-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .student-info input {
+                width: 100%;
+            }
+            .article-wrapper {
+                height: 35vh;
+            }
+            .questions-wrapper {
+                height: 40vh;
+            }
+            .fill-blank input, .select-question select {
+                width: 100%;
+                margin-left: 0;
+                margin-top: 8px;
+            }
+            .btn {
+                display: block;
+                margin: 10px auto;
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>深圳北理莫斯科大学汉语中心期末考试试卷</h1>
+            <p>中级汉语阅读1 - A卷</p>
+        </div>
+
+        <div class="student-info">
+            <div class="form-group">
+                <label>院系/专业：</label>
+                <input type="text" placeholder="请填写">
+            </div>
+            <div class="form-group">
+                <label>姓名：</label>
+                <input type="text" placeholder="请填写">
+            </div>
+            <div class="form-group">
+                <label>学号：</label>
+                <input type="text" placeholder="请填写">
+            </div>
+        </div>
+
+        <div class="exam-info">
+            <div><span>考试班级：</span>23级汉语言专业班</div>
+            <div><span>A/B卷：</span>A卷</div>
+            <div><span>课程名称：</span>中级汉语阅读1</div>
+            <div><span>考试时间：</span>2025年1月8日</div>
+        </div>
+
+        <!-- 章节切换按钮 -->
+        <div class="chapter-tabs">
+            <button class="chapter-tab active" data-chapter="1">第一章：读万卷书，行万里路</button>
+            <button class="chapter-tab" data-chapter="2">第二章：绿色食品</button>
+            <button class="chapter-tab" data-chapter="3">第三章：一生的职业</button>
+            <button class="chapter-tab" data-chapter="4">第四章：HSK报名通知</button>
+            <button class="chapter-tab" data-chapter="5">第五章：写字的价值</button>
+        </div>
+
+        <!-- 第一章：文章+题目 上下布局 -->
+        <div class="chapter-container active" id="chapter1-container">
+            <!-- 文章区域（3/5高度） -->
+            <div class="article-wrapper">
+                <h2 class="section-title">一、阅读文章一（共24分）</h2>
+                <div class="article">
+                    <h3>文章一 读万卷书，行万里路</h3>
+                    <p>儿子终于从西藏回来了，妈妈又心疼又高兴，心疼的是儿子又黑又瘦，高兴的是儿子平安回来了，现在自己可以放心地睡觉了。</p>
+                    <p>这一次儿子是骑自行车去西藏的，整整四个月的时间，妈妈一直在为他担心。每天只有接到电话，妈妈才能放心，如果一天没接到电话，就急得睡不着觉。朋友问她：“你既然这么不放心，为什么还让他去呢？”妈妈说：“孩子长大了，有自己的兴趣和理想，我怎么能不同意呢？再说，他一边锻炼身体，一边宣传环保，是大好事啊！只有‘读万卷书，行万里路’，才能长成男子汉啊！”</p>
+                    <p>儿子回来了，虽然又黑又瘦，但是更强壮，更懂事了。走的时候还是个大男孩儿，短短的四个月就真的变成男子汉了。</p>
+                    <p>儿子一边给父母和朋友看自己拍的照片，一边讲述着自己一路的见闻。照片上的风景太美了，儿子的经历也太有意思了！下次儿子远行的时候，就不会是一个人了，许多人都决定跟他一起去。</p>
+                    <div class="note">
+                        注：<br>
+                        西藏：Tibet<br>
+                        见闻：what one sees and hears
+                    </div>
+                </div>
+            </div>
+
+            <!-- 题目区域（2/5高度） -->
+            <div class="questions-wrapper">
+                <h3 class="section-title">第一章 题目（共24分）</h3>
+                <div class="question-item" data-answer="√" data-score="3" data-chapter="1">
+                    <p>1. 儿子是在四个月以前骑自行车去的西藏。</p>
+                    <div class="option">
+                        <input type="radio" name="q1" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q1" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="3" data-chapter="1">
+                    <p>2. 妈妈因为担心，坚决不让他去。</p>
+                    <div class="option">
+                        <input type="radio" name="q2" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q2" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="3" data-chapter="1">
+                    <p>3. 儿子骑车去西藏的目的是一边锻炼身体，一边宣传环保。</p>
+                    <div class="option">
+                        <input type="radio" name="q3" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q3" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="3" data-chapter="1">
+                    <p>4. 儿子给大家看自己拍的照片，讲自己在路上的见闻。</p>
+                    <div class="option">
+                        <input type="radio" name="q4" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q4" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="3" data-chapter="1">
+                    <p>5. 儿子还打算骑自行车去旅行，他的两个朋友决定和他一起去。</p>
+                    <div class="option">
+                        <input type="radio" name="q5" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q5" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="3" data-chapter="1">
+                    <p>6. 妈妈尊重孩子的兴趣和理想。</p>
+                    <div class="option">
+                        <input type="radio" name="q6" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q6" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="3" data-chapter="1">
+                    <p>7. 儿子回来时又黑又瘦，因此成为了男子汉。</p>
+                    <div class="option">
+                        <input type="radio" name="q7" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q7" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="3" data-chapter="1">
+                    <p>8. “读万卷书，行万里路”的意思是要读一万本书。</p>
+                    <div class="option">
+                        <input type="radio" name="q8" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q8" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第二章：文章+题目 上下布局 -->
+        <div class="chapter-container" id="chapter2-container">
+            <!-- 文章区域（3/5高度） -->
+            <div class="article-wrapper">
+                <h2 class="section-title">二、阅读文章二（共15分）</h2>
+                <div class="article">
+                    <h3>文章二 绿色食品</h3>
+                    <p>近年来，“绿色食品”的知名度越来越高，广告中，商场里，到处都可以看到“绿色食品”的字样。然而，到底哪些食品是“绿色”的，哪些又不是“绿色”的呢？绿色食品发展规模与前途如何？怎么才能促进绿色食品的发展？下面就让我们一起来了解一下“绿色食品”。</p>
+                    <p>首先，我们先来了解一下到底什么是“绿色食品”？</p>
+                    <p>①目前，国家正大力发展复合生态环境保护的经济，</p>
+                    <p>②它是国家倡导的“绿色经济”的一部分。</p>
+                    <p>③如开发水果采摘体验等旅游项目，这叫“生态旅游”，也属于“绿色经济”的一部分。</p>
+                    <p>④“绿色食品”是指在生产过程中，不使用任何农药的绿色农产品。</p>
+                    <p>其次，我们来了解一下“绿色食品”的市场发展怎么样？近年来，绿色食品开发一直保持在30%以上的年增长速度。在市场需求的拉动下，绿色食品开发已经具备一定规模。</p>
+                    <p>最后，作为一个新兴的产业，我们可以采取哪些措施保障绿色食品的持续健康发展呢？对绿色食品而言，没有质量就没有价值。所以最重要的一点就是要加强绿色食品质量管理工作。对获得“绿色食品”标志的产品进行严格监管，确保绿色食品的质量和品牌形象。其次，绿色食品产业要发展壮大，必须有更多的大企业和公司加入进来，获得更多投资，共同培育绿色食品市场，加快新产品开发，逐步满足消费者对绿色食品的消费需求。只有这样，我们才能培养出健康有序的绿色食品市场。</p>
+                    <p>大力发展绿色经济不仅可以推动我国经济发展，还能为环保事业出一份力，因此我们在日常生活中也要鼓励和支持绿色经济，让绿色食品走进千家万户。</p>
+                    <div class="note">
+                        注：<br>
+                        增长（increase）：growth<br>
+                        拉动（pull）：drive<br>
+                        规模（scale）：scale<br>
+                        壮大（zhuàngdà）：expand<br>
+                        监管（supervise）：supervise
+                    </div>
+                </div>
+            </div>
+
+            <!-- 题目区域（2/5高度） -->
+            <div class="questions-wrapper">
+                <h3 class="section-title">第二章 题目（共15分）</h3>
+                <div class="question-item" data-answer="D" data-score="3" data-chapter="2">
+                    <p>1. 阅读短文，将①至④排列顺序，使短文内容完整（3分）</p>
+                    <div class="select-question">
+                        <select name="q9">
+                            <option value="">请选择</option>
+                            <option value="A">A. ②①④③</option>
+                            <option value="B">B. ②④①③</option>
+                            <option value="C">C. ④①②③</option>
+                            <option value="D">D. ④②①③</option>
+                        </select>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="3" data-chapter="2">
+                    <p>2. 绿色食品在产品上没有标志。</p>
+                    <div class="option">
+                        <input type="radio" name="q10" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q10" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="3" data-chapter="2">
+                    <p>3. 绿色食品的开发已具规模。</p>
+                    <div class="option">
+                        <input type="radio" name="q11" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q11" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="3" data-chapter="2">
+                    <p>4. 绿色食品不是新兴产业。</p>
+                    <div class="option">
+                        <input type="radio" name="q12" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q12" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="3" data-chapter="2">
+                    <p>5. 绿色食品在价格方面太贵。</p>
+                    <div class="option">
+                        <input type="radio" name="q13" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q13" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三章：文章+题目 上下布局 -->
+        <div class="chapter-container" id="chapter3-container">
+            <!-- 文章区域（3/5高度） -->
+            <div class="article-wrapper">
+                <h2 class="section-title">三、阅读文章三（共26分）</h2>
+                <div class="article">
+                    <h3>文章三 一生的职业</h3>
+                    <p>结婚前，她是一名成功的律师。结婚后，丈夫很支持她的事业。第二年，她生了一个儿子。</p>
+                    <p>后来，她又工作，又一次出了名。有人说，她将来会成为国内律师中最杰出的一位女性，所有的人都坚信这一点。</p>
+                    <p>没想到的事情发生了。儿子三岁那年，得了一种怪病。作为母亲的她特别伤心，不得不放下工作回家照顾儿子。一年过去了，所有的医生都摇头，他们说：“没有药物可以治疗，只能靠细心照顾，用爱和关怀来创造奇迹。”</p>
+                    <p>许多人劝她重新去当律师，挣的钱一定能够养活儿子。她坚决地摇头：“儿子需要的不是钱，是母亲的时间和母亲的关心，我把他带到人间，我就应该为他的一生负责。”</p>
+                    <p>她完全成了家庭妇女，细心地照顾儿子，什么事情都要自己亲自动手。就这样，她成了一个真正的母亲，一个标准的妻子。丈夫想代替她，她不愿意；同行劝她找一个保姆，她也不愿意。</p>
+                    <p>许多年过去了，人们忘记了她。可是她的儿子病好了，长成了一个男子汉，以优秀的成绩考入了一所著名的医科大学。儿子要成为一名医生，用自己的成功来补偿母亲。</p>
+                    <p>以前的同事来看她，他们都成名了。她平静地坐在他们中间。有人说，她本来也可以成为有名的律师。</p>
+                    <p>她笑了，说：“对于一个母亲来讲，任何工作都只是暂时的，只有一样工作是一生的职业，那就是爱孩子。我明白，我首先是一个母亲，然后才是一名律师或者别的什么。”</p>
+                    <div class="note">
+                        注：<br>
+                        律师：lawyer<br>
+                        杰出：outstanding<br>
+                        奇迹：miracle<br>
+                        保姆：baby sitter<br>
+                        补偿：compensate<br>
+                        暂时：temporary
+                    </div>
+                </div>
+            </div>
+
+            <!-- 题目区域（2/5高度） -->
+            <div class="questions-wrapper">
+                <h3 class="section-title">第三章 题目（共26分）</h3>
+                <div class="question-item" data-answer="B" data-score="3" data-chapter="3">
+                    <p>1. 文章的主要内容是？</p>
+                    <div class="select-question">
+                        <select name="q14">
+                            <option value="">请选择</option>
+                            <option value="A">A. 亲情</option>
+                            <option value="B">B. 母爱</option>
+                            <option value="C">C. 职业的选择</option>
+                            <option value="D">D. 孩子的教育</option>
+                        </select>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="C" data-score="3" data-chapter="3">
+                    <p>2. 所有的人都相信她会成为国内律师中最杰出的一位女性，因为？</p>
+                    <div class="select-question">
+                        <select name="q15">
+                            <option value="">请选择</option>
+                            <option value="A">A. 她有一个好儿子</option>
+                            <option value="B">B. 她有一个好丈夫</option>
+                            <option value="C">C. 她很能干</option>
+                            <option value="D">D. 她以前很出名</option>
+                        </select>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="A" data-score="3" data-chapter="3">
+                    <p>3. 她一切都要自己亲自动手，这说明了什么？</p>
+                    <div class="select-question">
+                        <select name="q16">
+                            <option value="">请选择</option>
+                            <option value="A">A. 她照顾儿子很细心</option>
+                            <option value="B">B. 她喜欢做家庭妇女</option>
+                            <option value="C">C. 她不想当律师了</option>
+                            <option value="D">D. 她没有别的选择</option>
+                        </select>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="B" data-score="3" data-chapter="3">
+                    <p>4. 对于这位母亲来说？</p>
+                    <div class="select-question">
+                        <select name="q17">
+                            <option value="">请选择</option>
+                            <option value="A">A. 爱儿子和工作一样重要</option>
+                            <option value="B">B. 爱儿子比工作更重要</option>
+                            <option value="C">C. 工作比爱儿子重要</option>
+                            <option value="D">D. 爱儿子和工作都不重要</option>
+                        </select>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="2" data-chapter="3">
+                    <p>5. 生了孩子以后丈夫不太支持她的事业。</p>
+                    <div class="option">
+                        <input type="radio" name="q18" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q18" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="2" data-chapter="3">
+                    <p>6. 她的婚姻影响了她事业上的发展。</p>
+                    <div class="option">
+                        <input type="radio" name="q19" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q19" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="2" data-chapter="3">
+                    <p>7. 儿子得怪病后她放弃了工作。</p>
+                    <div class="option">
+                        <input type="radio" name="q20" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q20" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <p style="margin: 10px 0 5px 0; font-size: 14px; color: #34495e;">选项：A.她首先是母亲… B.但是她坐在… C.许多年过去… D.她完全成了… E.作为母亲的她… F.她会成为国内…</p>
+                <div class="question-item" data-answer="F" data-score="2" data-chapter="3">
+                    <p>8. 她很能干，有人说________________。</p>
+                    <div class="select-question">
+                        <select name="q22">
+                            <option value="">请选择</option>
+                            <option value="A">A. 她首先是一个母亲，然后才是一名律师</option>
+                            <option value="B">B. 但是她坐在他们中间，非常平静</option>
+                            <option value="C">C. 许多年过去了，人们忘记了她</option>
+                            <option value="D">D. 她完全成了家庭妇女</option>
+                            <option value="E">E. 作为母亲的她不得不回家照顾儿子</option>
+                            <option value="F">F. 她会成为国内律师中最杰出的女性</option>
+                        </select>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第四章：文章+题目 上下布局 -->
+        <div class="chapter-container" id="chapter4-container">
+            <!-- 文章区域（3/5高度） -->
+            <div class="article-wrapper">
+                <h2 class="section-title">四、阅读文章四（共12分）</h2>
+                <div class="article">
+                    <h3>文章四 新汉语水平考试HSK报名通知</h3>
+                    <p>各位国际学生：</p>
+                    <p>2024年2月8日开考的HSK考试报名即日起开始，请登录www.chinesetest.cn进行网上报名。</p>
+                    <p>一、考试对象：优先面向本校学生</p>
+                    <p>二、报名截止日期：2024年1月12日15:00。</p>
+                    <p>三、缴费截止日期：2024年1月12日15:00。</p>
+                    <p>四、报名流程：</p>
+                    <p>1. 注册：请登录www.chinesetest.cn进行注册并选择相应级别进行报名。</p>
+                    <p>2. 选择考点：请选择 “中国 – 广东 – 深圳 – 深圳北理莫斯科大学”。</p>
+                    <p>3. 缴费：报名注册成功后，请确认缴费成功，缴费不成功者本次报考无效。</p>
+                    <p>4. 考试日期：HSK四、六级：2月8日上午09:00；HSK三、五级：2月8日下午13:30</p>
+                    <p>5. 成绩查询：考试后30天，考生可登录www.chinesetest.cn查询个人成绩。</p>
+                    <p>五、温馨提示：</p>
+                    <p>1. 报名系统将于1月12日15:00自动关闭，逾期将不能报考。</p>
+                    <p>2. 为了更好地了解汉语水平考试及报考注意事项，请考生自行下载并阅读《汉语水平考试考生手册》，下载地址：https://www.chinesetest.cn/godownload.do</p>
+                    <p>六、考务办公室地址：</p>
+                    <p>深圳北理莫斯科大学主楼238办公室。</p>
+                    <p>七、咨询电话：</p>
+                    <p>0755-85951103</p>
+                    <p>深圳北理莫斯科大学汉语中心</p>
+                    <p>2023年12月27日</p>
+                </div>
+            </div>
+
+            <!-- 题目区域（2/5高度） -->
+            <div class="questions-wrapper">
+                <h3 class="section-title">第四章 题目（共12分）</h3>
+                <div class="question-item" data-answer="2024年1月12日15:00" data-score="3" data-chapter="4">
+                    <p>1. 如果要参加这次考试，应该在________________前报名。</p>
+                    <div class="fill-blank">
+                        <input type="text" name="q25">
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="2月8日上午9:00" data-score="3" data-chapter="4">
+                    <p>2. HSK四级的考试时间是________________。</p>
+                    <div class="fill-blank">
+                        <input type="text" name="q26">
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="深圳北理莫斯科大学主楼238办公室" data-score="3" data-chapter="4">
+                    <p>3. 考务办公室的地址是________________。</p>
+                    <div class="fill-blank">
+                        <input type="text" name="q27">
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="《汉语水平考试考生手册》" data-score="3" data-chapter="4">
+                    <p>4. 如果需要了解汉语水平考试，需要下载并阅读________________。</p>
+                    <div class="fill-blank">
+                        <input type="text" name="q28">
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第五章：文章+题目 上下布局 -->
+        <div class="chapter-container" id="chapter5-container">
+            <!-- 文章区域（3/5高度） -->
+            <div class="article-wrapper">
+                <h2 class="section-title">五、阅读文章五（共23分）</h2>
+                <div class="article">
+                    <h3>文章五 写字，不能被取代的价值</h3>
+                    <p>【1】高铁上，我旁边一位女士抱怨说：“现在一切都用电脑了，还写什么字！电脑打字又快又好，何必浪费时间去写字！”我不敢多言，脑中却浮现多年前做的一个实验——一位四十五岁中风的妇女，她能听写，却不认得写出来的字，即失语症，她很不甘心，便用手指在空中反复地写，不久就认出那个字来了。我当时很惊讶，这是第一次知道，笔顺是除了形音义外，另外一条进入大脑的路。的确，很多时候，别人不知道你在讲哪个同音字时，当你在空中写那个字，他看到马上就会懂得，因为笔顺一样。</p>
+                    <p>【2】我们的大脑是凡走过必留下痕迹，留下的痕迹愈深，记忆愈好。思考时，牵扯到大脑别的部位的回路，用的资源最多，留下的痕迹深，所以孔子说“学而不思则罔”。写字要指挥手的肌肉运动，肌肉的运动也是一种记忆，就强化了这个字的练习。</p>
+                    <p>【3】最近有个实验，研究者将还不会读和写的幼儿园孩子带到实验室，请他们将英文字母写出或描红出来，第三组则是在键盘上找到这个字母把它打出来。学习完毕，请他们躺在核磁共振中，给他们看刚刚看过的字。结果写字组、描红组和打字组在大脑活化的强度不同，写字组最强，打字组最弱，所以自己动手写字比描红和打字在大脑中留下的痕迹深，对认字更有帮助。</p>
+                    <p>【4】另一个实验是追踪小学二年级到五年级的学生，观察他们写字和打字对学习的帮助。结果发现不同的做法动用到的大脑区域不同，自己动手写字在工作记忆上的效果最好，对阅读和识字系统的激发最强。</p>
+                    <p>【5】其实，早在这些大脑造影实验之前，神经心理学家就看到有些中风的病人不能读或写字，但能一个字母一个字母拼出那个字；也有病人正好相反，表示这两种方法在大脑储存的地方不同。西雅图华盛顿大学的研究者甚至认为写字可以训练孩子的自我控制，让孩子静下来。在这一点上，中国人一向认为练字是修身养性的好方法，写字虽然是动手，练的字却是心，心不静，字写得不好。孩子练字，透过手的动作，既学会了这个字，也静下了他的心。而现代人功利，一切只讲求结果，忘记了过程才是重要的。机器有时可以替代人力，但那些美好的、灵性的东西是无法替代的，就像没有任何一个电脑合成音可以像人的歌声一样美妙。</p>
+                    <div class="note">
+                        注：<br>
+                        实验：experiment<br>
+                        中风：stroke<br>
+                        失语症：alexia without agraphia<br>
+                        笔顺：stroke order<br>
+                        大脑：brain<br>
+                        痕迹：trace<br>
+                        肌肉：muscle<br>
+                        记忆：memory<br>
+                        键盘：keyboard<br>
+                        核磁共振：MRI<br>
+                        区域：area<br>
+                        激发：stimulate; stimulus<br>
+                        储存：storage<br>
+                        电脑合成音：computer synthesized sound
+                    </div>
+                </div>
+            </div>
+
+            <!-- 题目区域（2/5高度） -->
+            <div class="questions-wrapper">
+                <h3 class="section-title">第五章 题目（共23分）</h3>
+                <div class="question-item" data-answer="×" data-score="3" data-chapter="5">
+                    <p>1. 从第【1】段可以知道，笔顺和音形义通过相同的路进入大脑。</p>
+                    <div class="option">
+                        <input type="radio" name="q29" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q29" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="3" data-chapter="5">
+                    <p>2. 从第【2】段可以知道，写字可以强化对一个字的练习。</p>
+                    <div class="option">
+                        <input type="radio" name="q30" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q30" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="3" data-chapter="5">
+                    <p>3. 第【3】段核磁共振的实验结果告诉我们，写字对认字更有帮助。</p>
+                    <div class="option">
+                        <input type="radio" name="q31" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q31" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="3" data-chapter="5">
+                    <p>4. 第【4】段对小学生的追踪实验发现，写字和打字动用大脑的不同区域。</p>
+                    <div class="option">
+                        <input type="radio" name="q32" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q32" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="3" data-chapter="5">
+                    <p>5. 第【5】段告诉我们，书写可以让孩子练“字”，但不能让孩子练“心”。</p>
+                    <div class="option">
+                        <input type="radio" name="q33" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q33" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="写字会强化这个字的练习是因为它动用了更多的资源，即肌肉的运动，肌肉的运动也是一种记忆。" data-score="4" data-chapter="5">
+                    <p>6. 第【1】段中风的妇女可以听和说，却不认得写出来的字，但她通过用手指在空中写就能认出那个字，原因是什么呢？</p>
+                    <div class="textarea-question">
+                        <textarea name="q34"></textarea>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 答题按钮 -->
+        <div class="btn-group">
+            <button class="btn btn-check" id="check-answers">检查答案</button>
+            <button class="btn btn-reset" id="reset-answers">重置答题</button>
+        </div>
+
+        <!-- 答题结果 -->
+        <div class="result-section" id="result">
+            <h3>答题结果</h3>
+            <p>总分：<span id="total-score">0</span>/100分</p>
+            <p>答对题目数：<span id="correct-count">0</span>道</p>
+            <p>答错题目数：<span id="wrong-count">0</span>道</p>
+            <div id="wrong-questions">
+                <h4 style="color: #e74c3c; font-size: 14px;">答错的题目及正确答案：</h4>
+                <ul class="wrong-list" id="wrong-list"></ul>
+            </div>
+        </div>
+
+        <!-- HSK4级及以上词汇汇总 -->
+        <div class="vocab-section" id="vocab-section">
+            <h2 class="section-title">HSK4级及以上难度词汇汇总</h2>
+            <table class="vocab-table">
+                <tr>
+                    <<th>词汇</</th>
+                    <<th>拼音</</th>
+                    <<th>英文</</th>
+                    <<th>俄文</</th>
+                </tr>
+                <tr>
+                    <td>兴趣</td>
+                    <td>xìngqù</td>
+                    <td>interest</td>
+                    <td>интерес</td>
+                </tr>
+                <tr>
+                    <td>理想</td>
+                    <td>lǐxiǎng</td>
+                    <td>ideal</td>
+                    <td>идеал</td>
+                </tr>
+                <tr>
+                    <td>宣传</td>
+                    <td>xuānchuán</td>
+                    <td>publicize</td>
+                    <td>пропагандировать</td>
+                </tr>
+                <tr>
+                    <td>环保</td>
+                    <td>huánbǎo</td>
+                    <td>environmental protection</td>
+                    <td>экологическая защита</td>
+                </tr>
+                <tr>
+                    <td>男子汉</td>
+                    <td>nánzǐhàn</td>
+                    <td>manly man</td>
+                    <td>мужчина</td>
+                </tr>
+                <tr>
+                    <td>知名度</td>
+                    <td>zhīmíngdù</td>
+                    <td>popularity</td>
+                    <td>популярность</td>
+                </tr>
+                <tr>
+                    <td>规模</td>
+                    <td>guīmó</td>
+                    <td>scale</td>
+                    <td>масштаб</td>
+                </tr>
+                <tr>
+                    <td>促进</td>
+                    <td>cùjìn</td>
+                    <td>promote</td>
+                    <td>способствовать</td>
+                </tr>
+                <tr>
+                    <td>律师</td>
+                    <td>lǜshī</td>
+                    <td>lawyer</td>
+                    <td>юрист</td>
+                </tr>
+                <tr>
+                    <td>杰出</td>
+                    <td>jiéchū</td>
+                    <td>outstanding</td>
+                    <td>выдающийся</td>
+                </tr>
+                <tr>
+                    <td>奇迹</td>
+                    <td>qíjì</td>
+                    <td>miracle</td>
+                    <td>чудо</td>
+                </tr>
+                <tr>
+                    <td>补偿</td>
+                    <td>bǔcháng</td>
+                    <td>compensate</td>
+                    <td>компенсировать</td>
+                </tr>
+                <tr>
+                    <td>截止</td>
+                    <td>jiézhǐ</td>
+                    <td>deadline</td>
+                    <td>крайний срок</td>
+                </tr>
+                <tr>
+                    <td>注册</td>
+                    <td>zhùcè</td>
+                    <td>register</td>
+                    <td>регистрироваться</td>
+                </tr>
+                <tr>
+                    <td>中风</td>
+                    <td>zhòngfēng</td>
+                    <td>stroke</td>
+                    <td>инсульт</td>
+                </tr>
+                <tr>
+                    <td>笔顺</td>
+                    <td>bǐshùn</td>
+                    <td>stroke order</td>
+                    <td>порядок мазков</td>
+                </tr>
+                <tr>
+                    <td>肌肉</td>
+                    <td>jīròu</td>
+                    <td>muscle</td>
+                    <td>мускул</td>
+                </tr>
+                <tr>
+                    <td>修身养性</td>
+                    <td>xiūshēn yǎngxìng</td>
+                    <td>cultivate moral character</td>
+                    <td>культивировать нравственность</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // 章节切换
+        const chapterTabs = document.querySelectorAll('.chapter-tab');
+        const chapterContainers = document.querySelectorAll('.chapter-container');
+        
+        chapterTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const chapter = this.getAttribute('data-chapter');
+                
+                // 切换章节容器
+                chapterContainers.forEach(container => {
+                    container.classList.remove('active');
+                });
+                document.getElementById(`chapter${chapter}-container`).classList.add('active');
+                
+                // 切换按钮样式
+                chapterTabs.forEach(t => {
+                    t.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+
+        // 检查答案功能
+        document.getElementById('check-answers').addEventListener('click', function() {
+            let totalScore = 0;
+            let correctCount = 0;
+            let wrongCount = 0;
+            let wrongList = [];
+
+            // 获取所有题目
+            const questions = document.querySelectorAll('.question-item');
+
+            questions.forEach((question, index) => {
+                const questionNum = index + 1;
+                const correctAnswer = question.getAttribute('data-answer');
+                const score = parseInt(question.getAttribute('data-score'));
+                const feedback = question.querySelector('.feedback');
+                let userAnswer = '';
+
+                // 判断题目类型
+                const radioInputs = question.querySelectorAll('input[type="radio"]:checked');
+                const selectInput = question.querySelector('select');
+                const textInput = question.querySelector('input[type="text"]');
+                const textareaInput = question.querySelector('textarea');
+
+                if (radioInputs.length > 0) {
+                    userAnswer = radioInputs[0].value;
+                } else if (selectInput && selectInput.value) {
+                    userAnswer = selectInput.value;
+                } else if (textInput && textInput.value) {
+                    userAnswer = textInput.value.trim();
+                } else if (textareaInput && textareaInput.value) {
+                    userAnswer = textareaInput.value.trim();
+                }
+
+                // 比较答案
+                let isCorrect = false;
+                if (textareaInput) {
+                    const correctAnswers = correctAnswer.split('；');
+                    isCorrect = correctAnswers.some(ans => userAnswer.includes(ans.trim()));
+                } else {
+                    isCorrect = userAnswer === correctAnswer;
+                }
+
+                // 更新反馈和分数
+                if (isCorrect) {
+                    feedback.textContent = '正确';
+                    feedback.className = 'feedback correct';
+                    totalScore += score;
+                    correctCount++;
+                } else {
+                    feedback.textContent = `错误，正确答案：${correctAnswer}`;
+                    feedback.className = 'feedback incorrect';
+                    wrongCount++;
+                    const chapter = question.getAttribute('data-chapter');
+                    wrongList.push(`第${chapter}章第${getQuestionIndexInChapter(question, chapter)}题：正确答案为${correctAnswer}`);
+                }
+            });
+
+            // 显示结果
+            document.getElementById('total-score').textContent = totalScore;
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('wrong-count').textContent = wrongCount;
+
+            const wrongListElement = document.getElementById('wrong-list');
+            wrongListElement.innerHTML = '';
+            wrongList.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                wrongListElement.appendChild(li);
+            });
+
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('vocab-section').style.display = 'block';
+        });
+
+        // 获取题目在本章中的序号
+        function getQuestionIndexInChapter(question, chapter) {
+            const chapterQuestions = document.querySelectorAll(`.question-item[data-chapter="${chapter}"]`);
+            let index = 0;
+            chapterQuestions.forEach((q, i) => {
+                if (q === question) {
+                    index = i + 1;
+                    return false;
+                }
+            });
+            return index;
+        }
+
+        // 重置答题功能
+        document.getElementById('reset-answers').addEventListener('click', function() {
+            // 重置所有输入
+            document.querySelectorAll('input[type="radio"]:checked').forEach(input => {
+                input.checked = false;
+            });
+            document.querySelectorAll('select').forEach(select => {
+                select.value = '';
+            });
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                input.value = '';
+            });
+            document.querySelectorAll('textarea').forEach(textarea => {
+                textarea.value = '';
+            });
+
+            // 重置反馈
+            document.querySelectorAll('.feedback').forEach(feedback => {
+                feedback.textContent = '';
+                feedback.className = 'feedback';
+            });
+
+            // 隐藏结果和词汇表
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('vocab-section').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

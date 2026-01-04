@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>23级汉语言专业中级汉语阅读1 期末考试（B卷）</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+            line-height: 1.8;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 30px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #2c3e50;
+        }
+        .header h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .exam-info {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .exam-info div {
+            flex: 1;
+            min-width: 200px;
+            margin: 5px 0;
+            color: #34495e;
+        }
+        .exam-info span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .student-info {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .student-info .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .student-info label {
+            display: inline-block;
+            width: 80px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        .student-info input {
+            padding: 10px;
+            width: calc(100% - 90px);
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        /* 章节切换按钮 */
+        .chapter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .chapter-tab {
+            padding: 8px 15px;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .chapter-tab.active {
+            background-color: #3498db;
+            color: #fff;
+        }
+        /* 文章+题目容器 - 上下布局 */
+        .chapter-container {
+            display: none;
+            margin-bottom: 40px;
+        }
+        .chapter-container.active {
+            display: block;
+        }
+        /* 文章区域 - 占3/5高度 */
+        .article-wrapper {
+            height: 45vh; /* 占视口高度3/5，适配不同屏幕 */
+            margin-bottom: 20px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .article h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .article .note {
+            margin-top: 15px;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        /* 题目区域 - 占2/5高度 */
+        .questions-wrapper {
+            height: 30vh; /* 占视口高度2/5 */
+            overflow-y: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        .section-title {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        /* 题目样式 */
+        .question-item {
+            margin-bottom: 15px;
+            padding: 12px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #3498db;
+        }
+        .question-item p {
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .option {
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+        }
+        .option input {
+            margin-right: 8px;
+        }
+        .option label {
+            color: #34495e;
+            cursor: pointer;
+        }
+        .fill-blank input {
+            padding: 8px;
+            width: 220px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-left: 8px;
+        }
+        .textarea-question textarea {
+            padding: 8px;
+            width: 100%;
+            height: 80px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            font-size: 13px;
+            margin-left: 0;
+            margin-top: 8px;
+        }
+        .select-question select {
+            padding: 8px;
+            width: 250px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-left: 8px;
+            color: #34495e;
+        }
+        /* 词汇汇总样式 */
+        .vocab-section {
+            margin-top: 30px;
+            display: none;
+        }
+        .vocab-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 12px;
+        }
+        .vocab-table th, .vocab-table td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        .vocab-table th {
+            background-color: #3498db;
+            color: #fff;
+            font-weight: bold;
+        }
+        .vocab-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        /* 按钮样式 */
+        .btn-group {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 0 8px;
+            transition: all 0.3s;
+        }
+        .btn-check {
+            background-color: #27ae60;
+            color: #fff;
+        }
+        .btn-check:hover {
+            background-color: #219653;
+        }
+        .btn-reset {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+        .btn-reset:hover {
+            background-color: #c0392b;
+        }
+        /* 结果样式 */
+        .result-section {
+            display: none;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #27ae60;
+        }
+        .result-section h3 {
+            color: #27ae60;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .result-section p {
+            margin-bottom: 8px;
+            color: #34495e;
+            font-size: 14px;
+        }
+        .wrong-list {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .wrong-list li {
+            margin-bottom: 6px;
+            color: #e74c3c;
+            font-size: 13px;
+        }
+        .feedback {
+            margin-left: 10px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .correct {
+            color: #27ae60;
+        }
+        .incorrect {
+            color: #e74c3c;
+        }
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            .student-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .student-info input {
+                width: 100%;
+            }
+            .article-wrapper {
+                height: 35vh;
+            }
+            .questions-wrapper {
+                height: 40vh;
+            }
+            .fill-blank input, .select-question select {
+                width: 100%;
+                margin-left: 0;
+                margin-top: 8px;
+            }
+            .btn {
+                display: block;
+                margin: 10px auto;
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>深圳北理莫斯科大学汉语中心期末考试试卷</h1>
+            <p>中级汉语阅读1 - B卷</p>
+        </div>
+
+        <div class="student-info">
+            <div class="form-group">
+                <label>院系/专业：</label>
+                <input type="text" placeholder="请填写">
+            </div>
+            <div class="form-group">
+                <label>姓名：</label>
+                <input type="text" placeholder="请填写">
+            </div>
+            <div class="form-group">
+                <label>学号：</label>
+                <input type="text" placeholder="请填写">
+            </div>
+        </div>
+
+        <div class="exam-info">
+            <div><span>考试班级：</span>23级汉语言专业班</div>
+            <div><span>A/B卷：</span>B卷</div>
+            <div><span>课程名称：</span>中级汉语阅读1</div>
+            <div><span>考试时间：</span>2025年1月8日</div>
+        </div>
+
+        <!-- 章节切换按钮 -->
+        <div class="chapter-tabs">
+            <button class="chapter-tab active" data-chapter="1">第一章：拾金不昧</button>
+            <button class="chapter-tab" data-chapter="2">第二章：从中学到大学都没有的知识</button>
+            <button class="chapter-tab" data-chapter="3">第三章：少吃可以多活</button>
+            <button class="chapter-tab" data-chapter="4">第四章：HSK报名通知</button>
+            <button class="chapter-tab" data-chapter="5">第五章：写字的价值</button>
+        </div>
+
+        <!-- 第一章：文章+题目 上下布局 -->
+        <div class="chapter-container active" id="chapter1-container">
+            <!-- 文章区域（3/5高度） -->
+            <div class="article-wrapper">
+                <h2 class="section-title">一、阅读文章一（共24分）</h2>
+                <div class="article">
+                    <h3>文章一 拾金不昧</h3>
+                    <p>人人都有过丢东西的经历。丢东西的人都希望有人会“拾金不昧”，把东西还回来。那么，对“拾金不昧”的人应不应该给钱表示感谢呢？</p>
+                    <p>故事一：</p>
+                    <p>王女士坐出租车时，不小心把钱包掉在了车上。按照发票上的电话，她找到了出租车司机。第二天，当师傅把钱包还给她的时候，她主动给了司机100元钱。王女士说：“钱包是我自己不小心掉的，司机给我送回来，应该付给他钱表示感谢。”</p>
+                    <p>故事二：</p>
+                    <p>李女士捡到一个提包，包里约有15万元的现金。几天后，李女士在报纸上看到一个寻物启事：愿意花1.5万元找这个提包。可是当李女士把提包还给失主的时候，失主却没付给她1.5万元。</p>
+                    <p>对“拾金不昧”的人，应该怎么表示感谢？你们国家是怎么做的？有没有什么法律规定？</p>
+                    <div class="note">
+                        注：<br>
+                        拾金不昧：not pocket the money one picks up<br>
+                        寻物启事：lost notice<br>
+                        法律规定：legal provisions
+                    </div>
+                </div>
+            </div>
+
+            <!-- 题目区域（2/5高度） -->
+            <div class="questions-wrapper">
+                <h3 class="section-title">第一章 题目（共24分）</h3>
+                <div class="question-item" data-answer="√" data-score="3" data-chapter="1">
+                    <p>1. 文章认为每个人都丢过东西。</p>
+                    <div class="option">
+                        <input type="radio" name="q1" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q1" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="3" data-chapter="1">
+                    <p>2. 丢东西的人都拾金不昧。</p>
+                    <div class="option">
+                        <input type="radio" name="q2" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q2" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="3" data-chapter="1">
+                    <p>3. 出租车司机捡到了王女士的钱包。</p>
+                    <div class="option">
+                        <input type="radio" name="q3" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q3" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="3" data-chapter="1">
+                    <p>4. 王女士认为应该付给司机感谢费。</p>
+                    <div class="option">
+                        <input type="radio" name="q4" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q4" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="3" data-chapter="1">
+                    <p>5. 李女士收到1.5万元的感谢费后才把包还给了失主。</p>
+                    <div class="option">
+                        <input type="radio" name="q5" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q5" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="3" data-chapter="1">
+                    <p>6. 失主给了李女士很多钱。</p>
+                    <div class="option">
+                        <input type="radio" name="q6" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q6" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="3" data-chapter="1">
+                    <p>7. “拾金不昧”的意思是捡到了东西把东西还回去。</p>
+                    <div class="option">
+                        <input type="radio" name="q7" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q7" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="3" data-chapter="1">
+                    <p>8. 法律规定人们要感谢“拾金不昧”的人。</p>
+                    <div class="option">
+                        <input type="radio" name="q8" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q8" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第二章：文章+题目 上下布局 -->
+        <div class="chapter-container" id="chapter2-container">
+            <!-- 文章区域（3/5高度） -->
+            <div class="article-wrapper">
+                <h2 class="section-title">二、阅读文章二（共17分）</h2>
+                <div class="article">
+                    <h3>文章二 从中学到大学都没有的知识</h3>
+                    <p>大学就要毕业了，来上课的人不多。</p>
+                    <p>老师在黑板上写下了“中学到大学”几个字，问：“知道它的意思吗？”</p>
+                    <p>学生们笑起来。老师又写了“都没有的知识”几个字，问：“谁来念一下？”</p>
+                    <p>没有人愿意当“小学生”。老师只好自己念：“中学到大学都没有的知识。”</p>
+                    <p>老师又在前边加了一个“从”字，有个学生小声念：“从中学到大学都没有的知识。”老师立刻指着他：“请你朗读一下这句话。”</p>
+                    <p>那个学生有点儿不好意思，念道：“从中学/到大学/都没有的/知识。”</p>
+                    <p>同学们大笑起来。</p>
+                    <p>老师问：“他念得对吗？”没人回答。</p>
+                    <p>老师又问：“没有别的读法吗？”</p>
+                    <p>这时有人问：“他念得不对吗？”</p>
+                    <p>老师回答：“只对了一半”台下立刻安静了。老师开始念：“从中/学到/大学都没有的/知识！”</p>
+                    <p>老师说：“毕业以前，我想告诉大家，社会是个大课堂，在那里，有你们‘从中学/到大学/都没有的/知识’，而你们又必须‘从中/学到/大学都没有的/知识’。”</p>
+                    <p>教室里响起一片掌声。</p>
+                </div>
+            </div>
+
+            <!-- 题目区域（2/5高度） -->
+            <div class="questions-wrapper">
+                <h3 class="section-title">第二章 题目（共17分）</h3>
+                <div class="question-item" data-answer="×" data-score="2" data-chapter="2">
+                    <p>1. 老师觉得同学们没有知识。</p>
+                    <div class="option">
+                        <input type="radio" name="q9" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q9" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="2" data-chapter="2">
+                    <p>2. 学生们不想读老师写的句子，是因为太简单。</p>
+                    <div class="option">
+                        <input type="radio" name="q10" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q10" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="2" data-chapter="2">
+                    <p>3. 老师觉得那个学生完全读错了。</p>
+                    <div class="option">
+                        <input type="radio" name="q11" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q11" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="2" data-chapter="2">
+                    <p>4. 老师认为这句话有不同的读法。</p>
+                    <div class="option">
+                        <input type="radio" name="q12" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q12" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="2" data-chapter="2">
+                    <p>5. 老师认为学生们也应该从社会中学习。</p>
+                    <div class="option">
+                        <input type="radio" name="q13" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q13" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="从中学到大学都没有的知识" data-score="3" data-chapter="2">
+                    <p>6. 老师在黑板上写下了一句什么话？（3分）</p>
+                    <div class="textarea-question">
+                        <textarea name="q14"></textarea>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="两种读法：从中学/到大学/都没有的/知识；从中/学到/大学都没有的/知识。两种读法意思不同。" data-score="4" data-chapter="2">
+                    <p>7. 这个句子有哪两种读法？两种读法所表达的意思相同吗？（4分）</p>
+                    <div class="textarea-question">
+                        <textarea name="q15"></textarea>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三章：文章+题目 上下布局 -->
+        <div class="chapter-container" id="chapter3-container">
+            <!-- 文章区域（3/5高度） -->
+            <div class="article-wrapper">
+                <h2 class="section-title">三、阅读文章三（共24分）</h2>
+                <div class="article">
+                    <h3>文章三 少吃可以多活</h3>
+                    <p>面对自由基的侵犯，难道我们只能等死吗？除了细胞本身有防卫功能外，水果蔬菜中，也含有防卫物质，如维生素C和维生素E，它们都能杀死自由基，这样就可以使老化过程变慢。这也是建议大家要多吃水果蔬菜的原因。</p>
+                    <p>但是光吃水果和蔬菜，是不会很大程度延长寿命的，要减少体内自由基的产生，还有一个办法——就是少吃点儿，再少吃点儿。听上去有点儿不可理解，让我们看看，发生在两只老鼠身上的故事。</p>
+                    <p>对老鼠来说，一生的时间很快过去，几个月之内，就从婴儿到了少年、青年、中年，然后是老年，两岁多就要死去。但这是可以改变的。</p>
+                    <p>在一次实验中，研究人员挑选了两只老鼠，让其中一只老鼠放开肚子随便吃，过一种典型的终日吃喝玩乐式的日子，结果，两岁刚过，它就死了。另一只老鼠，则让它过一种斯巴达式的生活，只给它吃半饱，结果，它欢快活泼地活到三岁，才在真正的老年期死去。如果按照人来算，那就是120岁以后了。</p>
+                    <p>显然，大量的食物需要更多的氧气去消化，自然就会产生更多的自由基，这就是为什么少食长寿的秘密。</p>
+                    <p>然而少食，只能减少自由基的产生，最多不过是老得晚一点儿，而且少吃减肥是件太苦的事情。不管怎么说，大部分人都喜欢选择尽情地吃，而不愿意少吃一口。那么，如何过自由随便、想吃就吃的生活，同时还能长寿呢？我们还要继续寻找答案。</p>
+                    <div class="note">
+                        注：<br>
+                        侵犯：invade<br>
+                        防卫：defend<br>
+                        老化：ageing<br>
+                        典型：typical<br>
+                        消化：digest
+                    </div>
+                </div>
+            </div>
+
+            <!-- 题目区域（2/5高度） -->
+            <div class="questions-wrapper">
+                <h3 class="section-title">第三章 题目（共24分）</h3>
+                <div class="question-item" data-answer="A" data-score="2" data-chapter="3">
+                    <p>1. 正常老鼠的寿命是多长时间？（2分）</p>
+                    <div class="select-question">
+                        <select name="q16">
+                            <option value="">请选择</option>
+                            <option value="A">A. 两岁多</option>
+                            <option value="B">B. 几个月</option>
+                            <option value="C">C. 三岁以上</option>
+                            <option value="D">D. 文中没有提</option>
+                        </select>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="D" data-score="2" data-chapter="3">
+                    <p>2. 根据文章，下面哪句话说法正确？（2分）</p>
+                    <div class="select-question">
+                        <select name="q17">
+                            <option value="">请选择</option>
+                            <option value="A">A. 吃水果和蔬菜，可以大大延长寿命</option>
+                            <option value="B">B. 光吃水果和蔬菜，就可以延长寿命</option>
+                            <option value="C">C. 光吃水果和蔬菜不会延长寿命</option>
+                            <option value="D">D. 多吃水果和蔬菜延长寿命的作用很有限</option>
+                        </select>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="B" data-score="2" data-chapter="3">
+                    <p>3. 实验中，两只老鼠的寿命：（2分）</p>
+                    <div class="select-question">
+                        <select name="q18">
+                            <option value="">请选择</option>
+                            <option value="A">A. 随便吃的老鼠活得长</option>
+                            <option value="B">B. 只给吃半饱的老鼠活得长</option>
+                            <option value="C">C. 两只老鼠同时死去</option>
+                            <option value="D">D. 没有结果</option>
+                        </select>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="B" data-score="2" data-chapter="3">
+                    <p>4. 少吃减肥是件太苦的事情，意思是什么？（2分）</p>
+                    <div class="select-question">
+                        <select name="q19">
+                            <option value="">请选择</option>
+                            <option value="A">A. 大部分人都愿意少吃一口</option>
+                            <option value="B">B. 大部分人都喜欢尽情地吃</option>
+                            <option value="C">C. 大部分人都愿意通过少吃减肥</option>
+                            <option value="D">D. 大部分人都愿意减肥</option>
+                        </select>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="2" data-chapter="3">
+                    <p>5. 提倡大家多吃水果蔬菜是因为多吃水果蔬菜可以变得年轻。（2分）</p>
+                    <div class="option">
+                        <input type="radio" name="q20" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q20" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="2" data-chapter="3">
+                    <p>6. 随便吃的老鼠不到两岁就死了。（2分）</p>
+                    <div class="option">
+                        <input type="radio" name="q21" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q21" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="2" data-chapter="3">
+                    <p>7. 斯巴达式生活的老鼠活了120岁。（2分）</p>
+                    <div class="option">
+                        <input type="radio" name="q22" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q22" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="2" data-chapter="3">
+                    <p>8. 想吃就吃的生活对人的寿命并没有好处。（2分）</p>
+                    <div class="option">
+                        <input type="radio" name="q23" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q23" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="A" data-score="2" data-chapter="3">
+                    <p>9. 它们都能杀死自由基，这样就可以使老化过程变慢。（2分）</p>
+                    <div class="select-question">
+                        <select name="q24">
+                            <option value="">请选择</option>
+                            <option value="A">A. 变老的过程</option>
+                            <option value="B">B. 死的过程</option>
+                            <option value="C">C. 化学的过程</option>
+                            <option value="D">D. 消化的过程</option>
+                        </select>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="B" data-score="2" data-chapter="3">
+                    <p>10. 另一只老鼠则让它过一种斯巴达式的生活，只给它吃半饱。（2分）</p>
+                    <div class="select-question">
+                        <select name="q25">
+                            <option value="">请选择</option>
+                            <option value="A">A. 特别饱</option>
+                            <option value="B">B. 五分饱</option>
+                            <option value="C">C. 吃不饱</option>
+                            <option value="D">D. 吃一点儿</option>
+                        </select>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="B" data-score="2" data-chapter="3">
+                    <p>11. 大量的食物需要更多的氧气去消化。（2分）</p>
+                    <div class="select-question">
+                        <select name="q26">
+                            <option value="">请选择</option>
+                            <option value="A">A. 被身体消灭</option>
+                            <option value="B">B. 被身体吸收</option>
+                            <option value="C">C. 消失</option>
+                            <option value="D">D. 吃掉</option>
+                        </select>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="C" data-score="2" data-chapter="3">
+                    <p>12. 但是光吃水果和蔬菜，是不会很大程度延长寿命的。（2分）</p>
+                    <div class="select-question">
+                        <select name="q27">
+                            <option value="">请选择</option>
+                            <option value="A">A. 会使寿命变得更长</option>
+                            <option value="B">B. 会使寿命变得更短</option>
+                            <option value="C">C. 只会使寿命变长一点点</option>
+                            <option value="D">D. 不会使寿命变长</option>
+                        </select>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第四章：文章+题目 上下布局 -->
+        <div class="chapter-container" id="chapter4-container">
+            <!-- 文章区域（3/5高度） -->
+            <div class="article-wrapper">
+                <h2 class="section-title">四、阅读文章四（共12分）</h2>
+                <div class="article">
+                    <h3>文章四 新汉语水平考试HSK报名通知</h3>
+                    <p>各位国际学生：</p>
+                    <p>2023年12月18日开考的HSK考试报名即日起开始，请登录www.chinesetest.cn进行网上报名。</p>
+                    <p>一、考试对象：优先面向本校学生。</p>
+                    <p>二、报名截止日期：2023年11月8日15:00。</p>
+                    <p>三、缴费截止日期：2023年11月8日15:00。</p>
+                    <p>四、报名流程：</p>
+                    <p>1. 注册：请登录www.chinesetest.cn进行注册并选择相应级别进行报名。</p>
+                    <p>2. 选择考点：请选择 “中国 – 广东 – 深圳 – 深圳北理莫斯科大学”。</p>
+                    <p>3. 缴费：报名注册成功后，请确认缴费成功，缴费不成功者本次报考无效。</p>
+                    <p>4. 考试日期：HSK四、六级：12月18日上午09:00；HSK三、五级：12月18日下午13:30</p>
+                    <p>5. 成绩查询：考试后30天，考生可登录www.chinesetest.cn查询个人成绩。</p>
+                    <p>五、温馨提示：</p>
+                    <p>1. 报名系统将于11月8日15:00自动关闭，逾期将不能报考。</p>
+                    <p>2. 为了更好地了解汉语水平考试及报考注意事项，请考生自行下载并阅读《汉语水平考试考生手册》，下载地址：https://www.chinesetest.cn/godownload.do</p>
+                    <p>六、考务办公室地址：</p>
+                    <p>深圳北理莫斯科大学主楼238办公室。</p>
+                    <p>七、咨询电话：</p>
+                    <p>0755-87600079</p>
+                    <p>深圳北理莫斯科大学汉语中心</p>
+                    <p>2023年10月23日</p>
+                </div>
+            </div>
+
+            <!-- 题目区域（2/5高度） -->
+            <div class="questions-wrapper">
+                <h3 class="section-title">第四章 题目（共12分）</h3>
+                <div class="question-item" data-answer="本校学生" data-score="3" data-chapter="4">
+                    <p>1. 关于这次HSK考试，可以参加的人包括________________。（3分）</p>
+                    <div class="fill-blank">
+                        <input type="text" name="q28">
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="12月18日下午13:30" data-score="3" data-chapter="4">
+                    <p>2. 如果报考HSK五级，考试的时间是________________。（3分）</p>
+                    <div class="fill-blank">
+                        <input type="text" name="q29">
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="深圳北理莫斯科大学" data-score="3" data-chapter="4">
+                    <p>3. 本次考试的地点是________________。（3分）</p>
+                    <div class="fill-blank">
+                        <input type="text" name="q30">
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="更好地了解汉语水平考试及报考注意事项" data-score="3" data-chapter="4">
+                    <p>4. 阅读《汉语水平考试考生手册》可以________________。（3分）</p>
+                    <div class="fill-blank">
+                        <input type="text" name="q31">
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第五章：文章+题目 上下布局 -->
+        <div class="chapter-container" id="chapter5-container">
+            <!-- 文章区域（3/5高度） -->
+            <div class="article-wrapper">
+                <h2 class="section-title">五、阅读文章五（共23分）</h2>
+                <div class="article">
+                    <h3>文章五 写字，不能被取代的价值</h3>
+                    <p>【1】高铁上，我旁边一位女士抱怨说：“现在一切都用电脑了，还写什么字！电脑打字又快又好，何必浪费时间去写字！”我不敢多言，脑中却浮现多年前做的一个实验——一位四十五岁中风的妇女，她能听写，却不认得写出来的字，即失语症，她很不甘心，便用手指在空中反复地写，不久就认出那个字来了。我当时很惊讶，这是第一次知道，笔顺是除了形音义外，另外一条进入大脑的路。的确，很多时候，别人不知道你在讲哪个同音字时，当你在空中写那个字，他看到马上就会懂得，因为笔顺一样。</p>
+                    <p>【2】我们的大脑是凡走过必留下痕迹，留下的痕迹愈深，记忆愈好。思考时，牵扯到大脑别的部位的回路，用的资源最多，留下的痕迹深，所以孔子说“学而不思则罔”。写字要指挥手的肌肉运动，肌肉的运动也是一种记忆，就强化了这个字的练习。</p>
+                    <p>【3】最近有个实验，研究者将还不会读和写的幼儿园孩子带到实验室，请他们将英文字母写出或描红出来，第三组则是在键盘上找到这个字母把它打出来。学习完毕，请他们躺在核磁共振中，给他们看刚刚看过的字。结果写字组、描红组和打字组在大脑活化的强度不同，写字组最强，打字组最弱，所以自己动手写字比描红和打字在大脑中留下的痕迹深，对认字更有帮助。</p>
+                    <p>【4】另一个实验是追踪小学二年级到五年级的学生，观察他们写字和打字对学习的帮助。结果发现不同的做法动用到的大脑区域不同，自己动手写字在工作记忆上的效果最好，对阅读和识字系统的激发最强。</p>
+                    <p>【5】其实，早在这些大脑造影实验之前，神经心理学家就看到有些中风的病人不能读或写字，但能一个字母一个字母拼出那个字；也有病人正好相反，表示这两种方法在大脑储存的地方不同。西雅图华盛顿大学的研究者甚至认为写字可以训练孩子的自我控制，让孩子静下来。在这一点上，中国人一向认为练字是修身养性的好方法，写字虽然是动手，练的字却是心，心不静，字写得不好。孩子练字，透过手的动作，既学会了这个字，也静下了他的心。而现代人功利，一切只讲求结果，忘记了过程才是重要的。机器有时可以替代人力，但那些美好的、灵性的东西是无法替代的，就像没有任何一个电脑合成音可以像人的歌声一样美妙。</p>
+                    <div class="note">
+                        注：<br>
+                        实验：experiment<br>
+                        中风：stroke<br>
+                        失语症：alexia without agraphia<br>
+                        笔顺：stroke order<br>
+                        大脑：brain<br>
+                        痕迹：trace<br>
+                        肌肉：muscle<br>
+                        记忆：memory<br>
+                        键盘：keyboard<br>
+                        核磁共振：MRI<br>
+                        区域：area<br>
+                        激发：stimulate; stimulus<br>
+                        储存：storage<br>
+                        电脑合成音：computer synthesized sound
+                    </div>
+                </div>
+            </div>
+
+            <!-- 题目区域（2/5高度） -->
+            <div class="questions-wrapper">
+                <h3 class="section-title">第五章 题目（共23分）</h3>
+                <div class="question-item" data-answer="×" data-score="3" data-chapter="5">
+                    <p>1. 从第【1】段可以知道，笔顺和音形义通过相同的路进入大脑。（3分）</p>
+                    <div class="option">
+                        <input type="radio" name="q32" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q32" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="3" data-chapter="5">
+                    <p>2. 从第【2】段可以知道，写字可以强化对一个字的练习。（3分）</p>
+                    <div class="option">
+                        <input type="radio" name="q33" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q33" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="3" data-chapter="5">
+                    <p>3. 第【3】段核磁共振的实验结果告诉我们，写字对认字更有帮助。（3分）</p>
+                    <div class="option">
+                        <input type="radio" name="q34" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q34" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="√" data-score="3" data-chapter="5">
+                    <p>4. 第【4】段对小学生的追踪实验发现，写字和打字动用大脑的不同区域。（3分）</p>
+                    <div class="option">
+                        <input type="radio" name="q35" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q35" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="×" data-score="3" data-chapter="5">
+                    <p>5. 第【5】段告诉我们，书写可以让孩子练“字”，但不能让孩子练“心”。（3分）</p>
+                    <div class="option">
+                        <input type="radio" name="q36" value="√">
+                        <label>√</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q36" value="×">
+                        <label>×</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="写字会强化这个字的练习是因为它动用了更多的资源，即肌肉的运动，肌肉的运动也是一种记忆。" data-score="4" data-chapter="5">
+                    <p>6. 第【1】段中风的妇女可以听和说，却不认得写出来的字，但她通过用手指在空中写就能认出那个字，原因是什么呢？（4分）</p>
+                    <div class="textarea-question">
+                        <textarea name="q37"></textarea>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="question-item" data-answer="根据作者的观点，机器不能代替人力，因为电脑不能合成人那样美妙的歌声。" data-score="4" data-chapter="5">
+                    <p>7. 根据作者的观点，机器可以代替人力吗？为什么？（4分）</p>
+                    <div class="textarea-question">
+                        <textarea name="q38"></textarea>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 答题按钮 -->
+        <div class="btn-group">
+            <button class="btn btn-check" id="check-answers">检查答案</button>
+            <button class="btn btn-reset" id="reset-answers">重置答题</button>
+        </div>
+
+        <!-- 答题结果 -->
+        <div class="result-section" id="result">
+            <h3>答题结果</h3>
+            <p>总分：<span id="total-score">0</span>/100分</p>
+            <p>答对题目数：<span id="correct-count">0</span>道</p>
+            <p>答错题目数：<span id="wrong-count">0</span>道</p>
+            <div id="wrong-questions">
+                <h4 style="color: #e74c3c; font-size: 14px;">答错的题目及正确答案：</h4>
+                <ul class="wrong-list" id="wrong-list"></ul>
+            </div>
+        </div>
+
+        <!-- HSK4级及以上词汇汇总 -->
+        <div class="vocab-section" id="vocab-section">
+            <h2 class="section-title">HSK4级及以上难度词汇汇总</h2>
+            <table class="vocab-table">
+                <tr>
+                    <<th>词汇</</th>
+                    <<th>拼音</</th>
+                    <<th>英文</</th>
+                    <<th>俄文</</th>
+                </tr>
+                <tr>
+                    <td>拾金不昧</td>
+                    <td>shí jīn bù mèi</td>
+                    <td>not pocket the money one picks up</td>
+                    <td>не брать найденное деньги за себя</td>
+                </tr>
+                <tr>
+                    <td>寻物启事</td>
+                    <td>xún wù qǐ shì</td>
+                    <td>lost notice</td>
+                    <td>объявление о пропаже</td>
+                </tr>
+                <td>法律规定</td>
+                <td>fǎ lǜ guī dìng</td>
+                <td>legal provisions</td>
+                <td>законодательные положения</td>
+                </tr>
+                <tr>
+                    <td>感谢</td>
+                    <td>gǎn xiè</td>
+                    <td>thank, gratitude</td>
+                    <td>благодарность, благодарить</td>
+                </tr>
+                <tr>
+                    <td>现金</td>
+                    <td>xiàn jīn</td>
+                    <td>cash</td>
+                    <td>наличные деньги</td>
+                </tr>
+                <tr>
+                    <td>侵犯</td>
+                    <td>qīn fàn</td>
+                    <td>invade</td>
+                    <td>нападение, вторжение</td>
+                </tr>
+                <tr>
+                    <td>防卫</td>
+                    <td>fáng wèi</td>
+                    <td>defend</td>
+                    <td>оборона, защищаться</td>
+                </tr>
+                <tr>
+                    <td>老化</td>
+                    <td>lǎo huà</td>
+                    <td>ageing</td>
+                    <td>старение</td>
+                </tr>
+                <tr>
+                    <td>典型</td>
+                    <td>diǎn xíng</td>
+                    <td>typical</td>
+                    <td>типичный</td>
+                </tr>
+                <tr>
+                    <td>消化</td>
+                    <td>xiāo huà</td>
+                    <td>digest</td>
+                    <td>переваривать, пищеварение</td>
+                </tr>
+                <tr>
+                    <td>自由基</td>
+                    <td>zì yóu jī</td>
+                    <td>free radical</td>
+                    <td>свободный радикал</td>
+                </tr>
+                <tr>
+                    <td>延长</td>
+                    <td>yán cháng</td>
+                    <td>extend, prolong</td>
+                    <td>연장하다, простираться</td>
+                </tr>
+                <tr>
+                    <td>寿命</td>
+                    <td>shòu mìng</td>
+                    <td>lifespan</td>
+                    <td>срок жизни</td>
+                </tr>
+                <tr>
+                    <td>减肥</td>
+                    <td>jiǎn féi</td>
+                    <td>lose weight</td>
+                    <td>похудение</td>
+                </tr>
+                <tr>
+                    <td>注册</td>
+                    <td>zhù cè</td>
+                    <td>register</td>
+                    <td>регистрироваться</td>
+                </tr>
+                <tr>
+                    <td>缴费</td>
+                    <td>jiǎo fèi</td>
+                    <td>pay fees</td>
+                    <td>оплачивать сборы</td>
+                </tr>
+                <tr>
+                    <td>截止</td>
+                    <td>jié zhǐ</td>
+                    <td>deadline, close</td>
+                    <td>крайний срок, заканчиваться</td>
+                </tr>
+                <tr>
+                    <td>查询</td>
+                    <td>chá xún</td>
+                    <td>inquire, check</td>
+                    <td>просматривать, проверять</td>
+                </tr>
+                <tr>
+                    <td>中风</td>
+                    <td>zhòng fēng</td>
+                    <td>stroke</td>
+                    <td>инсульт, удар</td>
+                </tr>
+                <tr>
+                    <td>笔顺</td>
+                    <td>bǐ shùn</td>
+                    <td>stroke order</td>
+                    <td>порядок мазков</td>
+                </tr>
+                <tr>
+                    <td>修身养性</td>
+                    <td>xiū shēn yǎng xìng</td>
+                    <td>cultivate moral character</td>
+                    <td>культивировать нравственность</td>
+                </tr>
+                <tr>
+                    <td>功利</td>
+                    <td>gōng lì</td>
+                    <td>utilitarian, pragmatic</td>
+                    <td>утилитарный, прагматичный</td>
+                </tr>
+                <tr>
+                    <td>灵性</td>
+                    <td>líng xìng</td>
+                    <td>spirituality, intelligence</td>
+                    <td>духовность, интуиция</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // 章节切换
+        const chapterTabs = document.querySelectorAll('.chapter-tab');
+        const chapterContainers = document.querySelectorAll('.chapter-container');
+        
+        chapterTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const chapter = this.getAttribute('data-chapter');
+                
+                // 切换章节容器
+                chapterContainers.forEach(container => {
+                    container.classList.remove('active');
+                });
+                document.getElementById(`chapter${chapter}-container`).classList.add('active');
+                
+                // 切换按钮样式
+                chapterTabs.forEach(t => {
+                    t.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+
+        // 检查答案功能
+        document.getElementById('check-answers').addEventListener('click', function() {
+            let totalScore = 0;
+            let correctCount = 0;
+            let wrongCount = 0;
+            let wrongList = [];
+
+            // 获取所有题目
+            const questions = document.querySelectorAll('.question-item');
+
+            questions.forEach((question, index) => {
+                const questionNum = index + 1;
+                const correctAnswer = question.getAttribute('data-answer');
+                const score = parseInt(question.getAttribute('data-score'));
+                const feedback = question.querySelector('.feedback');
+                let userAnswer = '';
+
+                // 判断题目类型
+                const radioInputs = question.querySelectorAll('input[type="radio"]:checked');
+                const selectInput = question.querySelector('select');
+                const textInput = question.querySelector('input[type="text"]');
+                const textareaInput = question.querySelector('textarea');
+
+                if (radioInputs.length > 0) {
+                    userAnswer = radioInputs[0].value;
+                } else if (selectInput && selectInput.value) {
+                    userAnswer = selectInput.value;
+                } else if (textInput && textInput.value) {
+                    userAnswer = textInput.value.trim();
+                } else if (textareaInput && textareaInput.value) {
+                    userAnswer = textareaInput.value.trim();
+                }
+
+                // 比较答案
+                let isCorrect = false;
+                if (textareaInput) {
+                    const correctAnswers = correctAnswer.split('；');
+                    isCorrect = correctAnswers.some(ans => userAnswer.includes(ans.trim()));
+                } else {
+                    isCorrect = userAnswer === correctAnswer;
+                }
+
+                // 更新反馈和分数
+                if (isCorrect) {
+                    feedback.textContent = '正确';
+                    feedback.className = 'feedback correct';
+                    totalScore += score;
+                    correctCount++;
+                } else {
+                    feedback.textContent = `错误，正确答案：${correctAnswer}`;
+                    feedback.className = 'feedback incorrect';
+                    wrongCount++;
+                    const chapter = question.getAttribute('data-chapter');
+                    wrongList.push(`第${chapter}章第${getQuestionIndexInChapter(question, chapter)}题：正确答案为${correctAnswer}`);
+                }
+            });
+
+            // 显示结果
+            document.getElementById('total-score').textContent = totalScore;
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('wrong-count').textContent = wrongCount;
+
+            const wrongListElement = document.getElementById('wrong-list');
+            wrongListElement.innerHTML = '';
+            wrongList.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                wrongListElement.appendChild(li);
+            });
+
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('vocab-section').style.display = 'block';
+        });
+
+        // 获取题目在本章中的序号
+        function getQuestionIndexInChapter(question, chapter) {
+            const chapterQuestions = document.querySelectorAll(`.question-item[data-chapter="${chapter}"]`);
+            let index = 0;
+            chapterQuestions.forEach((q, i) => {
+                if (q === question) {
+                    index = i + 1;
+                    return false;
+                }
+            });
+            return index;
+        }
+
+        // 重置答题功能
+        document.getElementById('reset-answers').addEventListener('click', function() {
+            // 重置所有输入
+            document.querySelectorAll('input[type="radio"]:checked').forEach(input => {
+                input.checked = false;
+            });
+            document.querySelectorAll('select').forEach(select => {
+                select.value = '';
+            });
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                input.value = '';
+            });
+            document.querySelectorAll('textarea').forEach(textarea => {
+                textarea.value = '';
+            });
+
+            // 重置反馈
+            document.querySelectorAll('.feedback').forEach(feedback => {
+                feedback.textContent = '';
+                feedback.className = 'feedback';
+            });
+
+            // 隐藏结果和词汇表
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('vocab-section').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
