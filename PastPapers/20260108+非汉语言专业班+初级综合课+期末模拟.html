@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初级汉语综合课练习</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f9f7fe;
+            color: #333;
+            line-height: 1.6;
+            padding: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
+            border-radius: 18px;
+            box-shadow: 0 6px 15px rgba(168, 230, 207, 0.3);
+        }
+        
+        h1 {
+            color: #4a4a7d;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: #6d6da7;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .exam-info {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 12px;
+            border-radius: 12px;
+        }
+        
+        .info-item {
+            margin: 5px 10px;
+            color: #5a5a8a;
+            font-size: 0.95rem;
+        }
+        
+        .section {
+            background-color: white;
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-3px);
+        }
+        
+        .section-title {
+            color: #ff8ba7;
+            border-left: 6px solid #ff8ba7;
+            padding-left: 12px;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .section-title i {
+            color: #ffb5b5;
+            font-size: 1.2rem;
+        }
+        
+        .question {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #eaeaea;
+        }
+        
+        .question:last-child {
+            border-bottom: none;
+        }
+        
+        .question-number {
+            display: inline-block;
+            width: 26px;
+            height: 26px;
+            background-color: #a8e6cf;
+            color: #4a4a7d;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 26px;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .question-text {
+            font-size: 1.05rem;
+            color: #444;
+            margin-bottom: 12px;
+        }
+        
+        .answer-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dcedc1;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-top: 8px;
+            transition: border-color 0.3s;
+        }
+        
+        .answer-input:focus {
+            outline: none;
+            border-color: #a8e6cf;
+        }
+        
+        .inline-select {
+            display: inline-block;
+            padding: 5px 10px;
+            border: 2px solid #dcedc1;
+            border-radius: 6px;
+            background-color: white;
+            font-size: 1rem;
+            margin: 0 5px;
+            min-width: 80px;
+        }
+        
+        .select-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .select-option {
+            padding: 8px 15px;
+            background-color: #f0f5ff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .select-option:hover {
+            background-color: #e1ecff;
+        }
+        
+        .select-option.selected {
+            background-color: #d4edda;
+            border-color: #a8e6cf;
+        }
+        
+        .multiple-choice {
+            margin-top: 10px;
+        }
+        
+        .choice-option {
+            display: block;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .choice-option:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .choice-option.selected {
+            background-color: #e1f5e1;
+            border-left: 4px solid #a8e6cf;
+        }
+        
+        .check-btn {
+            display: block;
+            width: 180px;
+            margin: 25px auto 10px;
+            padding: 14px;
+            background: linear-gradient(to right, #ffaaa5, #ff8ba7);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(255, 138, 167, 0.3);
+        }
+        
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 138, 167, 0.4);
+        }
+        
+        .check-btn:active {
+            transform: translateY(0);
+        }
+        
+        .view-reference-btn {
+            display: block;
+            width: 180px;
+            margin: 25px auto 10px;
+            padding: 14px;
+            background: linear-gradient(to right, #a8e6cf, #dcedc1);
+            color: #4a4a7d;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(168, 230, 207, 0.3);
+        }
+        
+        .view-reference-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(168, 230, 207, 0.4);
+        }
+        
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            display: none;
+        }
+        
+        .correct {
+            background-color: #e8f7ef;
+            border-left: 5px solid #a8e6cf;
+        }
+        
+        .incorrect {
+            background-color: #ffeaea;
+            border-left: 5px solid #ffaaa5;
+        }
+        
+        .reference {
+            background-color: #f0f5ff;
+            border-left: 5px solid #a8e6cf;
+        }
+        
+        .result-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .result-title i {
+            margin-right: 8px;
+        }
+        
+        .correct-answer {
+            margin-top: 8px;
+            padding: 8px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 6px;
+        }
+        
+        .essay-area {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #dcedc1;
+            border-radius: 12px;
+            font-size: 1rem;
+            margin-top: 10px;
+            resize: vertical;
+        }
+        
+        .word-count {
+            text-align: right;
+            margin-top: 8px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        .reference-words {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .word-tag {
+            background-color: #e6f7ff;
+            color: #5a5a8a;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .essay-reference {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f7fe;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .essay-reference h4 {
+            color: #5a5a8a;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .essay-reference h4 i {
+            margin-right: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .section {
+                padding: 18px;
+            }
+            
+            .section-title {
+                font-size: 1.2rem;
+            }
+            
+            .exam-info {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .inline-select {
+                min-width: 60px;
+                padding: 4px 8px;
+            }
+        }
+        
+        .section-1 { border-top: 5px solid #a8e6cf; }
+        .section-2 { border-top: 5px solid #ffaaa5; }
+        .section-3 { border-top: 5px solid #ffd3b6; }
+        .section-4 { border-top: 5px solid #dcedc1; }
+        .section-5 { border-top: 5px solid #a8e6cf; }
+        .section-6 { border-top: 5px solid #ffaaa5; }
+        .section-7 { border-top: 5px solid #ffd3b6; }
+        .section-8 { border-top: 5px solid #dcedc1; }
+        
+        .sentence-line {
+            margin: 15px 0;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>初级汉语综合课练习</h1>
+        <div class="subtitle">《发展汉语》初级综合 I L1-L28</div>
+        <div class="exam-info">
+            <div class="info-item"><i class="fas fa-users"></i> 考试班级：初级汉语班</div>
+            <div class="info-item"><i class="fas fa-file-alt"></i> 练习卷：B卷</div>
+            <div class="info-item"><i class="fas fa-book"></i> 课程：汉语综合入门</div>
+        </div>
+    </header>
+    
+    <section class="section section-1">
+        <div class="section-title">
+            <span>一、听写句子</span>
+            <i class="fas fa-headphones"></i>
+        </div>
+        <div class="question">
+            <div class="question-text">请听录音并写出句子：</div>
+            <div class="question">
+                <div class="question-number">1</div>
+                <input type="text" class="answer-input" id="q1-1" placeholder="请在这里输入你听到的句子">
+            </div>
+            <div class="question">
+                <div class="question-number">2</div>
+                <input type="text" class="answer-input" id="q1-2" placeholder="请在这里输入你听到的句子">
+            </div>
+            <div class="question">
+                <div class="question-number">3</div>
+                <input type="text" class="answer-input" id="q1-3" placeholder="请在这里输入你听到的句子">
+            </div>
+        </div>
+        <button class="check-btn" onclick="checkSection1()">查看参考答案</button>
+        <div class="result-box" id="result1"></div>
+    </section>
+    
+    <section class="section section-2">
+        <div class="section-title">
+            <span>二、模仿例子组词语</span>
+            <i class="fas fa-puzzle-piece"></i>
+        </div>
+        <div class="question">
+            <div class="question-text">例如：喝 <u>水</u></div>
+            <div class="question">
+                <div class="question-number">1</div>
+                <span class="question-text">开</span>
+                <input type="text" class="answer-input" id="q2-1" placeholder="请组词">
+            </div>
+            <div class="question">
+                <div class="question-number">2</div>
+                <span class="question-text">骑</span>
+                <input type="text" class="answer-input" id="q2-2" placeholder="请组词">
+            </div>
+            <div class="question">
+                <div class="question-number">3</div>
+                <span class="question-text">交</span>
+                <input type="text" class="answer-input" id="q2-3" placeholder="请组词">
+            </div>
+            <div class="question">
+                <div class="question-number">4</div>
+                <span class="question-text">打</span>
+                <input type="text" class="answer-input" id="q2-4" placeholder="请组词">
+            </div>
+            <div class="question">
+                <div class="question-number">5</div>
+                <span class="question-text">坐</span>
+                <input type="text" class="answer-input" id="q2-5" placeholder="请组词">
+            </div>
+            <div class="question">
+                <div class="question-number">6</div>
+                <span class="question-text">换</span>
+                <input type="text" class="answer-input" id="q2-6" placeholder="请组词">
+            </div>
+            <div class="question">
+                <div class="question-number">7</div>
+                <span class="question-text">店</span>
+                <input type="text" class="answer-input" id="q2-7" placeholder="请组词">
+            </div>
+            <div class="question">
+                <div class="question-number">8</div>
+                <span class="question-text">间</span>
+                <input type="text" class="answer-input" id="q2-8" placeholder="请组词">
+            </div>
+            <div class="question">
+                <div class="question-number">9</div>
+                <span class="question-text">机</span>
+                <input type="text" class="answer-input" id="q2-9" placeholder="请组词">
+            </div>
+        </div>
+        <button class="view-reference-btn" onclick="viewReference2()">查看参考答案</button>
+        <div class="result-box" id="result2"></div>
+    </section>
+    
+    <section class="section section-3">
+        <div class="section-title">
+            <span>三、选择正确的词语填空</span>
+            <i class="fas fa-check-circle"></i>
+        </div>
+        
+        <div class="question">
+            <div class="question-text">（一）选择正确的量词填空：双 门 条 件 遍</div>
+            <div class="sentence-line">
+                <span class="question-number">1</span>
+                我们有三
+                <select class="inline-select" id="q3-1-1">
+                    <option value="">选择</option>
+                    <option value="门">门</option>
+                    <option value="件">件</option>
+                    <option value="条">条</option>
+                    <option value="遍">遍</option>
+                    <option value="双">双</option>
+                </select>
+                课。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">2</span>
+                他告诉我一
+                <select class="inline-select" id="q3-1-2">
+                    <option value="">选择</option>
+                    <option value="门">门</option>
+                    <option value="件">件</option>
+                    <option value="条">条</option>
+                    <option value="遍">遍</option>
+                    <option value="双">双</option>
+                </select>
+                事。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">3</span>
+                我买了一
+                <select class="inline-select" id="q3-1-3">
+                    <option value="">选择</option>
+                    <option value="门">门</option>
+                    <option value="件">件</option>
+                    <option value="条">条</option>
+                    <option value="遍">遍</option>
+                    <option value="双">双</option>
+                </select>
+                新裤子。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">4</span>
+                这本书非常有意思，我看了两
+                <select class="inline-select" id="q3-1-4">
+                    <option value="">选择</option>
+                    <option value="门">门</option>
+                    <option value="件">件</option>
+                    <option value="条">条</option>
+                    <option value="遍">遍</option>
+                    <option value="双">双</option>
+                </select>
+                。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">5</span>
+                她有一
+                <select class="inline-select" id="q3-1-5">
+                    <option value="">选择</option>
+                    <option value="门">门</option>
+                    <option value="件">件</option>
+                    <option value="条">条</option>
+                    <option value="遍">遍</option>
+                    <option value="双">双</option>
+                </select>
+                红色的鞋，很漂亮。
+            </div>
+        </div>
+        
+        <div class="question">
+            <div class="question-text">（二）选择正确的词语填空：为了 对 离 给 从</div>
+            <div class="sentence-line">
+                <span class="question-number">1</span>
+                我家
+                <select class="inline-select" id="q3-2-1">
+                    <option value="">选择</option>
+                    <option value="离">离</option>
+                    <option value="为了">为了</option>
+                    <option value="对">对</option>
+                    <option value="从">从</option>
+                    <option value="给">给</option>
+                </select>
+                学校不远。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">2</span>
+                <select class="inline-select" id="q3-2-2">
+                    <option value="">选择</option>
+                    <option value="离">离</option>
+                    <option value="为了">为了</option>
+                    <option value="对">对</option>
+                    <option value="从">从</option>
+                    <option value="给">给</option>
+                </select>
+                学好汉语，我来中国留学。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">3</span>
+                父母
+                <select class="inline-select" id="q3-2-3">
+                    <option value="">选择</option>
+                    <option value="离">离</option>
+                    <option value="为了">为了</option>
+                    <option value="对">对</option>
+                    <option value="从">从</option>
+                    <option value="给">给</option>
+                </select>
+                我的影响很大。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">4</span>
+                我
+                <select class="inline-select" id="q3-2-4">
+                    <option value="">选择</option>
+                    <option value="离">离</option>
+                    <option value="为了">为了</option>
+                    <option value="对">对</option>
+                    <option value="从">从</option>
+                    <option value="给">给</option>
+                </select>
+                今年九月开始学习汉语。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">5</span>
+                马丁
+                <select class="inline-select" id="q3-2-5">
+                    <option value="">选择</option>
+                    <option value="离">离</option>
+                    <option value="为了">为了</option>
+                    <option value="对">对</option>
+                    <option value="从">从</option>
+                    <option value="给">给</option>
+                </select>
+                我们发了电子邮件，你看到了吗？
+            </div>
+        </div>
+        
+        <div class="question">
+            <div class="question-text">（三）选择正确的词语填空：常 最 还 只 先</div>
+            <div class="sentence-line">
+                <span class="question-number">1</span>
+                我
+                <select class="inline-select" id="q3-3-1">
+                    <option value="">选择</option>
+                    <option value="常">常</option>
+                    <option value="最">最</option>
+                    <option value="还">还</option>
+                    <option value="只">只</option>
+                    <option value="先">先</option>
+                </select>
+                去上课，然后去图书馆。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">2</span>
+                我们现在
+                <select class="inline-select" id="q3-3-2">
+                    <option value="">选择</option>
+                    <option value="常">常</option>
+                    <option value="最">最</option>
+                    <option value="还">还</option>
+                    <option value="只">只</option>
+                    <option value="先">先</option>
+                </select>
+                学习汉语，没有别的课。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">3</span>
+                我一般去食堂吃饭，不
+                <select class="inline-select" id="q3-3-3">
+                    <option value="">选择</option>
+                    <option value="常">常</option>
+                    <option value="最">最</option>
+                    <option value="还">还</option>
+                    <option value="只">只</option>
+                    <option value="先">先</option>
+                </select>
+                自己做饭。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">4</span>
+                在我们班，马丁
+                <select class="inline-select" id="q3-3-4">
+                    <option value="">选择</option>
+                    <option value="常">常</option>
+                    <option value="最">最</option>
+                    <option value="还">还</option>
+                    <option value="只">只</option>
+                    <option value="先">先</option>
+                </select>
+                高。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">5</span>
+                我们
+                <select class="inline-select" id="q3-3-5">
+                    <option value="">选择</option>
+                    <option value="常">常</option>
+                    <option value="最">最</option>
+                    <option value="还">还</option>
+                    <option value="只">只</option>
+                    <option value="先">先</option>
+                </select>
+                没有学习这个语法呢。
+            </div>
+        </div>
+        
+        <div class="question">
+            <div class="question-text">（四）选择正确的词语填空：来 去 有点儿 一点儿</div>
+            <div class="sentence-line">
+                <span class="question-number">1</span>
+                他们在楼上等我们呢，咱们快上
+                <select class="inline-select" id="q3-4-1">
+                    <option value="">选择</option>
+                    <option value="来">来</option>
+                    <option value="去">去</option>
+                    <option value="有点儿">有点儿</option>
+                    <option value="一点儿">一点儿</option>
+                </select>
+                吧。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">2</span>
+                昨天是我的生日，我妈妈从韩国给我寄
+                <select class="inline-select" id="q3-4-2">
+                    <option value="">选择</option>
+                    <option value="来">来</option>
+                    <option value="去">去</option>
+                    <option value="有点儿">有点儿</option>
+                    <option value="一点儿">一点儿</option>
+                </select>
+                了生日礼物和一些好吃的。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">3</span>
+                我感冒了，
+                <select class="inline-select" id="q3-4-3">
+                    <option value="">选择</option>
+                    <option value="来">来</option>
+                    <option value="去">去</option>
+                    <option value="有点儿">有点儿</option>
+                    <option value="一点儿">一点儿</option>
+                </select>
+                不舒服。昨天吃了药，今天感觉好
+                <select class="inline-select" id="q3-4-4">
+                    <option value="">选择</option>
+                    <option value="来">来</option>
+                    <option value="去">去</option>
+                    <option value="有点儿">有点儿</option>
+                    <option value="一点儿">一点儿</option>
+                </select>
+                了。
+            </div>
+        </div>
+        
+        <div class="question">
+            <div class="question-text">（五）选择正确的词语填空：上 到 在 走 完 错</div>
+            <div class="sentence-line">
+                <span class="question-number">1</span>
+                我已经做
+                <select class="inline-select" id="q3-5-1">
+                    <option value="">选择</option>
+                    <option value="上">上</option>
+                    <option value="到">到</option>
+                    <option value="在">在</option>
+                    <option value="走">走</option>
+                    <option value="完">完</option>
+                    <option value="错">错</option>
+                </select>
+                作业了。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">2</span>
+                我今天一直睡
+                <select class="inline-select" id="q3-5-2">
+                    <option value="">选择</option>
+                    <option value="上">上</option>
+                    <option value="到">到</option>
+                    <option value="在">在</option>
+                    <option value="走">走</option>
+                    <option value="完">完</option>
+                    <option value="错">错</option>
+                </select>
+                中午12点才起床。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">3</span>
+                天气突然变冷了，大家都穿
+                <select class="inline-select" id="q3-5-3">
+                    <option value="">选择</option>
+                    <option value="上">上</option>
+                    <option value="到">到</option>
+                    <option value="在">在</option>
+                    <option value="走">走</option>
+                    <option value="完">完</option>
+                    <option value="错">错</option>
+                </select>
+                了厚衣服。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">4</span>
+                你听
+                <select class="inline-select" id="q3-5-4">
+                    <option value="">选择</option>
+                    <option value="上">上</option>
+                    <option value="到">到</option>
+                    <option value="在">在</option>
+                    <option value="走">走</option>
+                    <option value="完">完</option>
+                    <option value="错">错</option>
+                </select>
+                了，我们不是四点上课，是十点上课。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">5</span>
+                我坐
+                <select class="inline-select" id="q3-5-5">
+                    <option value="">选择</option>
+                    <option value="上">上</option>
+                    <option value="到">到</option>
+                    <option value="在">在</option>
+                    <option value="走">走</option>
+                    <option value="完">完</option>
+                    <option value="错">错</option>
+                </select>
+                山田后边。
+            </div>
+            <div class="sentence-line">
+                <span class="question-number">6</span>
+                他现在不住在这儿，已经搬
+                <select class="inline-select" id="q3-5-6">
+                    <option value="">选择</option>
+                    <option value="上">上</option>
+                    <option value="到">到</option>
+                    <option value="在">在</option>
+                    <option value="走">走</option>
+                    <option value="完">完</option>
+                    <option value="错">错</option>
+                </select>
+                了。
+            </div>
+        </div>
+        
+        <button class="check-btn" onclick="checkSection3()">查看参考答案</button>
+        <div class="result-box" id="result3"></div>
+    </section>
+    
+    <section class="section section-4">
+        <div class="section-title">
+            <span>四、给括号里的词语选择正确的位置</span>
+            <i class="fas fa-arrows-alt-h"></i>
+        </div>
+        
+        <div class="question">
+            <div class="question-number">1</div>
+            <div class="question-text">我A把B书C带D来。（没）</div>
+            <div class="multiple-choice">
+                <div class="choice-option" onclick="selectOption(this, 'q4-1')">A</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-1')">B</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-1')">C</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-1')">D</div>
+            </div>
+            <input type="hidden" id="q4-1" value="">
+        </div>
+        
+        <div class="question">
+            <div class="question-number">2</div>
+            <div class="question-text">林娜A想下B楼C买点儿D东西。（去）</div>
+            <div class="multiple-choice">
+                <div class="choice-option" onclick="selectOption(this, 'q4-2')">A</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-2')">B</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-2')">C</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-2')">D</div>
+            </div>
+            <input type="hidden" id="q4-2" value="">
+        </div>
+        
+        <div class="question">
+            <div class="question-number">3</div>
+            <div class="question-text">我弟弟A今年B二十C岁D。（多）</div>
+            <div class="multiple-choice">
+                <div class="choice-option" onclick="selectOption(this, 'q4-3')">A</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-3')">B</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-3')">C</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-3')">D</div>
+            </div>
+            <input type="hidden" id="q4-3" value="">
+        </div>
+        
+        <div class="question">
+            <div class="question-number">4</div>
+            <div class="question-text">我同屋A给B她妈妈C打电话D。（正在）</div>
+            <div class="multiple-choice">
+                <div class="choice-option" onclick="selectOption(this, 'q4-4')">A</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-4')">B</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-4')">C</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-4')">D</div>
+            </div>
+            <input type="hidden" id="q4-4" value="">
+        </div>
+        
+        <div class="question">
+            <div class="question-number">5</div>
+            <div class="question-text">从我们A宿舍B到教学楼，走路C十分钟D能到。（就）</div>
+            <div class="multiple-choice">
+                <div class="choice-option" onclick="selectOption(this, 'q4-5')">A</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-5')">B</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-5')">C</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-5')">D</div>
+            </div>
+            <input type="hidden" id="q4-5" value="">
+        </div>
+        
+        <div class="question">
+            <div class="question-number">6</div>
+            <div class="question-text">A老师B你C去D办公室。（让）</div>
+            <div class="multiple-choice">
+                <div class="choice-option" onclick="selectOption(this, 'q4-6')">A</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-6')">B</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-6')">C</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-6')">D</div>
+            </div>
+            <input type="hidden" id="q4-6" value="">
+        </div>
+        
+        <div class="question">
+            <div class="question-number">7</div>
+            <div class="question-text">我们A两点B上课，他C三点D来。（才）</div>
+            <div class="multiple-choice">
+                <div class="choice-option" onclick="selectOption(this, 'q4-7')">A</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-7')">B</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-7')">C</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-7')">D</div>
+            </div>
+            <input type="hidden" id="q4-7" value="">
+        </div>
+        
+        <div class="question">
+            <div class="question-number">8</div>
+            <div class="question-text">他A上星期B去了那家饭馆，C这星期D去了一次。（又）</div>
+            <div class="multiple-choice">
+                <div class="choice-option" onclick="selectOption(this, 'q4-8')">A</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-8')">B</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-8')">C</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-8')">D</div>
+            </div>
+            <input type="hidden" id="q4-8" value="">
+        </div>
+        
+        <div class="question">
+            <div class="question-number">9</div>
+            <div class="question-text">我A会B说C汉语D。（一点儿）</div>
+            <div class="multiple-choice">
+                <div class="choice-option" onclick="selectOption(this, 'q4-9')">A</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-9')">B</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-9')">C</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-9')">D</div>
+            </div>
+            <input type="hidden" id="q4-9" value="">
+        </div>
+        
+        <div class="question">
+            <div class="question-number">10</div>
+            <div class="question-text">我A已经B这件事C忘了D。（把）</div>
+            <div class="multiple-choice">
+                <div class="choice-option" onclick="selectOption(this, 'q4-10')">A</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-10')">B</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-10')">C</div>
+                <div class="choice-option" onclick="selectOption(this, 'q4-10')">D</div>
+            </div>
+            <input type="hidden" id="q4-10" value="">
+        </div>
+        
+        <button class="check-btn" onclick="checkSection4()">查看参考答案</button>
+        <div class="result-box" id="result4"></div>
+    </section>
+    
+    <section class="section section-5">
+        <div class="section-title">
+            <span>五、连词成句</span>
+            <i class="fas fa-random"></i>
+        </div>
+        
+        <div class="question">
+            <div class="question-number">1</div>
+            <div class="question-text">爸爸 很 我的 担心 身体</div>
+            <input type="text" class="answer-input" id="q5-1" placeholder="请将词语连成完整的句子">
+        </div>
+        
+        <div class="question">
+            <div class="question-number">2</div>
+            <div class="question-text">毛衣 你的 是 什么 的 颜色</div>
+            <input type="text" class="answer-input" id="q5-2" placeholder="请将词语连成完整的句子（注意标点）">
+        </div>
+        
+        <div class="question">
+            <div class="question-number">3</div>
+            <div class="question-text">一年 学 汉语 了 我 了</div>
+            <input type="text" class="answer-input" id="q5-3" placeholder="请将词语连成完整的句子">
+        </div>
+        
+        <div class="question">
+            <div class="question-number">4</div>
+            <div class="question-text">家里 他 把 自行车 放在 了</div>
+            <input type="text" class="answer-input" id="q5-4" placeholder="请将词语连成完整的句子">
+        </div>
+        
+        <div class="question">
+            <div class="question-number">5</div>
+            <div class="question-text">考试 我们 星期五 就要 了</div>
+            <input type="text" class="answer-input" id="q5-5" placeholder="请将词语连成完整的句子">
+        </div>
+        
+        <button class="check-btn" onclick="checkSection5()">查看参考答案</button>
+        <div class="result-box" id="result5"></div>
+    </section>
+    
+    <section class="section section-6">
+        <div class="section-title">
+            <span>六、用括号中的词语完成句子</span>
+            <i class="fas fa-pen"></i>
+        </div>
+        
+        <div class="question">
+            <div class="question-number">1</div>
+            <div class="question-text">A：这家饭馆的菜怎么样？</div>
+            <div class="question-text">B：<input type="text" class="answer-input" id="q6-1" placeholder="用「又......又......」完成句子"></div>
+        </div>
+        
+        <div class="question">
+            <div class="question-number">2</div>
+            <div class="question-text">A：你觉得这件衣服合适吗？</div>
+            <div class="question-text">B：<input type="text" class="answer-input" id="q6-2" placeholder="用「有点儿」完成句子"></div>
+        </div>
+        
+        <div class="question">
+            <div class="question-number">3</div>
+            <div class="question-text">A：明天你打算去哪里玩儿？</div>
+            <div class="question-text">B：<input type="text" class="answer-input" id="q6-3" placeholder="用「要是......就......」完成句子"></div>
+        </div>
+        
+        <div class="question">
+            <div class="question-number">4</div>
+            <div class="question-text">A：你喜欢唱歌还是跳舞？</div>
+            <div class="question-text">B：<input type="text" class="answer-input" id="q6-4" placeholder="用「对......感兴趣」完成句子"></div>
+        </div>
+        
+        <div class="question">
+            <div class="question-number">5</div>
+            <div class="question-text">A：你认为那套房子怎么样？</div>
+            <div class="question-text">B：<input type="text" class="answer-input" id="q6-5" placeholder="用「虽然......但是......」完成句子"></div>
+        </div>
+        
+        <button class="view-reference-btn" onclick="viewReference6()">查看参考答案</button>
+        <div class="result-box" id="result6"></div>
+    </section>
+    
+    <section class="section section-7">
+        <div class="section-title">
+            <span>七、阅读理解</span>
+            <i class="fas fa-book-reader"></i>
+        </div>
+        
+        <div class="question">
+            <div class="question-text" style="background-color: #f5f9ff; padding: 15px; border-radius: 10px; font-style: italic;">
+                （阿明接到妈妈的电话）<br><br>
+                阿明：喂，你好！<br>
+                妈妈：阿明，我是妈妈。你在做什么呢？<br>
+                阿明：我刚吃完饭，正准备做作业，你呢？<br>
+                妈妈：我刚下班，正在和爸爸一起吃饭。你那儿天气怎么样？冷不冷？<br>
+                阿明：现在天气很冷，最近还下了一场大雪，很多人都穿棉衣了。天气预报说北京今年冬天特别冷，最低气温差不多有零下十七度。我还没有习惯这儿的气候，上个星期又感冒了。<br>
+                妈妈：你现在怎么样了？好点儿了吗？<br>
+                阿明：我现在已经好了。你们怎么样？<br>
+                妈妈：我们还可以。我和你爸爸给你寄了一些东西，有水果、药、棉鞋和两件羽绒服。下个星期应该就到了。<br>
+                阿明：谢谢妈妈！我最近常常锻炼身体，平时也注意休息，多喝水，现在感冒已经好了。<br>
+                妈妈：好的，一定要注意身体。你学习还好吗？<br>
+                阿明：最近学习很忙，但我学到了很多新的东西，也认识了很多中国朋友。所以，我的听力和口语都有很大进步。<br>
+                妈妈：好的，给自己多买一点儿好吃的。<br>
+                阿明：不用担心，妈妈你也要注意身体！
+            </div>
+        </div>
+        
+        <div class="question">
+            <div class="question-text">（一）根据上边的对话判断对错（对的打√，错的打×）</div>
+            <div class="question">
+                <div class="question-number">1</div>
+                <span class="question-text">今年冬天，北京天气不太冷。</span>
+                <div class="select-group">
+                    <div class="select-option" onclick="selectTF(this, 'q7-1-1')">√</div>
+                    <div class="select-option" onclick="selectTF(this, 'q7-1-1')">×</div>
+                </div>
+                <input type="hidden" id="q7-1-1" value="">
+            </div>
+            <div class="question">
+                <div class="question-number">2</div>
+                <span class="question-text">阿明没习惯北京的气候，现在感冒了。</span>
+                <div class="select-group">
+                    <div class="select-option" onclick="selectTF(this, 'q7-1-2')">√</div>
+                    <div class="select-option" onclick="selectTF(this, 'q7-1-2')">×</div>
+                </div>
+                <input type="hidden" id="q7-1-2" value="">
+            </div>
+            <div class="question">
+                <div class="question-number">3</div>
+                <span class="question-text">妈妈给阿明寄的东西可能下个星期就到了。</span>
+                <div class="select-group">
+                    <div class="select-option" onclick="selectTF(this, 'q7-1-3')">√</div>
+                    <div class="select-option" onclick="selectTF(this, 'q7-1-3')">×</div>
+                </div>
+                <input type="hidden" id="q7-1-3" value="">
+            </div>
+            <div class="question">
+                <div class="question-number">4</div>
+                <span class="question-text">阿明学到了很多新的东西，口语和听力进步很大。</span>
+                <div class="select-group">
+                    <div class="select-option" onclick="selectTF(this, 'q7-1-4')">√</div>
+                    <div class="select-option" onclick="selectTF(this, 'q7-1-4')">×</div>
+                </div>
+                <input type="hidden" id="q7-1-4" value="">
+            </div>
+        </div>
+        
+        <div class="question">
+            <div class="question-text">（二）根据上边的短文回答问题（每个答题不少于10个字）</div>
+            <div class="question">
+                <div class="question-number">1</div>
+                <span class="question-text">阿明为什么感冒了？</span>
+                <textarea class="answer-input" id="q7-2-1" rows="3" placeholder="请在这里输入你的答案"></textarea>
+            </div>
+            <div class="question">
+                <div class="question-number">2</div>
+                <span class="question-text">阿明最近学习怎么样？</span>
+                <textarea class="answer-input" id="q7-2-2" rows="3" placeholder="请在这里输入你的答案"></textarea>
+            </div>
+        </div>
+        
+        <button class="check-btn" onclick="checkSection7()">查看参考答案</button>
+        <div class="result-box" id="result7"></div>
+    </section>
+    
+    <section class="section section-8">
+        <div class="section-title">
+            <span>八、写作练习</span>
+            <i class="fas fa-edit"></i>
+        </div>
+        
+        <div class="question">
+            <div class="question-text">根据要求，选择其中一个话题，写一段话。（不少于100字）</div>
+            
+            <div class="select-group" style="margin-bottom: 20px;">
+                <div class="select-option" onclick="selectTopic(this, 'topic1')" style="flex-grow: 1; text-align: center;">
+                    （一）题目：《我在中国的生活》
+                </div>
+                <div class="select-option" onclick="selectTopic(this, 'topic2')" style="flex-grow: 1; text-align: center;">
+                    （二）题目：《寒假快要到了》
+                </div>
+            </div>
+            
+            <div id="topic1-words" class="reference-words" style="display: none;">
+                <div class="word-tag">担心</div>
+                <div class="word-tag">机会</div>
+                <div class="word-tag">感觉</div>
+                <div class="word-tag">懂</div>
+                <div class="word-tag">聊天儿</div>
+                <div class="word-tag">关心</div>
+                <div class="word-tag">变化</div>
+                <div class="word-tag">方法</div>
+                <div class="word-tag">说话</div>
+            </div>
+            
+            <div id="topic2-words" class="reference-words" style="display: none;">
+                <div class="word-tag">许多</div>
+                <div class="word-tag">丰富</div>
+                <div class="word-tag">不同</div>
+                <div class="word-tag">利用</div>
+                <div class="word-tag">各种</div>
+                <div class="word-tag">打算</div>
+                <div class="word-tag">外地</div>
+                <div class="word-tag">附近</div>
+                <div class="word-tag">有意思</div>
+            </div>
+            
+            <input type="hidden" id="selected-topic" value="">
+            
+            <textarea class="essay-area" id="essay" placeholder="请在这里写下你的作文..." oninput="updateWordCount()"></textarea>
+            <div class="word-count">字数：<span id="word-count">0</span> 字</div>
+            
+            <div style="margin-top: 20px; padding: 15px; background-color: #f9f7fe; border-radius: 10px;">
+                <p style="color: #5a5a8a; margin-bottom: 10px;"><strong>写作要求：</strong></p>
+                <ul style="color: #5a5a8a; padding-left: 20px;">
+                    <li>内容紧扣题目</li>
+                    <li>用词准确恰当，语法正确，逻辑清晰</li>
+                    <li>汉字书写工整，无错别字</li>
+                    <li>注意汉语文章书写格式，正确使用标点符号</li>
+                    <li>作文要求达到100字以上</li>
+                </ul>
+            </div>
+            
+            <div id="essay-reference1" class="essay-reference">
+                <h4><i class="fas fa-book-open"></i> 参考范文：《我在中国的生活》</h4>
+                <p>我来中国已经三个月了，刚开始的时候很担心自己的汉语水平，但是现在已经感觉好多了。在中国生活有很多新的机会，我认识了很多中国朋友，我们常常一起聊天儿。刚开始我不太懂他们说话，但是通过努力学习，我现在已经能听懂很多了。我的中国朋友都很关心我，教给我很多学习汉语的方法。我发现中国的生活和我的国家有很多不同，但是这种变化让我觉得很有意思。每天我都尝试用汉语说话，虽然有时候还会说错，但是我的朋友们总是耐心地帮助我。在这里生活让我学到了很多新东西，我觉得这段经历非常宝贵。</p>
+            </div>
+            
+            <div id="essay-reference2" class="essay-reference">
+                <h4><i class="fas fa-book-open"></i> 参考范文：《寒假快要到了》</h4>
+                <p>寒假快要到了，我有很多打算。我想利用这个假期做许多有意思的事情。首先，我打算去外地旅行，看看中国不同的城市。我的中国朋友告诉我，寒假的时候北方会下雪，南方却很暖和，这种不同让我很感兴趣。我计划去北京附近的地方看看，因为那里有许多名胜古迹。除了旅行，我还打算利用寒假时间学习汉语，看一些中国电影，读一些简单的汉语书。寒假是一个很丰富的假期，可以做各种自己喜欢的事情。我可能会去参加一些文化活动，了解中国的传统节日。这个寒假一定会很有意思，我已经开始期待了！</p>
+            </div>
+        </div>
+        
+        <button class="check-btn" onclick="submitEssay()">提交作文</button>
+        <button class="view-reference-btn" onclick="viewEssayReference()">查看参考范文</button>
+    </section>
+    
+    <footer>
+        <p>© 2023 汉语学习平台 | 初级汉语综合练习</p>
+        <p>本练习基于《发展汉语》初级综合 I 教材 L1-L28 内容</p>
+    </footer>
+
+    <script>
+        // 存储正确答案（根据答案文档）
+        const correctAnswers = {
+            // 第一题听写句子
+            section1: ["要是没有时间的话，我就不回国了。", 
+                      "他学习很努力，汉语水平有了很大的进步。", 
+                      "马丁一下课就去图书馆学习了。"],
+            
+            // 第二题组词（参考答案示例）
+            section2: ["开门", "骑车", "交通", "打电话", "坐车", "换钱", "书店", "房间", "手机"],
+            
+            // 第三题选择填空
+            section3: {
+                part1: ["门", "件", "条", "遍", "双"],
+                part2: ["离", "为了", "对", "从", "给"],
+                part3: ["先", "只", "常", "最", "还"],
+                part4: ["去", "来", "有点儿", "一点儿"],
+                part5: ["完", "到", "上", "错", "在", "走"]
+            },
+            
+            // 第四题选择位置
+            section4: ["B", "C", "C", "A", "D", "B", "D", "D", "C", "B"],
+            
+            // 第五题连词成句
+            section5: ["爸爸很担心我的身体。", 
+                      "你的毛衣是什么颜色的？", 
+                      "我学了一年汉语了。", 
+                      "他把自行车放在家里了。", 
+                      "我们星期五就要考试了。"],
+            
+            // 第六题完成句子
+            section6: ["这家饭馆的菜真是又便宜又好吃。", 
+                      "我觉得这件衣服有点儿大。", 
+                      "要是明天天气好，我就去海边玩儿。", 
+                      "我不喜欢唱歌，我对跳舞很感兴趣。", 
+                      "那套房子虽然很便宜，但是太远了。"],
+            
+            // 第七题阅读理解
+            section7: {
+                tf: ["×", "×", "√", "√"],
+                qa: ["天气特别冷，阿明还没习惯北京的气候，所以感冒了。", 
+                    "阿明最近学习很忙，但学到了很多新东西，听力和口语进步很大。"]
+            }
+        };
+        
+        // 选择选项（第四题）
+        function selectOption(element, questionId) {
+            // 清除同组其他选项的选中状态
+            const parent = element.parentElement;
+            const options = parent.querySelectorAll('.choice-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // 设置当前选项为选中状态
+            element.classList.add('selected');
+            
+            // 保存选择的值
+            document.getElementById(questionId).value = element.textContent;
+        }
+        
+        // 选择对错（第七题判断题）
+        function selectTF(element, questionId) {
+            // 清除同组其他选项的选中状态
+            const parent = element.parentElement;
+            const options = parent.querySelectorAll('.select-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // 设置当前选项为选中状态
+            element.classList.add('selected');
+            
+            // 保存选择的值
+            document.getElementById(questionId).value = element.textContent;
+        }
+        
+        // 选择作文题目
+        function selectTopic(element, topicId) {
+            // 清除同组其他选项的选中状态
+            const parent = element.parentElement;
+            const options = parent.querySelectorAll('.select-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // 设置当前选项为选中状态
+            element.classList.add('selected');
+            
+            // 保存选择的值
+            document.getElementById('selected-topic').value = topicId;
+            
+            // 显示对应的参考词语
+            document.getElementById('topic1-words').style.display = 'none';
+            document.getElementById('topic2-words').style.display = 'none';
+            document.getElementById(topicId + '-words').style.display = 'flex';
+            
+            // 隐藏参考范文
+            document.getElementById('essay-reference1').style.display = 'none';
+            document.getElementById('essay-reference2').style.display = 'none';
+        }
+        
+        // 更新作文字数统计
+        function updateWordCount() {
+            const essayText = document.getElementById('essay').value;
+            const wordCount = essayText.replace(/\s+/g, '').length; // 中文按字符数计算
+            document.getElementById('word-count').textContent = wordCount;
+        }
+        
+        // 查看第二题参考答案
+        function viewReference2() {
+            let resultHTML = "<div class='result-title'><i class='fas fa-lightbulb'></i> 参考答案</div>";
+            resultHTML += "<div class='question-text'>以下是一些可能的组词，你的答案可能有所不同：</div>";
+            
+            for (let i = 0; i < correctAnswers.section2.length; i++) {
+                resultHTML += `<div class="question-text">${i+1}. ${correctAnswers.section2[i]}</div>`;
+            }
+            
+            resultHTML += "<div class='correct-answer'>注意：组词题目有多种答案，以上仅为参考示例。</div>";
+            
+            showReference('result2', resultHTML);
+        }
+        
+        // 查看第六题参考答案
+        function viewReference6() {
+            let resultHTML = "<div class='result-title'><i class='fas fa-lightbulb'></i> 参考答案</div>";
+            resultHTML += "<div class='question-text'>以下为参考答案，你的答案可能有所不同：</div>";
+            
+            for (let i = 0; i < correctAnswers.section6.length; i++) {
+                resultHTML += `<div class="question-text">${i+1}. ${correctAnswers.section6[i]}</div>`;
+            }
+            
+            resultHTML += "<div class='correct-answer'>注意：完成句子题目有多种答案，以上仅为参考示例。</div>";
+            
+            showReference('result6', resultHTML);
+        }
+        
+        // 查看作文参考范文
+        function viewEssayReference() {
+            const selectedTopic = document.getElementById('selected-topic').value;
+            
+            if (!selectedTopic) {
+                alert("请先选择一个作文题目！");
+                return;
+            }
+            
+            // 隐藏所有参考范文
+            document.getElementById('essay-reference1').style.display = 'none';
+            document.getElementById('essay-reference2').style.display = 'none';
+            
+            // 显示对应的参考范文
+            document.getElementById('essay-reference' + selectedTopic.slice(-1)).style.display = 'block';
+            
+            // 滚动到参考范文位置
+            document.getElementById('essay-reference' + selectedTopic.slice(-1)).scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 检查第一题答案
+        function checkSection1() {
+            let resultHTML = "<div class='result-title'><i class='fas fa-lightbulb'></i> 参考答案</div>";
+            
+            for (let i = 0; i < correctAnswers.section1.length; i++) {
+                resultHTML += `<div class="question-text">第${i+1}题：${correctAnswers.section1[i]}</div>`;
+            }
+            
+            showReference('result1', resultHTML);
+        }
+        
+        // 检查第三题答案
+        function checkSection3() {
+            let resultHTML = "<div class='result-title'><i class='fas fa-lightbulb'></i> 参考答案</div>";
+            
+            // 第一部分
+            resultHTML += "<div class='question-text'>（一）</div>";
+            for (let i = 0; i < correctAnswers.section3.part1.length; i++) {
+                resultHTML += `<div class="question-text">${i+1}. ${correctAnswers.section3.part1[i]}</div>`;
+            }
+            
+            // 第二部分
+            resultHTML += "<div class='question-text'>（二）</div>";
+            for (let i = 0; i < correctAnswers.section3.part2.length; i++) {
+                resultHTML += `<div class="question-text">${i+1}. ${correctAnswers.section3.part2[i]}</div>`;
+            }
+            
+            // 第三部分
+            resultHTML += "<div class='question-text'>（三）</div>";
+            for (let i = 0; i < correctAnswers.section3.part3.length; i++) {
+                resultHTML += `<div class="question-text">${i+1}. ${correctAnswers.section3.part3[i]}</div>`;
+            }
+            
+            // 第四部分
+            resultHTML += "<div class='question-text'>（四）</div>";
+            resultHTML += `<div class="question-text">1. ${correctAnswers.section3.part4[0]}</div>`;
+            resultHTML += `<div class="question-text">2. ${correctAnswers.section3.part4[1]}</div>`;
+            resultHTML += `<div class="question-text">3. ${correctAnswers.section3.part4[2]}, ${correctAnswers.section3.part4[3]}</div>`;
+            
+            // 第五部分
+            resultHTML += "<div class='question-text'>（五）</div>";
+            for (let i = 0; i < correctAnswers.section3.part5.length; i++) {
+                resultHTML += `<div class="question-text">${i+1}. ${correctAnswers.section3.part5[i]}</div>`;
+            }
+            
+            showReference('result3', resultHTML);
+        }
+        
+        // 检查第四题答案
+        function checkSection4() {
+            let resultHTML = "<div class='result-title'><i class='fas fa-lightbulb'></i> 参考答案</div>";
+            
+            for (let i = 0; i < correctAnswers.section4.length; i++) {
+                const userAnswer = document.getElementById(`q4-${i+1}`).value;
+                const correctAnswer = correctAnswers.section4[i];
+                const isCorrect = userAnswer === correctAnswer;
+                
+                resultHTML += `<div class="question-text">第${i+1}题：${isCorrect ? '✓ 正确' : '✗ 不正确'}`;
+                if (!isCorrect) {
+                    resultHTML += `<div class="correct-answer">正确答案：${correctAnswer}</div>`;
+                }
+                resultHTML += `</div>`;
+            }
+            
+            showReference('result4', resultHTML);
+        }
+        
+        // 检查第五题答案
+        function checkSection5() {
+            let resultHTML = "<div class='result-title'><i class='fas fa-lightbulb'></i> 参考答案</div>";
+            
+            for (let i = 0; i < correctAnswers.section5.length; i++) {
+                resultHTML += `<div class="question-text">第${i+1}题：${correctAnswers.section5[i]}</div>`;
+            }
+            
+            showReference('result5', resultHTML);
+        }
+        
+        // 检查第七题答案
+        function checkSection7() {
+            let resultHTML = "<div class='result-title'><i class='fas fa-lightbulb'></i> 参考答案</div>";
+            
+            // 判断题部分
+            resultHTML += "<div class='question-text'>（一）判断题</div>";
+            for (let i = 0; i < correctAnswers.section7.tf.length; i++) {
+                const userAnswer = document.getElementById(`q7-1-${i+1}`).value;
+                const correctAnswer = correctAnswers.section7.tf[i];
+                const isCorrect = userAnswer === correctAnswer;
+                
+                resultHTML += `<div class="question-text">第${i+1}题：${isCorrect ? '✓ 正确' : '✗ 不正确'}`;
+                if (!isCorrect) {
+                    resultHTML += `<div class="correct-answer">正确答案：${correctAnswer}</div>`;
+                }
+                resultHTML += `</div>`;
+            }
+            
+            // 问答题部分
+            resultHTML += "<div class='question-text'>（二）问答题</div>";
+            for (let i = 0; i < correctAnswers.section7.qa.length; i++) {
+                resultHTML += `<div class="question-text">第${i+1}题：${correctAnswers.section7.qa[i]}</div>`;
+            }
+            
+            showReference('result7', resultHTML);
+        }
+        
+        // 提交作文
+        function submitEssay() {
+            const selectedTopic = document.getElementById('selected-topic').value;
+            const essayText = document.getElementById('essay').value.trim();
+            const wordCount = essayText.replace(/\s+/g, '').length;
+            
+            if (!selectedTopic) {
+                alert("请先选择一个作文题目！");
+                return;
+            }
+            
+            if (wordCount < 100) {
+                alert(`作文字数不足100字，当前为${wordCount}字，请继续完善。`);
+                return;
+            }
+            
+            alert("作文已提交！\n\n教师将会批改您的作文并给予反馈。\n\n当前字数：" + wordCount + "字");
+        }
+        
+        // 显示参考答案
+        function showReference(elementId, content) {
+            const resultBox = document.getElementById(elementId);
+            
+            resultBox.className = "result-box reference";
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = content;
+            
+            // 滚动到结果位置
+            resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // 初始化：设置默认作文题目
+        document.addEventListener('DOMContentLoaded', function() {
+            // 默认选择第一个作文题目
+            const firstTopic = document.querySelector('.section-8 .select-option');
+            if (firstTopic) {
+                firstTopic.click();
+            }
+            
+            // 更新作文字数统计
+            updateWordCount();
+        });
+    </script>
+</body>
+</html>
