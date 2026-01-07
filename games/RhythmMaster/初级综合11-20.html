@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高老师的汉语节奏游戏</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
+        }
+        body {
+            background: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+        /* 按钮样式 */
+        .btn-group {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 12px 26px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            margin: 0 8px;
+            background: #333;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button:hover {
+            opacity: 0.9;
+            transform: scale(1.03);
+        }
+        /* 轮数提示 */
+        .tip-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        /* 核心-游戏卡片容器 强制2行4列 纯正方形卡片 永不跑偏 */
+        .game-box {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 15px;
+            width: 85vw;
+            max-width: 850px;
+            aspect-ratio: 2 / 1;
+        }
+        /* 卡片样式 - 超大醒目字体+纯正方形+60%透明度多巴胺色+无频闪丝滑动画 */
+        .card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1 / 1;
+            border-radius: 12px;
+            font-size: 32px; /* 超大字号 核心醒目 */
+            font-weight: 900; /* 极致加粗 清晰突出 */
+            color: #000;
+            text-align: center;
+            line-height: 1.2;
+            opacity: 0;
+            transform: scale(1);
+            transition: all 0.2s ease-out;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        /* 卡片显示状态 - 固定60%透明度 */
+        .card.show {
+            opacity: 0.6;
+        }
+        /* 卡片动画状态 - 放大高亮 只触发一次 无闪烁 */
+        .card.active {
+            opacity: 1;
+            transform: scale(1.25);
+        }
+        /* 标题容器 - 全屏居中 8个字符均分 */
+        .title-wrap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            z-index: 99;
+        }
+        .title-char {
+            font-size: 80px;
+            font-weight: bold;
+            color: #333;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- 标题：高老师的汉语节奏游戏 8个字符 -->
+    <div class="title-wrap" id="titleBox">
+        <div class="title-char">高</div>
+        <div class="title-char">老</div>
+        <div class="title-char">师</div>
+        <div class="title-char">的</div>
+        <div class="title-char">节</div>
+        <div class="title-char">奏</div>
+        <div class="title-char">游</div>
+        <div class="title-char">戏</div>
+    </div>
+
+    <div class="tip-text" id="roundTip">第1轮 · 初级（2个词语）</div>
+    <div class="btn-group">
+        <button id="pauseBtn">暂停</button>
+        <button id="restartBtn">重新开始</button>
+    </div>
+    <div class="game-box" id="gameBox"></div>
+
+    <script>
+        // ========== 配置项 固定写死 无需修改 ==========
+        const BGM_URL = './bgm.mp3';          // 背景音乐固定为当前目录的bgm.mp3
+        const TITLE_TIME = 2600;              // 标题展示时长 2.6秒
+        const ROUND_TIME = 5240;              // 每轮总时长 5.2秒
+        const SHOW_TIME = 2620;               // 每轮出词时长 2.6秒
+        const ANIM_TIME = 2620;               // 每轮动画时长 2.6秒
+        const CARD_COUNT = 8;                 // 固定8个卡片
+        const CYCLE_WORDS = [2,2,4,4,6,6];    // 6轮选词规则
+        // 多巴胺配色【无任何白色/浅白色】60%透明度专用
+        const COLORS = [
+            "#FF4A70", "#FF9058", "#FFDD55", "#74E291", "#54C5FF", "#B194FF", "#F067E2", "#FF5555",
+            "#42A5F5", "#66BB6A", "#AB47BC", "#FFA726", "#26A69A", "#EC3D76", "#7986CB", "#FF80AB"
+        ];
+
+        // ========== 游戏核心词汇库 ==========
+        const WORD_LIST = [
+"一","不","用","菜","从","到","的","时","候","东","西","房","间","干","工","作","公","司","号","码","画","儿","家","聊","天","没","平","汽","车","上","班","食","堂","收","拾","手","机","宿","舍","听","同","屋","晚","饭","喜","欢","学","校","般","块","音","乐","在","中","国","周","末","做","爱","好","报","名","杯","打","对","感","兴","趣","还","是","红","茶","咖","啡","可","课","篮","球","绿","错","跑","步","骑","身","体","书","法","太","极","拳","踢","位","下","选","期","样","运","动","自","行","足","最","语","言","院","搬","大","方","便","子","租","父","母","贵","离","满","意","有","每","那","旁","边","请","客","套","玩","行","已","经","又","远","后","昨","穿","但","冬","冒","厚","件","今","年","看","病","空","快","冷","里","毛","衣","商","场","生","水","果","趟","特","别","气","新","呀","药","医","院","羽","绒","这","么","真","北","京","办","室","帮","比","较","餐","厅","当","放","假","辅","导","谢","告","诉","合","适","互","相","回","或","者","辆","旅","游","能","陪","挣","钱","泰","法","参","加","带","然","分","给","好","吃","婚","礼","简","单","节","日","结","酒","麻","烦","亲","戚","少","事","情","束","送","殊","希","望","定","应","该","意","思","照","片","相","重","要","人","包","别","才","次","第","发","音","更","教","饺","进","步","口","难","努","力","啤","瓶","葡","萄","热","闹","声","调","说","话","力","写","着","急","总","汉","字","近","客","常","查","长","得","电","话","多","飞","钟","忙","交","卡","开","账","户","另","外","排","队","试","网","站","忘","为","什","么","小","闻","会","直","邮","件","箱","只","保","证","抱","歉","遍","戴","等","读","过","去","来","天","坏","见","调","帽","棉","内","容","暖","认","为","易","完","先","生","修","以","前","圣","诞","张","萨","饼","赛","成","点","服","务","员","光","临","欢","迎","目","练","习","卖","迷","面","条","舒","外","名","主","意","坐","利","路","要","怎","走"
+];
+        // ========== 获取DOM元素 ==========
+        const titleBox = document.getElementById('titleBox');
+        const titleChars = document.querySelectorAll('.title-char');
+        const roundTip = document.getElementById('roundTip');
+        const gameBox = document.getElementById('gameBox');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        // ========== 全局状态 ==========
+        let audio = new Audio(BGM_URL);
+        let currentRound = 1;
+        let isPause = false;
+        let cardDomList = [];
+        let timerList = [];
+
+        // ========== 工具函数 - 随机选不重复的词 ==========
+        function getRandomWords(num) {
+            let arr = [...WORD_LIST];
+            let res = [];
+            for(let i=0; i<num; i++){
+                let idx = Math.floor(Math.random() * arr.length);
+                res.push(arr.splice(idx,1)[0]);
+            }
+            return res;
+        }
+
+        // ========== 工具函数 - 生成8个随机排列的词 ==========
+        function get8Words(words) {
+            let res = [];
+            while(res.length < 8) {
+                let idx = Math.floor(Math.random() * words.length);
+                res.push(words[idx]);
+            }
+            return res;
+        }
+
+        // ========== 生成游戏卡片 ==========
+        function createCards() {
+            gameBox.innerHTML = '';
+            cardDomList = [];
+            const wordNum = CYCLE_WORDS[currentRound - 1];
+            const words = getRandomWords(wordNum);
+            const word8 = get8Words(words);
+            const colorMap = {};
+
+            // 同词同色、异词异色
+            words.forEach(word => colorMap[word] = COLORS[Math.floor(Math.random() * COLORS.length)]);
+            
+            // 创建卡片DOM
+            word8.forEach(word => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.textContent = word;
+                card.style.backgroundColor = colorMap[word];
+                gameBox.appendChild(card);
+                cardDomList.push(card);
+            });
+
+            // 更新轮数提示
+            roundTip.innerText = `第${currentRound}轮 · ${currentRound<=2?'初级':currentRound<=4?'中级':'高级'}（${wordNum}个词语）`;
+        }
+
+        // ========== 标题逐字动画 - 均分2.6秒 ==========
+        function playTitleAni() {
+            titleChars.forEach((char, idx) => {
+                const timer = setTimeout(() => {
+                    if(!isPause) char.style.opacity = 1;
+                }, idx * (TITLE_TIME / 8));
+                timerList.push(timer);
+            });
+
+            // 标题结束后隐藏
+            const timer = setTimeout(() => {
+                if(!isPause) {
+                    titleBox.style.display = 'none';
+                    startGameRound();
+                }
+            }, TITLE_TIME);
+            timerList.push(timer);
+        }
+
+        // ========== 单轮游戏逻辑 - 前2.6秒出词 后2.6秒动画 无闪烁 ==========
+        function startGameRound() {
+            if(currentRound > 6) {
+                audio.pause();
+                roundTip.innerText = '🎉 游戏结束！恭喜通关 🎉';
+                return;
+            }
+
+            // 创建本轮卡片
+            createCards();
+
+            // 阶段1：前2.6秒 - 卡片依次平滑显示 均分时间
+            cardDomList.forEach((card, idx) => {
+                const timer = setTimeout(() => {
+                    if(!isPause) card.classList.add('show');
+                }, idx * (SHOW_TIME / CARD_COUNT));
+                timerList.push(timer);
+            });
+
+            // 阶段2：后2.6秒 - 卡片依次高亮动画 均分时间 只亮一次 彻底无闪烁
+            const animTimer = setTimeout(() => {
+                if(isPause) return;
+                cardDomList.forEach((card, idx) => {
+                    const timer = setTimeout(() => {
+                        if(!isPause) {
+                            card.classList.add('active');
+                            // 动画结束后恢复原状
+                            setTimeout(() => card.classList.remove('active'), 200);
+                        }
+                    }, idx * (ANIM_TIME / CARD_COUNT));
+                    timerList.push(timer);
+                });
+            }, SHOW_TIME);
+            timerList.push(animTimer);
+
+            // 本轮结束 进入下一轮 无缝衔接
+            const roundTimer = setTimeout(() => {
+                if(!isPause) {
+                    currentRound++;
+                    startGameRound();
+                }
+            }, ROUND_TIME);
+            timerList.push(roundTimer);
+        }
+
+        // ========== 暂停/恢复 功能 ==========
+        pauseBtn.addEventListener('click', () => {
+            isPause = !isPause;
+            if(isPause) {
+                audio.pause();
+                pauseBtn.innerText = '恢复';
+            } else {
+                audio.play();
+                pauseBtn.innerText = '暂停';
+            }
+        });
+
+        // ========== 重新开始 功能 ==========
+        restartBtn.addEventListener('click', () => {
+            // 清除所有定时器 无残留
+            timerList.forEach(t => clearTimeout(t));
+            timerList = [];
+            
+            // 重置所有状态
+            isPause = false;
+            currentRound = 1;
+            audio.currentTime = 0;
+            pauseBtn.innerText = '暂停';
+            
+            // 重置标题
+            titleChars.forEach(char => char.style.opacity = 0);
+            titleBox.style.display = 'flex';
+            
+            // 重启游戏
+            audio.play();
+            playTitleAni();
+        });
+
+        // ========== 初始化游戏 - 解决浏览器自动播放限制 ==========
+        window.addEventListener('load', () => {
+            audio.play().then(() => {
+                playTitleAni();
+            }).catch(() => {
+                roundTip.innerText = '👉 点击页面任意位置开始游戏';
+                document.body.addEventListener('click', () => {
+                    audio.play();
+                    playTitleAni();
+                }, {once: true});
+            });
+        });
+    </script>
+</body>
+</html>
