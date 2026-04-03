@@ -171,6 +171,12 @@
             color: #ff90c8;
             margin: 10px 0;
         }
+        
+        .correct-next {
+            font-size: 50px;
+            color: #ff90c8;
+            margin: 10px 0;
+        }
 
         .correct-img {
             width: 100%;
@@ -258,6 +264,7 @@
 
         // 固定显示的汉字和图片
         const FIXED_CHAR = "传";
+        const FIXED_NEXT = "下一站在这里：";
         const FIXED_IMAGE = "./1-2.jpg";
 
         let currentRiddleList = []; // 当前使用的题库
@@ -304,9 +311,10 @@
 
             if (userInput === correctAnswer) {
                 // 猜对后显示固定字和图片
-                tipText.innerText = "🎉 恭喜你答对啦！";
+                tipText.innerText = "🎉 恭喜你答对啦！本站解锁汉字：";
                 tipText.className = "tip success";
                 document.getElementById("correct-char").innerText = FIXED_CHAR;
+                document.getElementById("correct-next").innerText = FIXED_NEXT;
                 document.getElementById("correct-img").src = FIXED_IMAGE;
                 document.getElementById("result-box").style.display = "block";
             } else {
