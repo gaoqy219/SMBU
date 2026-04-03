@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>雨生百谷 语通四海</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fdeaff 0%, #e0f7ff 50%, #f0ffe6 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-box {
+            background: rgba(255, 255, 255, 0.9);
+            width: 100%;
+            max-width: 420px;
+            border-radius: 25px;
+            padding: 30px 25px;
+            box-shadow: 0 8px 30px rgba(180, 180, 255, 0.2);
+            text-align: center;
+        }
+
+        .title {
+            font-size: 26px;
+            color: #a880d8;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #74b9c7;
+            margin-bottom: 30px;
+        }
+
+        /* 组别选择样式 */
+        .group-select {
+            margin: 30px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .group-btn {
+            padding: 18px 25px;
+            border: none;
+            border-radius: 20px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+            color: white;
+        }
+
+        .group-cn {
+            background: #ff90c8;
+        }
+
+        .group-intl {
+            background: #a8d8ff;
+        }
+
+        .group-btn:hover {
+            opacity: 0.85;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .riddle-box {
+            background: #f8f0ff;
+            border-radius: 20px;
+            padding: 25px 20px;
+            margin: 20px 0;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .riddle-text {
+            font-size: 18px;
+            color: #6a5acd;
+            line-height: 1.6;
+        }
+
+        .input-area {
+            margin: 25px 0;
+        }
+
+        #answer-input {
+            width: 70%;
+            height: 50px;
+            border: 2px solid #c4e3f1;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 20px;
+            outline: none;
+            color: #555;
+            transition: 0.3s;
+        }
+
+        #answer-input:focus {
+            border-color: #a880d8;
+            background: #fcf9ff;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            flex: 1;
+        }
+
+        .btn-submit {
+            background: #a8d8ff;
+            color: #2a72a5;
+        }
+
+        .btn-change {
+            background: #c8ffd8;
+            color: #2a9e55;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+
+        .tip {
+            margin-top: 15px;
+            font-size: 15px;
+            height: 20px;
+        }
+
+        .error {
+            color: #ff88a8;
+        }
+
+        .success {
+            color: #50c8a8;
+            font-weight: bold;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .correct-char {
+            font-size: 50px;
+            color: #ff90c8;
+            margin: 10px 0;
+        }
+
+        .correct-img {
+            width: 100%;
+            max-width: 220px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(200, 200, 255, 0.2);
+        }
+
+        /* 游戏内容区域默认隐藏 */
+        .game-content {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-box">
+        <h1 class="title">🌸 雨生百谷 语通四海 🌸</h1>
+        <p class="subtitle">2026国际中文日系列活动之</p>
+        <p class="subtitle">谷雨密语 · 汉字寻宝</p>
+        <p class="subtitle">线路一 第一站</p>
+
+        <!-- 组别选择区域 -->
+        <div class="group-select" id="group-select">
+            <button class="group-btn group-cn" onclick="selectGroup('cn')">中国学生组</button>
+            <button class="group-btn group-intl" onclick="selectGroup('intl')">国际学生组</button>
+        </div>
+
+        <!-- 游戏内容区域 -->
+        <div class="game-content" id="game-content">
+            <div class="riddle-box">
+                <p class="riddle-text" id="riddle-content"></p>
+            </div>
+
+            <div class="input-area">
+                <input type="text" id="answer-input" placeholder="请输入答案" maxlength="1">
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-submit" onclick="checkAnswer()">提交答案</button>
+                <button class="btn btn-change" onclick="changeRiddle()">换一题</button>
+            </div>
+
+            <div class="tip" id="tip-text"></div>
+
+            <div class="result-box" id="result-box">
+                <div class="correct-char" id="correct-char"></div>
+                <img src="" class="correct-img" id="correct-img" alt="春日图片">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 中国学生组题库
+        const riddleListCN = [
+             { question: "一个礼拜", answer: "旨" },
+{ question: "一家十一口", answer: "吉" },
+{ question: "一只牛", answer: "生" },
+{ question: "一只狗四个口", answer: "器" },
+{ question: "一边是红，一边是绿，一边喜风，一边喜雨", answer: "秋" },
+{ question: "七人头上长了草", answer: "花" },
+{ question: "九只鸟", answer: "鸠" },
+{ question: "九号", answer: "旭" },
+{ question: "九辆车", answer: "轨" },
+{ question: "九点", answer: "丸" },
+{ question: "二八佳人", answer: "妙" },
+{ question: "二小姐", answer: "姿" },
+{ question: "二兄弟，各自立", answer: "竞" },
+{ question: "人不在其位", answer: "立" },
+{ question: "人有他则变大", answer: "一" },
+        ];
+
+        // 国际学生组题库
+        const riddleListINTL = [
+           { question: "夫人去哪儿了", answer: "二" },
+{ question: "一字生得巧，四面八只脚", answer: "井" },
+{ question: "我没有他有，天没有地有", answer: "也" },
+{ question: "一家十一口", answer: "吉" },
+{ question: "一斗米", answer: "料" },
+{ question: "三水压倒山", answer: "当" },
+{ question: "一只牛", answer: "生" },
+{ question: "加一半，减一半", answer: "喊" },
+{ question: "上下难分", answer: "卡" },
+{ question: "一只小虫，生得奇怪，嘴巴长在头顶上", answer: "虽" },
+        ];
+
+        // 固定显示的汉字和图片
+        const FIXED_CHAR = "城";
+        const FIXED_IMAGE = "./3-2.jpg";
+
+        let currentRiddleList = []; // 当前使用的题库
+        let currentIndex = 0;
+
+        // 选择组别
+        function selectGroup(groupType) {
+            // 隐藏组别选择区域，显示游戏内容
+            document.getElementById("group-select").style.display = "none";
+            document.getElementById("game-content").style.display = "block";
+            
+            // 根据组别选择对应的题库
+            currentRiddleList = groupType === 'cn' ? riddleListCN : riddleListINTL;
+            
+            // 加载第一道题目
+            loadRiddle();
+        }
+
+        // 加载题目
+        function loadRiddle() {
+            document.getElementById("riddle-content").innerText = currentRiddleList[currentIndex].question;
+            document.getElementById("answer-input").value = "";
+            document.getElementById("tip-text").innerText = "";
+            document.getElementById("result-box").style.display = "none";
+        }
+
+        // 更换题目
+        function changeRiddle() {
+            currentIndex = Math.floor(Math.random() * currentRiddleList.length);
+            loadRiddle();
+        }
+
+        // 检查答案
+        function checkAnswer() {
+            const userInput = document.getElementById("answer-input").value.trim();
+            const tipText = document.getElementById("tip-text");
+            const correctAnswer = currentRiddleList[currentIndex].answer;
+
+            if (userInput === "") {
+                tipText.innerText = "请输入答案哦~";
+                tipText.className = "tip error";
+                return;
+            }
+
+            if (userInput === correctAnswer) {
+                // 猜对后显示固定字和图片
+                tipText.innerText = "🎉 恭喜你答对啦！";
+                tipText.className = "tip success";
+                document.getElementById("correct-char").innerText = FIXED_CHAR;
+                document.getElementById("correct-img").src = FIXED_IMAGE;
+                document.getElementById("result-box").style.display = "block";
+            } else {
+                tipText.innerText = "❌ 答案不对，再试试吧！";
+                tipText.className = "tip error";
+                document.getElementById("result-box").style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
