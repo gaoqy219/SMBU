@@ -190,7 +190,7 @@
         <h1 class="title">🌸 雨生百谷 语通四海 🌸</h1>
         <p class="subtitle">2026国际中文日系列活动之</p>
         <p class="subtitle">谷雨密语 · 汉字寻宝</p>
-        <p class="subtitle">线路一 第一站</p>
+        <p class="subtitle">线路一 第二站</p>
 
         <!-- 组别选择区域 -->
         <div class="group-select" id="group-select">
@@ -259,7 +259,7 @@
 
         // 固定显示的汉字和图片
         const FIXED_CHAR = "传";
-        const FIXED_IMAGE = "./1-2.jpg";
+        const FIXED_IMAGE = "./1-3.jpg";
 
         let currentRiddleList = []; // 当前使用的题库
         let currentIndex = 0;
@@ -305,7 +305,7 @@
 
             if (userInput === correctAnswer) {
                 // 猜对后显示固定字和图片
-                tipText.innerText = "🎉 恭喜你答对啦！本站解锁汉字：";
+                tipText.innerText = "🎉 恭喜你答对啦！本站解锁密语：";
                 tipText.className = "tip success";
                 document.getElementById("correct-char").innerText = FIXED_CHAR;
                 document.getElementById("correct-img").src = FIXED_IMAGE;
