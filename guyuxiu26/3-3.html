@@ -259,7 +259,7 @@
 
         // 固定显示的汉字和图片
         const FIXED_CHAR = "满";
-        const FIXED_IMAGE = "./3-3.jpg";
+        const FIXED_IMAGE = "./3-4.jpg";
 
         let currentRiddleList = []; // 当前使用的题库
         let currentIndex = 0;
@@ -305,7 +305,7 @@
 
             if (userInput === correctAnswer) {
                 // 猜对后显示固定字和图片
-                tipText.innerText = "🎉 恭喜你答对啦！本站解锁文字：";
+                tipText.innerText = "🎉 恭喜你答对啦！本站解锁密语：";
                 tipText.className = "tip success";
                 document.getElementById("correct-char").innerText = FIXED_CHAR;
                 document.getElementById("correct-img").src = FIXED_IMAGE;
