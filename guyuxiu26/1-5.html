@@ -217,6 +217,7 @@
 
             <div class="result-box" id="result-box">
                 <div class="correct-char" id="correct-char"></div>
+                 <p style="font-size:17px; color:#ff6fa8; font-weight:bold; margin:10px 0;">下一站在这里👇</p>
                 <img src="" class="correct-img" id="correct-img" alt="春日图片">
             </div>
         </div>
@@ -304,7 +305,7 @@
 
             if (userInput === correctAnswer) {
                 // 猜对后显示固定字和图片
-                tipText.innerText = "🎉 恭喜你答对啦！";
+                tipText.innerText = "🎉 恭喜你答对啦！本站解锁汉字：";
                 tipText.className = "tip success";
                 document.getElementById("correct-char").innerText = FIXED_CHAR;
                 document.getElementById("correct-img").src = FIXED_IMAGE;
