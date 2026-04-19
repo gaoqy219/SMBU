@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>谷雨笑盒</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:18px}
+body{font-family:'Noto Sans SC',sans-serif;background:linear-gradient(170deg,#fce4ec 0%,#f3e5f5 25%,#e8f5e9 55%,#e0f7fa 100%);min-height:100vh;overflow-x:hidden;display:flex;align-items:center;justify-content:center;padding:30px}
+.petal{position:fixed;border-radius:150% 0 150% 0;pointer-events:none;z-index:0;opacity:0;animation:petalFall linear infinite}
+@keyframes petalFall{0%{transform:translateY(-5vh) rotate(0deg);opacity:0}8%{opacity:.5}85%{opacity:.4}100%{transform:translateY(108vh) rotate(540deg);opacity:0}}
+.wrap{position:relative;z-index:1;width:820px;max-width:95vw;min-height:520px;margin:0 auto;padding:48px 56px 40px;background:rgba(255,255,255,.94);border-radius:28px;box-shadow:0 12px 48px rgba(233,30,99,.12);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:2em;color:#e91e63;margin-bottom:4px;letter-spacing:2px}
+.sub{font-size:1.05em;color:#999;margin-bottom:24px}
+.tag{display:inline-block;padding:5px 22px;border-radius:20px;font-size:.95em;color:#fff;margin-bottom:18px;font-weight:500;letter-spacing:1px}
+.tag-pk{background:linear-gradient(135deg,#e91e63,#ff6090)}
+.tag-or{background:linear-gradient(135deg,#ff9800,#ffb74d)}
+.tag-bl{background:linear-gradient(135deg,#42a5f5,#64b5f6)}
+.tag-gn{background:linear-gradient(135deg,#66bb6a,#81c784)}
+.tag-pu{background:linear-gradient(135deg,#ab47bc,#ce93d8)}
+.tag-cy{background:linear-gradient(135deg,#26c6da,#4dd0e1)}
+.qb{background:#fafafa;border-radius:16px;padding:24px 28px;margin-bottom:22px;border:1.5px solid #f0e8f0;width:100%;max-width:680px}
+.qt{font-size:1.25em;color:#333;line-height:2}
+.qh{font-size:.9em;color:#aaa;margin-top:8px;font-style:italic}
+.opts{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-bottom:18px}
+.ob{padding:14px 28px;border:2px solid #e0d8e0;border-radius:14px;background:#fff;font-size:1.1em;color:#444;cursor:pointer;transition:all .18s;min-width:80px;text-align:center;line-height:1.5}
+.ob:hover{border-color:#e91e63;background:#fce4ec;transform:translateY(-1px)}
+.ob.sel{border-color:#e91e63;background:#e91e63;color:#fff}
+.ob.ok{border-color:#4caf50;background:#4caf50;color:#fff;pointer-events:none}
+.ob.no{border-color:#f44336;background:#f44336;color:#fff;pointer-events:none}
+.ob.off{pointer-events:none;opacity:.45}
+.meq{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:3px;font-size:1.25em;color:#333;line-height:2.4;margin-bottom:6px}
+.meq span{white-space:nowrap}
+.mi{width:3em;height:2.5em;text-align:center;border:2px solid #e91e63;border-radius:10px;font-size:1.05em;color:#e91e63;font-weight:700;outline:none;background:#fff8fa;padding:0;line-height:2.5em}
+.mi.fc{border-color:#ff4081;box-shadow:0 0 0 4px rgba(233,30,99,.18)}
+.mi.ok{border-color:#4caf50;background:#e8f5e9;color:#2e7d32}
+.mi.no{border-color:#f44336;background:#ffebee;color:#c62828}
+.np{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0 16px;padding:14px 20px;background:#f5f0f5;border-radius:14px;max-width:680px}
+.nb{padding:8px 14px;border:1.5px solid #e0d0e0;border-radius:10px;background:#fff;font-size:1.05em;cursor:pointer;transition:all .12s;min-width:44px;text-align:center;color:#555}
+.nb:hover{background:#fce4ec;border-color:#e91e63;transform:translateY(-1px)}
+.nb:active{background:#f8bbd0}
+.tfw{display:flex;gap:32px;justify-content:center;margin-bottom:18px}
+.tfb{width:90px;height:90px;border-radius:50%;border:3px solid #e0d8e0;background:#fff;font-size:2.6em;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center}
+.tfb:hover{transform:scale(1.08)}
+.tfb.sel{border-color:#e91e63;background:#fce4ec}
+.tfb.ok{border-color:#4caf50;background:#4caf50;color:#fff;pointer-events:none}
+.tfb.no{border-color:#f44336;background:#f44336;color:#fff;pointer-events:none}
+.tfb.off{pointer-events:none;opacity:.45}
+.dbox{font-size:1.3em;color:#333;line-height:2.1;padding:24px 28px;background:linear-gradient(135deg,#fff9c4,#fff3e0);border-radius:16px;margin-bottom:18px;width:100%;max-width:680px}
+.cg{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:18px}
+.cc{width:56px;height:56px;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid #e91e63;border-radius:12px;font-size:1.55em;color:#333;font-weight:500}
+.btn{display:inline-block;padding:14px 48px;border:none;border-radius:32px;background:linear-gradient(135deg,#e91e63,#ff6090);color:#fff;font-size:1.15em;cursor:pointer;transition:all .2s;box-shadow:0 5px 18px rgba(233,30,99,.25);font-weight:500;letter-spacing:1px}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(233,30,99,.35)}
+.btn:active{transform:translateY(0)}
+.btng{background:linear-gradient(135deg,#43a047,#66bb6a);box-shadow:0 5px 18px rgba(76,175,80,.25)}
+.btng:hover{box-shadow:0 8px 24px rgba(76,175,80,.35)}
+.btno{display:inline-block;padding:12px 32px;border:2px solid #e91e63;border-radius:32px;background:transparent;color:#e91e63;font-size:1.05em;cursor:pointer;transition:all .18s;margin-top:14px}
+.btno:hover{background:#fce4ec}
+.btnw{display:inline-block;padding:12px 32px;border:2px solid #ff9800;border-radius:32px;background:transparent;color:#ff9800;font-size:1.05em;cursor:pointer;transition:all .18s;margin-top:14px}
+.btnw:hover{background:#fff3e0}
+.fb{margin-top:14px;padding:14px 20px;border-radius:14px;font-size:1.1em;display:none;line-height:1.7}
+.fb-ok{display:block;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7}
+.fb-no{display:block;background:#ffebee;color:#c62828;border:1px solid #ef9a9a}
+.hid{display:none!important}
+.fi{animation:fadeIn .35s ease;display:flex;flex-direction:column;align-items:center;width:100%}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.sci{width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,#e91e63,#ff6090);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:3.4em;animation:pop .5s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.conf{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;overflow:hidden}
+.cp{position:absolute;top:-10px;animation:cfall linear forwards}
+@keyframes cfall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.err{color:#c62828;padding:20px;font-size:1em;word-break:break-all}
+.hero-icon{font-size:4.5em;margin:24px 0}
+.hero-desc{color:#777;margin-bottom:30px;line-height:1.8;font-size:1.08em}
+</style>
+</head>
+<body>
+<div id="petals"></div>
+<div class="wrap" id="app"><p style="color:#999;padding:40px 0;font-size:1.1em">正在加载题目...</p></div>
+<div id="confetti" class="conf"></div>
+
+<script>
+window.onerror = function(msg, url, line) {
+    var a = document.getElementById('app');
+    if (a) a.innerHTML = '<div class="err">JS Error: ' + msg + ' (Line ' + line + ')</div>';
+};
+
+(function() {
+
+var Q = [];
+
+function add(m, c, q, o, a, h) {
+    Q.push({m:m, c:c, q:q, o:o||null, a:a, h:h||null});
+}
+
+add('choice','汉字填空','乱七（  ）糟',['六','八','九','十'],'八');
+add('choice','汉字填空','三心（  ）意',['一','二','三','四'],'二');
+add('choice','汉字填空','手忙（  ）乱',['手','毛','腿','脚'],'脚');
+
+add('display','问答','春雨惊春清谷天中的"谷"指的是哪个节气？',null,null,'请口头回答，由工作人员判定');
+add('display','问答','每年三四月汉语中心举办的国际中文日活动叫什么名字？',null,null,'请口头回答，由工作人员判定');
+
+add('math','加法运算','##言为定+##鸣惊人=##全其美',null,['一','一','两']);
+add('math','加法运算','##亲不认+##触即发=##窍生烟',null,['六','一','七']);
+add('math','加法运算','##体投地+##手遮天=##神无主',null,['五','一','六']);
+add('math','加法运算','##令五申+##平八稳=##步之才',null,['三','四','七']);
+add('math','加法运算','##通八达+##望无际=##湖四海',null,['四','一','五']);
+add('math','加法运算','##龙戏珠+##零八落=##霄云外',null,['双','七','九']);
+add('math','加法运算','##海为家+##亲不认=##万火急',null,['四','六','十']);
+add('math','加法运算','##生有幸+##颜六色=##面玲珑',null,['三','五','八']);
+add('math','加法运算','##字千金+##令五申=##通八达',null,['一','三','四']);
+add('math','加法运算','##牛一毛+##目了然=##面埋伏',null,['九','一','十']);
+
+add('math','减法运算','##彩缤纷-##呼百应=##海升平',null,['五','一','四']);
+add('math','减法运算','##全十美-##手八脚=##顾茅庐',null,['十','七','三']);
+add('math','减法运算','##光十色-##事无成=##面八方',null,['五','一','四']);
+add('math','减法运算','##嘴八舌-##亲不认=##言为定',null,['七','六','一']);
+add('math','减法运算','##死一生-##分五裂=##湖四海',null,['九','四','五']);
+add('math','减法运算','##室九空-##盘散沙=##牛一毛',null,['十','一','九']);
+add('math','减法运算','##神无主-##龙戏珠=##面受敌',null,['六','双','四']);
+add('math','减法运算','##体投地-##长两短=##败俱伤',null,['五','三','两']);
+add('math','减法运算','##仙过海-##掷千金=##上八下',null,['八','一','七']);
+add('math','减法运算','##面威风-##光十色=##头六臂',null,['八','五','三']);
+add('math','减法运算','##颜六色-##海为家=##丝不苟',null,['五','四','一']);
+
+add('math','乘法运算','##里挑一\u00d7##川归海=##籁俱寂',null,['百','百','万']);
+add('math','乘法运算','##马平川\u00d7##发千钧=##笔勾销',null,['一','一','一']);
+add('math','乘法运算','##全其美\u00d7##厢情愿=##海一家',null,['两','两','四']);
+add('math','乘法运算','##花齐放\u00d7##万火急=##变万化',null,['百','十','千']);
+add('math','乘法运算','##全十美\u00d7##指连心=##花盛开',null,['十','十','百']);
+add('math','乘法运算','##龙戏珠\u00d7##丝不苟=##面三刀',null,['双','一','两']);
+add('math','乘法运算','##心二意\u00d7##视同仁=##思而行',null,['三','一','三']);
+add('math','乘法运算','##言九鼎\u00d7##牛二虎=##霄云外',null,['一','九','九']);
+add('math','乘法运算','##顾茅庐\u00d7##望无际=##言两语',null,['三','一','三']);
+
+add('math','除法运算','##寿无疆\u00f7##思不解=##折不挠',null,['万','百','百']);
+add('math','除法运算','##辛万苦\u00f7##步芳草=##年树人',null,['千','十','百']);
+add('math','除法运算','##霄云外\u00f7##头六臂=##教九流',null,['九','三','三']);
+add('math','除法运算','##神无主\u00f7##虎相斗=##长两短',null,['六','两','三']);
+add('math','除法运算','##面楚歌\u00f7##面三刀=##龙戏珠',null,['四','两','双']);
+add('math','除法运算','##拿九稳\u00f7##光十色=##袖清风',null,['十','五','两']);
+add('math','除法运算','##炼成钢\u00f7##全十美=##拿九稳',null,['百','十','十']);
+add('math','除法运算','##气呵成\u00f7##毛不拔=##波三折',null,['一','一','一']);
+add('math','除法运算','##拜之交\u00f7##鬓如霜=##海为家',null,['八','两','四']);
+
+add('choice','选择题','俄罗斯最常见的男性名字是',['A. 伊万','B. 彼得'],'A');
+add('choice','选择题','以下哪个中国姓更常见',['A. 李','B. 常'],'A');
+add('choice','选择题','俄罗斯的首都是？',['A. 莫斯科','B. 圣彼得堡'],'A');
+add('choice','选择题','中国的首都是？',['A. 上海','B. 北京'],'B');
+add('choice','选择题','俄罗斯人最常喝的传统烈酒是？',['A. 伏特加','B. 啤酒'],'A');
+add('choice','选择题','中国人最常喝的传统热饮是？',['A. 咖啡','B. 茶'],'B');
+add('choice','选择题','俄罗斯最著名的芭蕾舞剧是？',['A. 天鹅湖','B. 睡美人'],'A');
+add('choice','选择题','中国的国宝动物是？',['A. 熊猫','B. 老虎'],'A');
+add('choice','选择题','俄罗斯最长的河流是？',['A. 伏尔加河','B. 叶尼塞河'],'A');
+add('choice','选择题','中国最长的河流是？',['A. 黄河','B. 长江'],'B');
+add('choice','选择题','俄罗斯人过新年时，家里会摆什么树？',['A. 松树','B. 枞树'],'B');
+add('choice','选择题','中国人过春节时，长辈会给晚辈什么？',['A. 红包','B. 鲜花'],'A');
+add('choice','选择题','俄罗斯的套娃是？',['A. 一种木头玩具','B. 一种食物'],'A');
+add('choice','选择题','中国的饺子是？',['A. 一种面食','B. 一种饮料'],'A');
+add('choice','选择题','俄罗斯人常用什么搭配红菜汤？',['A. 酸奶油','B. 酱油'],'A');
+add('choice','选择题','中国人常用什么蘸饺子？',['A. 醋','B. 果酱'],'A');
+add('choice','选择题','俄罗斯最著名的广场是？',['A. 红场','B. 冬宫广场'],'A');
+add('choice','选择题','中国最著名的广场是？',['A. 天安门广场','B. 人民广场'],'A');
+add('choice','选择题','俄罗斯的谢肉节主要吃什么？',['A. 薄饼','B. 面包'],'A');
+add('choice','选择题','中国的端午节主要吃什么？',['A. 粽子','B. 月饼'],'A');
+add('choice','选择题','中国的武术在英文中常被称为？',['A. Kung Fu','B. Judo'],'A');
+add('choice','选择题','俄罗斯人认为送花时，单数花朵用于？',['A. 喜庆场合','B. 葬礼'],'A');
+add('choice','选择题','中国传统婚礼时，新娘通常穿什么颜色？',['A. 白色','B. 红色'],'B');
+add('choice','选择题','俄罗斯最著名的作家是？',['A. 托尔斯泰','B. 莎士比亚'],'A');
+add('choice','选择题','中国最著名的古代教育家是？',['A. 孔子','B. 老子'],'A');
+add('choice','选择题','俄罗斯的国歌旋律来自？',['A. 苏联国歌','B. 沙俄国歌'],'A');
+add('choice','选择题','中华人民共和国是哪一年成立的？',['A. 1956','B. 1949'],'B');
+add('choice','选择题','中国的改革开放是什么时候开始的？',['A. 1980','B. 1978'],'B');
+add('choice','选择题','中国现在的主席是？',['A. 习近平','B. 毛泽东'],'A');
+add('choice','选择题','深圳北理莫斯科大学的吉祥物是？',['A. 套娃','B. 莫莫熊'],'B');
+add('choice','选择题','中国的国旗上有几颗五角星？',['A. 5颗','B. 6颗'],'A');
+add('choice','选择题','2026年的APEC会议在中国的哪个城市举行？',['A. 深圳','B. 广州'],'A');
+add('choice','选择题','今年是什么年？',['A. 中俄建交70周年','B. 中俄教育年'],'B');
+add('choice','选择题','毛泽东第一次访问苏联时，会见的苏联领导人是？',['A. 赫鲁晓夫','B. 斯大林'],'B');
+add('choice','选择题','毛泽东第一次访问苏联是在哪一年？',['A. 1949年','B. 1957年'],'A');
+add('choice','选择题','毛泽东第一次访苏期间，中苏签订了什么重要条约？',['A. 中苏友好同盟互助条约','B. 中苏互不侵犯条约'],'A');
+add('choice','选择题','毛泽东第二次访问苏联时，会见的苏联领导人是？',['A. 斯大林','B. 赫鲁晓夫'],'B');
+add('choice','选择题','毛泽东两次访苏中，哪次是新中国元首第一次出国？',['A. 第一次(1949年)','B. 第二次(1957年)'],'A');
+add('choice','选择题','汉语这个词中的汉最早是什么意思？',['A. 人的名字','B. 河的名字'],'B');
+add('choice','选择题','以下哪个朝代存在的时间更长？',['A. 唐朝','B. 秦朝'],'A');
+add('choice','选择题','这件事___他负责，你就不用操心了。',['A. 由','B. 被'],'A');
+add('choice','选择题','你既然答应了帮忙，就___做到。',['A. 非','B. 得'],'B');
+add('choice','选择题','你___不愿意来，那就别勉强了。',['A. 既然','B. 即使'],'A');
+add('choice','选择题','这封信，我___给他了，你放心。',['A. 已经','B. 曾经'],'A');
+add('choice','选择题','深北莫主楼高多少米？',['A. 156米','B. 165米'],'A');
+add('choice','选择题','关于谷雨的传说常常和哪个人物联系在一起？',['A. 神农','B. 仓颉'],'B');
+add('choice','选择题','谷雨前的一个节气是？',['A. 春分','B. 清明'],'B');
+add('choice','选择题','谷雨后的一个节气是？',['A. 立夏','B. 惊蛰'],'A');
+add('choice','选择题','深北莫图书馆现在的开馆时间是？',['A. 8:00-22:00','B. 7:30-23:30'],'B');
+add('choice','选择题','我们学校的湖里最多时有几只黑天鹅？',['A. 5只','B. 6只'],'B');
+add('choice','选择题','深北莫没有以下哪个专业？',['A. 历史学','B. 东方学与非洲学'],'A');
+add('choice','选择题','学校语言交流角的名称是？',['A. 语联湖畔','B. 语动湖畔'],'A');
+add('choice','选择题','学校的汉语中心在主楼的哪一侧？',['A. 东侧','B. 西侧'],'A');
+
+add('choice','填空','俄罗斯人常说的 спасибо 意思是？',['A. 谢谢','B. 再见'],'A');
+add('choice','填空','俄罗斯的 матрешка 是一种______玩具。',['A. 木头','B. 娃娃'],'B');
+add('choice','填空','中国的月饼是在______吃的。',['A. 清明节','B. 中秋'],'B');
+add('choice','填空','中国的故宫在______市。',['A. 北京','B. 香港'],'A');
+add('choice','填空','俄罗斯的贝加尔湖是世界上最______的湖。',['A. 大','B. 深'],'B');
+add('choice','填空','中国的长城有多长？',['A. 万里','B. 千里'],'A');
+add('choice','填空','俄罗斯的伏尔加河注入______。',['A. 黑海','B. 里海'],'B');
+add('choice','填空','中国的黄河水是______色的。',['A. 红','B. 黄'],'B');
+add('choice','填空','俄罗斯的克里姆林宫在______市。',['A. 莫斯科','B. 圣彼得堡'],'A');
+add('choice','填空','中国的东方明珠塔在______市。',['A. 上海','B. 广州'],'A');
+add('choice','填空','俄罗斯宇航员加加林是第一个进入______的人。',['A. 太空','B. 宇宙'],'A');
+add('choice','填空','俄罗斯和中国的界河是______。',['A. 长江','B. 黑龙江'],'B');
+add('choice','填空题','中国人口最多的民族是______。',['A. 汉族','B. 维吾尔族'],'A');
+add('choice','填空题','中国一共有______个民族。',['A. 55','B. 56'],'B');
+add('choice','填空题','深北莫整体建筑曾获______奖。',['A. 鲁班','B. 华佗'],'A');
+
+add('tf','判断对错','俄罗斯人喝伏特加时常用酸黄瓜下酒。',null,true);
+add('tf','判断对错','中国人吃饭都用刀叉。',null,false);
+add('tf','判断对错','俄罗斯的冬天很冷。',null,true);
+add('tf','判断对错','中国的春节在夏天。',null,false);
+add('tf','判断对错','俄罗斯的套娃是一个娃娃套着另一个娃娃。',null,true);
+add('tf','判断对错','中国不管哪个城市，冬天都下雪。',null,false);
+add('tf','判断对错','圣彼得堡是俄罗斯的首都。',null,false);
+add('tf','判断对错','上海是中国最大的城市之一。',null,true);
+add('tf','判断对错','俄罗斯人喜欢喝热茶。',null,true);
+add('tf','判断对错','中国人过生日都吃蛋糕，不吃面条。',null,false);
+
+add('display','绕口令','四是四，十是十，十四是十四，四十是四十。别把四十说成十四，别把十四说成四十。',null,null,'请快速连续读5遍，不能出错');
+add('display','绕口令','吃葡萄不吐葡萄皮，不吃葡萄倒吐葡萄皮。',null,null,'请快速连续读5遍，不能出错');
+add('display','绕口令','扁担长，板凳宽，扁担没有板凳宽，板凳没有扁担长。扁担绑在板凳上，板凳不让扁担绑在板凳上。',null,null,'请快速连续读5遍，不能出错');
+add('display','绕口令','黑化肥会发灰，灰化肥会发黑。黑化肥发灰会挥发，灰化肥挥发会发黑。',null,null,'请快速连续读5遍，不能出错');
+add('display','绕口令','妈妈骑马，马慢妈妈骂马。妞妞轰牛，牛拗妞妞拧牛。',null,null,'请快速连续读5遍，不能出错');
+add('display','绕口令','粉红墙上画凤凰，凤凰画在粉红墙。红凤凰、粉凤凰，红粉凤凰花凤凰。',null,null,'请快速连续读5遍，不能出错');
+
+add('display','歌曲','请唱一首中文歌',null,null,'请现场演唱，由工作人员判定');
+add('display','歌曲','请唱一首俄语歌',null,null,'请现场演唱，由工作人员判定');
+
+add('display','回答问题','请说出三道中国菜的名字',null,null,'请口头回答，由工作人员判定');
+add('display','回答问题','请说出三种俄罗斯特色食物的名字',null,null,'请口头回答，由工作人员判定');
+add('display','回答问题','请说出五个中国人的姓',null,null,'请口头回答，由工作人员判定');
+add('display','回答问题','请说出五个俄罗斯人的姓',null,null,'请口头回答，由工作人员判定');
+add('display','回答问题','请说出一个中国酒的牌子',null,null,'请口头回答，由工作人员判定');
+
+add('read','朗读汉字','期、希、望、现、实、简、单、解、决、题',null,null,'请逐字朗读，由工作人员判定');
+add('read','朗读汉字','旅、行、计、划、提、前、预、约、参、加',null,null,'请逐字朗读，由工作人员判定');
+add('read','朗读汉字','环、境、保、护、重、要、态、度、选、择',null,null,'请逐字朗读，由工作人员判定');
+add('read','朗读汉字','接、受、建、议、继、续、努、力、成、功',null,null,'请逐字朗读，由工作人员判定');
+
+var cur = null;
+var sel = null;
+var done = false;
+var mfi = 0;
+var app = document.getElementById('app');
+
+function esc(s) {
+    if (!s) return '';
+    var d = document.createElement('div');
+    d.appendChild(document.createTextNode(s));
+    return d.innerHTML;
+}
+
+function tagCls(c) {
+    if (c.indexOf('\u586b\u7a7a') >= 0 || c.indexOf('\u6c49\u5b57') >= 0) return 'tag-pk';
+    if (c.indexOf('\u8fd0\u7b97') >= 0) return 'tag-or';
+    if (c.indexOf('\u9009\u62e9') >= 0) return 'tag-bl';
+    if (c.indexOf('\u5224\u65ad') >= 0) return 'tag-gn';
+    if (c.indexOf('\u7ed5\u53e3\u4ee4') >= 0) return 'tag-pu';
+    return 'tag-cy';
+}
+
+function optKey(s) {
+    var m = s.match(/^([A-Da-d])[\.\s]/);
+    return m ? m[1].toUpperCase() : s;
+}
+
+function showHome() {
+    done = false; sel = null; cur = null;
+    var h = '<div class="fi">';
+    h += '<h1>\ud83c\udf38 \u96e8\u751f\u767e\u8c37 \u8bed\u901a\u56db\u6d77 \ud83c\udf38</h1>';
+    h += '<div class="sub">2026\u56fd\u9645\u4e2d\u6587\u65e5\u7cfb\u5217\u6d3b\u52a8\u4e4b\u8c37\u96e8\u7b11\u76d2 \u00B7\u767e\u53d8SMBU</div>';
+    h += '<div class="hero-icon">\ud83c\udf27\ufe0f\ud83c\udf3e</div>';
+    h += '<p class="hero-desc">';
+    h += '\u968f\u673a\u62bd\u53d6\u4e00\u9053\u9898\u76ee<br>\u7b54\u5bf9\u5373\u53ef\u89e3\u9501\u4e00\u5f20\u7b11\u8138 \ud83d\ude0a</p>';
+    h += '<button class="btn" onclick="window._start()">\u5f00\u59cb\u7b54\u9898</button>';
+    h += '</div>';
+    app.innerHTML = h;
+}
+
+window._start = function() {
+    cur = Q[Math.floor(Math.random() * Q.length)];
+    sel = null; done = false; mfi = 0;
+    renderQ();
+};
+
+function renderQ() {
+    var h = '<div class="fi">';
+    h += '<h1>\ud83c\udf38 \u96e8\u751f\u767e\u8c37 \u8bed\u901a\u56db\u6d77 \ud83c\udf38</h1>';
+    h += '<div class="sub">2026\u56fd\u9645\u4e2d\u6587\u65e5\u7cfb\u5217\u6d3b\u52a8\u4e4b\u8c37\u96e8\u7b11\u76d2 \u767e\u53d8SMBU</div>';
+    h += '<div class="tag ' + tagCls(cur.c) + '">' + esc(cur.c) + '</div>';
+
+    if (cur.m === 'choice') h += buildChoice();
+    else if (cur.m === 'math') h += buildMath();
+    else if (cur.m === 'tf') h += buildTF();
+    else if (cur.m === 'display') h += buildDisplay();
+    else if (cur.m === 'read') h += buildRead();
+
+    h += '<div id="fb" class="fb"></div>';
+
+    if (cur.m === 'display' || cur.m === 'read') {
+        h += '<button class="btn btng" id="passbtn" onclick="window._pass()">\u5b8c\u6210 \u2713</button>';
+    } else {
+        h += '<button class="btn" id="sbtn" onclick="window._submit()">\u63d0\u4ea4\u7b54\u6848</button>';
+    }
+    h += '<br><button class="btno hid" id="nbtn" onclick="window._start()">\u4e0b\u4e00\u9898 \u2192</button>';
+    h += '<br><button class="btnw hid" id="retrybtn" onclick="window._start()">\u6362\u9053\u9898\u8bd5\u8bd5 \ud83d\udd04</button>';
+    h += '</div>';
+    app.innerHTML = h;
+
+    if (cur.m === 'math') {
+        var f = document.getElementById('mi0');
+        if (f) f.focus();
+    }
+}
+
+function buildChoice() {
+    var h = '<div class="qb"><div class="qt">' + esc(cur.q) + '</div></div>';
+    h += '<div class="opts" id="opts">';
+    for (var i = 0; i < cur.o.length; i++) {
+        var k = optKey(cur.o[i]);
+        h += '<button class="ob" data-k="' + esc(k) + '" onclick="window._pick(this)">' + esc(cur.o[i]) + '</button>';
+    }
+    h += '</div>';
+    return h;
+}
+
+function buildMath() {
+    var parts = cur.q.split('##');
+    var h = '<div class="qb"><div class="meq">';
+    var idx = 0;
+    for (var i = 0; i < parts.length; i++) {
+        if (i > 0) {
+            h += '(<input class="mi' + (idx === 0 ? ' fc' : '') + '" id="mi' + idx + '" type="text" readonly maxlength="2" data-i="' + idx + '" onfocus="window._mfocus(' + idx + ')">)';
+            idx++;
+        }
+        if (parts[i]) {
+            h += '<span>' + esc(parts[i]) + '</span>';
+        }
+    }
+    h += '</div></div>';
+
+    var nums = ['\u4e00','\u4e8c','\u4e09','\u56db','\u4e94','\u516d','\u4e03','\u516b','\u4e5d','\u5341','\u767e','\u5343','\u4e07','\u4e24','\u53cc'];
+    h += '<div class="np">';
+    for (var j = 0; j < nums.length; j++) {
+        h += '<button class="nb" onclick="window._tap(\'' + nums[j] + '\')">' + nums[j] + '</button>';
+    }
+    h += '<button class="nb" style="color:#e91e63" onclick="window._tap(\'\')">清除</button>';
+    h += '</div>';
+    return h;
+}
+
+function buildTF() {
+    var h = '<div class="qb"><div class="qt">' + esc(cur.q) + '</div></div>';
+    h += '<div class="tfw" id="tfw">';
+    h += '<button class="tfb" data-v="1" onclick="window._ptf(this)">\u2714</button>';
+    h += '<button class="tfb" data-v="0" onclick="window._ptf(this)">\u2718</button>';
+    h += '</div>';
+    return h;
+}
+
+function buildDisplay() {
+    var h = '<div class="dbox">';
+    h += '<div>' + esc(cur.q) + '</div>';
+    if (cur.h) h += '<div class="qh">' + esc(cur.h) + '</div>';
+    h += '</div>';
+    return h;
+}
+
+function buildRead() {
+    var chars = cur.q.split(/[\u3001,\uff0c\s]+/);
+    var h = '<div class="qb"><div class="qt" style="margin-bottom:12px">\u8bf7\u6b63\u786e\u8bfb\u51fa\u4ee5\u4e0b\u6c49\u5b57\uff1a</div>';
+    h += '<div class="cg">';
+    for (var i = 0; i < chars.length; i++) {
+        if (chars[i]) h += '<div class="cc">' + esc(chars[i]) + '</div>';
+    }
+    h += '</div>';
+    if (cur.h) h += '<div class="qh">' + esc(cur.h) + '</div>';
+    h += '</div>';
+    return h;
+}
+
+window._pick = function(btn) {
+    if (done) return;
+    var all = document.querySelectorAll('.ob');
+    for (var i = 0; i < all.length; i++) all[i].className = 'ob';
+    btn.className = 'ob sel';
+    sel = btn.getAttribute('data-k');
+};
+
+window._mfocus = function(idx) {
+    mfi = idx;
+    var all = document.querySelectorAll('.mi');
+    for (var i = 0; i < all.length; i++) {
+        all[i].className = (i === idx) ? 'mi fc' : 'mi';
+    }
+};
+
+window._tap = function(ch) {
+    if (done) return;
+    var el = document.getElementById('mi' + mfi);
+    if (!el) return;
+    el.value = ch;
+    var total = cur.a.length;
+    if (mfi < total - 1) {
+        window._mfocus(mfi + 1);
+        var nxt = document.getElementById('mi' + (mfi));
+        if (nxt) nxt.focus();
+    }
+};
+
+window._ptf = function(btn) {
+    if (done) return;
+    var all = document.querySelectorAll('.tfb');
+    for (var i = 0; i < all.length; i++) all[i].className = 'tfb';
+    btn.className = 'tfb sel';
+    sel = btn.getAttribute('data-v');
+};
+
+window._submit = function() {
+    if (done) return;
+    var fb = document.getElementById('fb');
+
+    if (cur.m === 'choice') {
+        if (!sel) { showWarn(fb, '\u26a0\ufe0f \u8bf7\u5148\u9009\u62e9\u4e00\u4e2a\u9009\u9879\uff01'); return; }
+        var correct = (sel === cur.a);
+        done = true;
+        var all = document.querySelectorAll('.ob');
+        for (var i = 0; i < all.length; i++) {
+            var k = all[i].getAttribute('data-k');
+            if (k === cur.a) all[i].className = 'ob ok';
+            else if (all[i].className.indexOf('sel') >= 0 && k !== cur.a) all[i].className = 'ob no';
+            else all[i].className = 'ob off';
+        }
+        showResult(fb, correct);
+    }
+    else if (cur.m === 'math') {
+        var vals = [];
+        for (var j = 0; j < cur.a.length; j++) {
+            var el = document.getElementById('mi' + j);
+            vals.push(el ? el.value.trim() : '');
+        }
+        if (vals.some(function(v){ return !v; })) { showWarn(fb, '\u26a0\ufe0f \u8bf7\u586b\u5199\u6240\u6709\u62ec\u53f7\u4e2d\u7684\u6c49\u5b57\uff01'); return; }
+        done = true;
+        var allOk = true;
+        for (var k2 = 0; k2 < cur.a.length; k2++) {
+            var el2 = document.getElementById('mi' + k2);
+            if (vals[k2] === cur.a[k2]) { el2.className = 'mi ok'; }
+            else { el2.className = 'mi no'; allOk = false; }
+        }
+        showResult(fb, allOk);
+    }
+    else if (cur.m === 'tf') {
+        if (!sel) { showWarn(fb, '\u26a0\ufe0f \u8bf7\u5148\u9009\u62e9 \u2714 \u6216 \u2718\uff01'); return; }
+        var isTrue = (sel === '1');
+        var tfOk = (isTrue === cur.a);
+        done = true;
+        var tbs = document.querySelectorAll('.tfb');
+        for (var t = 0; t < tbs.length; t++) {
+            var bv = (tbs[t].getAttribute('data-v') === '1');
+            if (bv === cur.a) tbs[t].className = 'tfb ok';
+            else if (tbs[t].className.indexOf('sel') >= 0 && bv !== cur.a) tbs[t].className = 'tfb no';
+            else tbs[t].className = 'tfb off';
+        }
+        showResult(fb, tfOk);
+    }
+};
+
+function showResult(fb, ok) {
+    var sbtn = document.getElementById('sbtn');
+    var nbtn = document.getElementById('nbtn');
+    var retrybtn = document.getElementById('retrybtn');
+    if (ok) {
+        fb.className = 'fb fb-ok';
+        fb.innerHTML = '\ud83c\udf89 \u606d\u559c\u7b54\u5bf9\u4e86\uff0c\u5feb\u53bb\u89e3\u9501\u4e00\u5f20\u7b11\u8138\u5427 \ud83d\ude0a';
+        if (sbtn) sbtn.className = 'btn hid';
+        if (nbtn) nbtn.className = 'btno';
+        if (retrybtn) retrybtn.className = 'btnw hid';
+        fireConf();
+    } else {
+        fb.className = 'fb fb-no';
+        fb.innerHTML = '\u274c \u7b54\u9519\u5566\uff01';
+        if (sbtn) sbtn.className = 'btn hid';
+        if (retrybtn) retrybtn.className = 'btnw';
+    }
+}
+
+function showWarn(fb, msg) {
+    fb.className = 'fb fb-no';
+    fb.innerHTML = msg;
+    setTimeout(function() { fb.className = 'fb'; fb.innerHTML = ''; }, 2000);
+}
+
+window._pass = function() {
+    done = true;
+    var fb = document.getElementById('fb');
+    fb.className = 'fb fb-ok';
+    fb.innerHTML = '\ud83c\udf89 \u606d\u559c\u5b8c\u6210\u6311\u6218\uff0c\u5feb\u53bb\u89e3\u9501\u4e00\u5f20\u7b11\u8138\u5427 \ud83d\ude0a';
+    var gbtn = document.getElementById('passbtn');
+    if (gbtn) gbtn.className = 'btn btng hid';
+    var nbtn = document.getElementById('nbtn');
+    if (nbtn) nbtn.className = 'btno';
+    fireConf();
+};
+
+function fireConf() {
+    var box = document.getElementById('confetti');
+    var colors = ['#e91e63','#ff5722','#ff9800','#ffeb3b','#4caf50','#2196f3','#9c27b0','#00bcd4'];
+    var h = '';
+    for (var i = 0; i < 60; i++) {
+        var c = colors[Math.floor(Math.random() * colors.length)];
+        var l = Math.random() * 100;
+        var d = Math.random() * 1.5;
+        var dur = 2 + Math.random() * 2;
+        var sz = 8 + Math.random() * 10;
+        var br = Math.random() > 0.5 ? 'border-radius:50%;' : '';
+        h += '<div class="cp" style="left:' + l + '%;animation-delay:' + d + 's;animation-duration:' + dur + 's;width:' + sz + 'px;height:' + sz + 'px;background:' + c + ';' + br + '"></div>';
+    }
+    box.innerHTML = h;
+    setTimeout(function() { box.innerHTML = ''; }, 5000);
+}
+
+function initPetals() {
+    var box = document.getElementById('petals');
+    var colors = ['#f48fb1','#f8bbd0','#fce4ec','#ef9a9a','#fff'];
+    var h = '';
+    for (var i = 0; i < 20; i++) {
+        var c = colors[Math.floor(Math.random() * colors.length)];
+        var l = Math.random() * 100;
+        var sz = 10 + Math.random() * 14;
+        var dur = 8 + Math.random() * 12;
+        var delay = Math.random() * 15;
+        h += '<div class="petal" style="left:' + l + '%;width:' + sz + 'px;height:' + sz + 'px;background:' + c + ';animation-duration:' + dur + 's;animation-delay:' + delay + 's"></div>';
+    }
+    box.innerHTML = h;
+}
+
+initPetals();
+showHome();
+
+})();
+</script>
+</body>
+</html>
