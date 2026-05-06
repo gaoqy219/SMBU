@@ -463,7 +463,7 @@
             const gradeScores = validScores.map(row => parseFloat(row[totalIndex])).sort((a, b) => b - a);
             const gradeRank = gradeScores.indexOf(currentUser.totalScore) + 1;
             elements.gradeRankAlert.textContent = 
-                `年级${totalField}：${currentUser.totalScore}，在${gradeScores.length}人中排名第${gradeRank}名`;
+                `年级排名：${totalField}：${currentUser.totalScore}，在${gradeScores.length}人中排名第${gradeRank}名`;
 
             // 班级排名
             if (classIndex !== -1) {
@@ -474,7 +474,7 @@
                 
                 const classRank = classScores.indexOf(currentUser.totalScore) + 1;
                 elements.classRankAlert.textContent = 
-                    `班级${totalField}：${currentUser.totalScore}，在${classScores.length}人中排名第${classRank}名`;
+                    `班级排名：${totalField}：${currentUser.totalScore}，在${classScores.length}人中排名第${classRank}名`;
             } else {
                 elements.classRankAlert.textContent = '未提供班级信息，无法计算班级排名';
                 elements.classRankAlert.classList.add('bg-amber-50', 'text-amber-800', 'border-amber-200');
