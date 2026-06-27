@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中级阅读练习</title>
+<style>
+/* ========== Reset & Base ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  background: #f0f4f8; color: #2d3748; line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ========== Layout ========== */
+.container { max-width: 900px; margin: 0 auto; padding: 16px; }
+
+/* ========== Header / Timer ========== */
+.header {
+  background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+  color: #fff; padding: 20px 24px; border-radius: 12px;
+  margin-bottom: 20px; display: flex;
+  align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px; box-shadow: 0 4px 16px rgba(26,54,93,0.25);
+}
+.header h1 { font-size: 1.4rem; font-weight: 700; }
+.timer-box {
+  background: rgba(255,255,255,0.15); border-radius: 10px;
+  padding: 10px 18px; text-align: center; min-width: 120px;
+  backdrop-filter: blur(8px);
+}
+.timer-label { font-size: 0.75rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
+.timer-display { font-size: 1.8rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.timer-display.warning { color: #fbbf24; animation: pulse 1s infinite; }
+.timer-display.danger { color: #f87171; animation: pulse 0.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+/* ========== Cards ========== */
+.card {
+  background: #fff; border-radius: 14px; padding: 28px 24px;
+  margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 1px solid #e2e8f0;
+}
+.card h2 { font-size: 1.25rem; color: #1a365d; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; }
+.card h3 { font-size: 1.1rem; color: #2b6cb0; margin: 20px 0 12px; }
+
+/* ========== Reading Content ========== */
+.reading-content {
+  font-size: 1.2rem; line-height: 2; padding: 20px 16px;
+  background: #fffbeb; border-left: 4px solid #d69e2e;
+  border-radius: 0 10px 10px 0; margin-bottom: 24px;
+}
+.reading-content p { margin-bottom: 0.8em; text-indent: 2em; }
+.reading-content .notes { font-size: 1rem; color: #718096; margin-top: 12px; padding-top: 10px; border-top: 1px dashed #e2e8f0; }
+.reading-content .notes p { text-indent: 0; margin-bottom: 0.3em; }
+
+/* Dictionary style for article 4 */
+.dict-entry {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", serif;
+  font-size: 1.15rem; line-height: 2; padding: 16px 20px;
+  background: #fafaf5; border: 1px solid #d4d4c8; border-radius: 8px;
+}
+.dict-entry .headword { font-size: 1.5rem; font-weight: 700; color: #1a365d; }
+.dict-entry .pron { color: #718096; margin-left: 4px; }
+.dict-entry .pos { color: #6b46c1; }
+.dict-entry .def { margin-left: 1em; }
+.dict-entry .example { color: #4a5568; }
+.dict-entry .seealso { color: #2b6cb0; }
+
+/* ========== Question Sections ========== */
+.section { margin-bottom: 24px; }
+.section h4 {
+  font-size: 1rem; color: #4a5568; margin-bottom: 14px;
+  padding: 8px 14px; background: #edf2f7; border-radius: 8px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 8px;
+}
+.section h4 .score-badge {
+  font-size: 0.8rem; background: #2b6cb0; color: #fff;
+  padding: 3px 10px; border-radius: 12px; white-space: nowrap;
+}
+
+.question {
+  margin-bottom: 18px; padding: 14px 16px;
+  background: #f7fafc; border-radius: 10px;
+  border: 1px solid #e2e8f0; transition: border-color 0.2s;
+}
+.question.answered { border-color: #48bb78; }
+.question .q-stem { font-size: 1.05rem; margin-bottom: 10px; font-weight: 500; }
+.question .q-number { color: #2b6cb0; font-weight: 700; }
+
+/* Options */
+.options { display: flex; flex-direction: column; gap: 6px; }
+.option {
+  display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+  border-radius: 8px; cursor: pointer; transition: background 0.15s;
+  font-size: 1.02rem;
+}
+.option:hover { background: #e2e8f0; }
+.option input[type="radio"] { width: 18px; height: 18px; cursor: pointer; accent-color: #2b6cb0; }
+.option.selected { background: #bee3f8; }
+
+/* Three-way true/false */
+.tf-three { display: flex; gap: 16px; flex-wrap: wrap; }
+.tf-three .option { flex: 0 0 auto; }
+.tf-three .option span { margin-left: 4px; font-weight: 600; }
+
+/* Fill in blank */
+.fill-input {
+  width: 100%; max-width: 300px; padding: 10px 14px;
+  font-size: 1.05rem; border: 2px solid #cbd5e0; border-radius: 8px;
+  transition: border-color 0.2s;
+}
+.fill-input:focus { outline: none; border-color: #2b6cb0; }
+
+/* Short answer */
+.short-answer {
+  width: 100%; padding: 12px 16px; font-size: 1.05rem;
+  border: 2px solid #cbd5e0; border-radius: 8px; resize: vertical;
+  min-height: 80px; font-family: inherit;
+}
+.short-answer:focus { outline: none; border-color: #2b6cb0; }
+
+/* Sorting */
+.sort-items { display: flex; flex-direction: column; gap: 8px; }
+.sort-item {
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+  background: #fff; border: 2px solid #e2e8f0; border-radius: 8px;
+  transition: all 0.15s;
+}
+.sort-item:hover { border-color: #a0aec0; }
+.sort-item .sort-rank {
+  width: 44px; height: 36px; text-align: center; font-size: 1rem;
+  border: 2px solid #cbd5e0; border-radius: 6px;
+}
+.sort-item .sort-rank:focus { outline: none; border-color: #2b6cb0; }
+.sort-item .sort-text { flex: 1; font-size: 1.02rem; }
+
+/* ========== Grading result ========== */
+.result-correct { color: #2f855a; font-weight: 600; }
+.result-incorrect { color: #c53030; font-weight: 600; }
+.result-neutral { color: #718096; }
+.result-badge {
+  display: inline-block; padding: 2px 10px; border-radius: 10px;
+  font-size: 0.85rem; font-weight: 600; margin-left: 8px;
+}
+.result-badge.correct { background: #c6f6d5; color: #22543d; }
+.result-badge.incorrect { background: #fed7d7; color: #9b2c2c; }
+.correct-answer { color: #2b6cb0; font-weight: 600; }
+.ref-answer {
+  background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 8px;
+  padding: 12px 16px; margin-top: 8px; color: #2b6cb0;
+}
+
+/* ========== Buttons ========== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; padding: 12px 24px; font-size: 1rem; font-weight: 600;
+  border: none; border-radius: 10px; cursor: pointer;
+  transition: all 0.2s; text-decoration: none;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: #2b6cb0; color: #fff; }
+.btn-primary:hover { background: #1a4f8a; }
+.btn-success { background: #2f855a; color: #fff; }
+.btn-success:hover { background: #22543d; }
+.btn-outline { background: #fff; color: #2b6cb0; border: 2px solid #2b6cb0; }
+.btn-outline:hover { background: #ebf8ff; }
+.btn-warn { background: #c53030; color: #fff; }
+.btn-warn:hover { background: #9b2c2c; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+
+/* ========== Paper Selection ========== */
+.paper-select {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  max-width: 600px; margin: 80px auto;
+}
+.paper-card {
+  background: #fff; border: 3px solid #e2e8f0; border-radius: 16px;
+  padding: 40px 20px; text-align: center; cursor: pointer;
+  transition: all 0.25s;
+}
+.paper-card:hover { border-color: #2b6cb0; transform: translateY(-4px); box-shadow: 0 8px 30px rgba(43,108,176,0.15); }
+.paper-card h2 { font-size: 2rem; color: #1a365d; margin-bottom: 8px; }
+.paper-card p { color: #718096; font-size: 0.95rem; }
+
+/* ========== Article Navigation ========== */
+.article-nav {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+}
+.article-nav .nav-dot {
+  width: 40px; height: 40px; border-radius: 50%; border: 2px solid #cbd5e0;
+  background: #fff; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
+  color: #718096;
+}
+.article-nav .nav-dot.active { border-color: #2b6cb0; background: #2b6cb0; color: #fff; }
+.article-nav .nav-dot.answered-dot { border-color: #48bb78; background: #f0fff4; color: #2f855a; }
+.article-nav .nav-dot.active.answered-dot { background: #2b6cb0; color: #fff; }
+
+/* ========== Score summary ========== */
+.score-summary {
+  background: linear-gradient(135deg, #f0fff4 0%, #ebf8ff 100%);
+  border: 2px solid #48bb78; border-radius: 14px; padding: 24px;
+  text-align: center; margin-bottom: 20px;
+}
+.score-summary .total { font-size: 2.5rem; font-weight: 800; color: #1a365d; }
+.score-summary .detail { color: #4a5568; margin-top: 8px; }
+
+/* ========== Time's up modal ========== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.modal {
+  background: #fff; border-radius: 16px; padding: 32px 24px;
+  max-width: 440px; width: 90%; text-align: center;
+}
+.modal h2 { font-size: 1.5rem; color: #c53030; margin-bottom: 12px; }
+.modal p { margin-bottom: 20px; color: #4a5568; }
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .container { padding: 10px; }
+  .header { padding: 16px; }
+  .header h1 { font-size: 1.15rem; }
+  .timer-display { font-size: 1.4rem; }
+  .card { padding: 18px 14px; border-radius: 10px; }
+  .reading-content { font-size: 1.1rem; line-height: 1.9; padding: 14px 10px; }
+  .paper-select { grid-template-columns: 1fr; gap: 14px; margin: 40px 0; }
+  .btn { padding: 10px 18px; font-size: 0.95rem; }
+  .question { padding: 12px 10px; }
+  .sort-item { flex-wrap: wrap; }
+}
+@media (max-width: 480px) {
+  .header h1 { font-size: 1rem; }
+  .timer-display { font-size: 1.2rem; }
+  .reading-content { font-size: 1.05rem; }
+  .card { padding: 14px 10px; }
+  .btn { width: 100%; justify-content: center; }
+  .btn-group { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="container" id="app"></div>
+
+<script>
+// ==================== DATA ====================
+const PAPER_DATA = {
+A: {
+  title: "A卷",
+  articles: [
+    {
+      id: 1, title: "路最远、票最贵的火车", totalScore: 24,
+      content: `<p>去远方旅行，坐火车是个不错的选择。它比长途汽车舒服，花费的时间也更短；虽然速度没有飞机快，但可以欣赏路上的美丽风景，还可以享受与家人、朋友在一起的快乐时光。</p>
+<p>如果你打算从中国到俄罗斯旅行，可以选择K3次跨国列车（2019年在俄罗斯境内称为0033次）。这条铁路线从开通到现在已经有半个多世纪了。列车每个星期三从北京出发，经过蒙古国，第二周的星期一到达莫斯科，全程近8000公里，总共用时约130个小时，是中国目前路线最长的旅行列车。和一般火车不同的是，这趟列车设有两人一间的小单间；当列车经过不同国家时，餐车上还有当地的特色美食。当然，这趟车的车票也是最贵的，平均一张要5000块左右。</p>
+<p>列车在中国行驶一天以后，就进入了蒙古国。行驶在无边的大草原上，不管是早晨的日出，还是傍晚的日落，都是美景。进入俄罗斯后，车窗外除了美，还是美，白白的雪山、清清的贝加尔湖、蓝蓝的天空，画儿一样的美景，会让你忘记长途旅行的疲劳。</p>
+<p>乘坐这趟路最远、票最贵的火车，感受不同国家的美食美景，和家人、朋友一起度过既难忘又特别的六天五夜，一定会给你留下最深刻的印象。</p>
+<div class="notes"><p><strong>注：</strong></p><p>①时光：时间。&emsp;②设有：设了。&emsp;③行驶（xíngshǐ）：车、船等向前开。</p></div>`,
+      sections: [{
+        type: "choice", instruction: "根据文章内容选择最佳答案", scoreEach: 2,
+        questions: [
+          { stem: "长途旅行，坐火车的好处是：", options: ["比坐飞机更舒服","比坐长途汽车便宜","不会感觉太疲劳","能欣赏路上的风景"], answer: 3 },
+          { stem: "关于K3次列车，下列说法正确的是：", options: ["有一百年的历史","全程100多个小时","有很多单人房间","星期二到达莫斯科"], answer: 1 },
+          { stem: "在K3列车上，不太可能看到的风景是：", options: ["绿色的草原","火红的落日","白白的雪山","蓝蓝的海洋"], answer: 3 }
+        ]},{
+        type: "tf_three", instruction: "根据文章内容判断正误，正确的画“√”，错误的画“×”，没说的画“〇”", scoreEach: 2,
+        questions: [
+          { stem: "K3次列车是中国第一趟跨国列车。", answer: "〇" },
+          { stem: "K3次列车每周三从北京出发。", answer: "√" },
+          { stem: "K3次列车使用的是中国最长的火车车厢。", answer: "〇" },
+          { stem: "乘坐这趟列车往返北京和莫斯科的票价在一万元左右。", answer: "×" },
+          { stem: "餐车上的食品主要是中国美食。", answer: "×" }
+        ]},{
+        type: "choice", instruction: "为画线部分选择最合适的解释", scoreEach: 2,
+        questions: [
+          { stem: "（坐火车）比长途汽车舒服，花费的时间也更<u>短</u>：", options: ["使用","浪费","减少","损失"], answer: 0 },
+          { stem: "（K3次列车）全程近8000公里，<u>总共</u>用时约130个小时：", options: ["总是","一共","完全","计划"], answer: 1 },
+          { stem: "和家人、朋友一起度过难忘又<u>特别</u>的六天五夜，会给你留下深刻的印象：", options: ["奇怪","普遍","普通","不一般"], answer: 3 }
+        ]},{
+        type: "short_answer", instruction: "“总共用时约130个小时”中“用时”是什么意思？", scoreEach: 2,
+        questions: [ { stem: "答：", answer: "需用的时间" } ]
+      }]
+    },
+    {
+      id: 2, title: "长跑是一种精神", totalScore: 21,
+      content: `<p>在大多数人眼中，肯尼亚是一个充满长跑奇迹的地方。在国际马拉松比赛中，肯尼亚运动员获得前三名是很常见的事。</p>
+<p>为什么肯尼亚运动员在长跑比赛中能表现得这么优秀呢？有人分析，肯尼亚人的四肢细长，天生就适合长跑；也有人说，肯尼亚人长期生活在高海拔地区，有强大的心肺功能，非常适合长距离运动。</p>
+<p>尽管运动员天生的身体条件非常重要，但如果你有机会去肯尼亚看看，可能会有新的认识。肯尼亚西部有个城市叫埃尔多雷特，曾经跑出过多个长跑世界冠军。那里海拔2400多米，四季气候变化不大，非常适合高原长跑，所以吸引了很多肯尼亚人去训练。他们每天凌晨5点集合，一起跑1个小时，然后吃早饭、休息，下午再跑1个小时，平均一天要跑20多公里。日复一日，年复一年，只有遇到下雨等特殊天气，才放松一天。当地人说："他们除了吃饭、睡觉和训练，几乎什么也不做。"</p>
+<p>他们为什么这么拼命地跑？一个中学生的回答最有代表性："为了更好的将来，必须坚持。"这些坚持每天跑步的人相信，只有不断训练，才有可能上领奖台。而成为长跑冠军，才能改变自己的人生。</p>
+<p>大家都称赞“肯尼亚人是天生的跑者”，但只有那些坚持训练的人才知道，每天重复地跑步到底意味着什么。正如肯尼亚一位著名长跑运动员曾说的：“长跑本身就是一种精神。必须努力奋斗，才能有所收获。”</p>
+<p style="font-size:0.9rem;color:#718096;">（作者：吕强。摘自《人民日报》，有删改）</p>`,
+      sections: [{
+        type: "tf_two", instruction: "根据文章内容判断正误，正确的画“√”，错误的画“×”", scoreEach: 2,
+        questions: [
+          { stem: "肯尼亚运动员参加马拉松比赛，每次都能取得好成绩。", answer: "×" },
+          { stem: "长距离跑步需要运动员有强大的心肺功能。", answer: "√" },
+          { stem: "肯尼亚的长跑冠军都出生在埃尔多雷特这个城市。", answer: "×" },
+          { stem: "“他们除了吃饭、睡觉和训练，几乎什么也不做”说明运动员很懒。", answer: "×" },
+          { stem: "如果去肯尼亚看看，你会更清楚地了解长跑运动员成功的原因。", answer: "√" }
+        ]},{
+        type: "choice", instruction: "根据文章内容选择最佳答案", scoreEach: 2,
+        questions: [
+          { stem: "肯尼亚人天生适合长跑，是因为他们：", options: ["个子很高","从小开始训练","认真努力","四肢又细又长"], answer: 2 },
+          { stem: "关于埃尔多雷特，下列说法正确的是：", options: ["四季变化很大","非常适合长跑训练","有漂亮的风景","经常举行马拉松比赛"], answer: 1 },
+          { stem: "“长跑是一种精神”，指的是：", options: ["认真做好每件小事","想各种办法克服困难","努力奋斗获得成功","不问将来，只管眼前"], answer: 2 }
+        ]},{
+        type: "sort", instruction: "根据文章内容排序（请给每句话标注序号1-7，1表示排第一，以此类推）", scoreEach: 5,
+        items: [
+          "但实际上，刻苦训练才是他们成功的真正法宝。",
+          "肯尼亚是个充满长跑奇迹的地方。",
+          "有人说，天生的身体条件是肯尼亚运动员取得成功的重要原因。",
+          "这个国家的运动员在长跑比赛中总能表现优秀，这是为什么呢？",
+          "在这些运动员的身上，我们看到了一种奋斗精神。",
+          "比如，在适合高原长跑的埃尔多雷特，有很多人坚持每天训练。",
+          "正是因为这种精神，他们才取得了令人骄傲的成绩。"
+        ],
+        questions: [{ answer: [4,1,3,2,6,5,7] }]
+      }]
+    },
+    {
+      id: 3, title: "粗海盐", totalScore: 28,
+      content: `<p>一天，在朋友家吃了炒花生，觉得与平常吃的大不相同，非常好吃。我好奇地问起花生的做法。朋友说："没有什么特别的技术，只是用了粗海盐。"</p>
+<p>粗海盐是我们小时候用的那种没有处理过的海盐。它的颗粒很大，像冰糖一样。朋友说，粗海盐味道好，营养也丰富。炒菜的时候，只要放一点儿，不用加其他调味品，就会满口留香。"粗海盐这么好的东西却被现代人舍弃了，大家都在用味道不好、营养很少的精盐，实在是可惜。"朋友说。</p>
+<p>这让我想起，以前的许多好东西，都因为“粗糙”而被舍弃。曾经有一位朋友带一包“糖蜜”送给我，糖蜜是制糖时最先熬出来的，黑色，像蜂蜜一样。朋友说，这种糖蜜对身体很有好处。</p>
+<p>其实，食物越粗糙对身体越好，比如糙米好过白米，黑麦面包好过白面包，天然食物好过加工食品。在"过度加工"的时代，人们不断地把食物做得越来越精细，事实上是有害的。</p>
+<p>我们坐在朋友的院子里，谈着“粗”与“细”的对错，朋友突然站起来，走到厨房，拿了一包粗海盐出来。她说：“这一包海盐送给你，你拿回去一用就会发现，食物的味道完全不同了。”她说得那么严肃，使我忍不住双手捧着那包海盐，心里充满感动。</p>
+<div class="notes"><p><strong>注：</strong></p><p>①好奇（hàoqí）：curious&emsp;②颗粒（kēlì）：particle&emsp;③调味品（tiáowèipǐn）：condiment&emsp;④舍弃（shěqì）：abandon&emsp;⑤粗糙（cūcāo）：rough</p></div>`,
+      sections: [{
+        type: "tf_two", instruction: "根据文章内容判断正误，正确的画“√”，错误的画“×”", scoreEach: 2,
+        questions: [
+          { stem: "在朋友家做客时，“我”吃到了粗海盐和糖蜜。", answer: "√" },
+          { stem: "粗海盐的颗粒很大，我以前从来没有见过。", answer: "×" },
+          { stem: "粗海盐的味道很好，但因为没有营养，所以现代人用得不多。", answer: "×" },
+          { stem: "和加工食品相比，天然的食物对身体更有好处。", answer: "√" }
+        ]},{
+        type: "choice", instruction: "根据文章内容选择正确答案", scoreEach: 3,
+        questions: [
+          { stem: "朋友家的炒花生特别好吃，是因为：", options: ["花生颗粒比较大","用了特别的方法","放了一些粗海盐","加了好吃的精盐"], answer: 2 },
+          { stem: "粗海盐被现代人舍弃，是因为它：", options: ["味道很奇怪","没什么营养","对身体不好","没经过加工"], answer: 3 },
+          { stem: "根据课文，下面属于“细”食物的是：", options: ["糖蜜","糙米","精盐","黑麦面包"], answer: 2 },
+          { stem: "根据文章内容，可以知道：", options: ["食品越加工，营养越丰富","现代人有些看法是不对的","多吃粗糙的食品对人身体有害","人们把传统的好东西都扔掉了"], answer: 1 }
+        ]},{
+        type: "choice", instruction: "为画线部分选择最合适的解释", scoreEach: 2,
+        questions: [
+          { stem: "粗海盐这么好的东西却被现代人<u>舍弃</u>了……", options: ["看不起","找不到","不使用","不满意"], answer: 2 },
+          { stem: "糙米好过白米，黑麦面包好过白面包，<u>天然</u>食物好过加工食品。", options: ["人工种植的","没有被加工的","以前常见的","在工厂制造的"], answer: 1 },
+          { stem: "人们不断地把食物做得越来越精细，<u>事实上</u>是有害的。", options: ["很厉害","有困难","很痛苦","有坏处"], answer: 3 },
+          { stem: "她说得那么<u>严肃</u>，使我忍不住双手捧着那包海盐，心里充满感动。", options: ["认真","随便","严重","轻松"], answer: 0 }
+        ]
+      }]
+    },
+    {
+      id: 4, title: "查阅词典——“好”", totalScore: 12,
+      content: `<p>下面是《现代汉语词典（第7版）》关于<strong>"好"</strong>的解释：</p>
+<div class="dict-entry">
+<p><span class="headword">好</span> <span class="pron">hǎo</span> <span class="pos">❶形</span> 优点多的；使人满意的（跟“坏”相对）：<span class="example">～人｜～东西｜～事情</span></p>
+<p style="margin-left:2.5em;"><span class="pos">❷形</span> 健康；痊愈：<span class="example">病～了｜身体～</span></p>
+<p style="margin-left:2.5em;"><span class="pos">❸副</span> 表示程度深，多含感叹语气：<span class="example">～冷｜～香｜～漂亮</span></p>
+<p style="margin-left:2.5em;"><span class="pos">❹形</span> 容易：<span class="example">这事～办｜这道题～做</span></p>
+<p style="margin-left:2.5em;"><span class="pos">❺动</span> 便于：<span class="example">地整平了～种庄稼</span></p>
+<p style="margin-top:8px;"><span class="headword">好</span> <span class="pron">hào</span> <span class="pos">动</span> 喜爱（跟“恶”wù相对）：<span class="example">～学｜～动脑筋｜～吃懒做</span></p>
+</div>`,
+      sections: [{
+        type: "pinyin", instruction: "根据以上资料，给下列句子中的“好”注音", scoreEach: 2,
+        questions: [
+          { stem: "朋友越多越<u>好</u>（ ）。", answer: "hǎo" },
+          { stem: "睡了一觉，我现在感觉<u>好</u>（ ）多了。", answer: "hǎo" },
+          { stem: "他是个非常<u>好</u>（ ）学的人。", answer: "hào" },
+          { stem: "这个猜字的游戏太<u>好</u>（ ）玩了。", answer: "hǎo" },
+          { stem: "我<u>好</u>（ ）不容易才找到这本书。", answer: "hǎo" },
+          { stem: "她别的饮料都不喜欢，就<u>好</u>（ ）喝咖啡。", answer: "hào" }
+        ]
+      }]
+    },
+    {
+      id: 5, title: "走进首博·参观须知", totalScore: 15,
+      content: `<p><strong>❶ 开放时间</strong></p>
+<p>（1）8:30～17:00（16:00后停止入馆），每周一为闭馆日。</p>
+<p>（2）特殊情况另行公告。</p>
+<p><strong>❷ 预约规则</strong></p>
+<p>（1）观众须提前在首都博物馆微信公众号上进行实名制预约，开放时间内，预约时段分为上午和下午。</p>
+<p>（2）当日预约名额未满的情况下，个人观众可进行现场预约。</p>
+<p>（3）持有效证件的老年人、学龄前儿童、残障人士、现役军人或特殊群体可享有现场登记服务。</p>
+<p>（4）特殊情况另行公告。</p>
+<p><strong>❸ 预约教程</strong></p>
+<p>（1）关注首都博物馆微信公众号。</p>
+<p>（2）点击公众号菜单“享·服务”—“预约服务”，进入预约页面。</p>
+<p>（3）根据自己的情况，选择参观日期与入馆时间，完成个人信息填写后，点击"提交预约"按钮完成预约操作。</p>
+<p>（4）预约成功后，进入"预约成功"界面，既可以继续预约，也可以查看订单。</p>`,
+      sections: [{
+        type: "choice", instruction: "根据文章内容选择最佳答案", scoreEach: 3,
+        questions: [
+          { stem: "观众可以入馆参观的时间是：", options: ["星期一10:00","星期二08:00","星期三11:00","星期五17:00"], answer: 2 },
+          { stem: "关于预约，下列说法正确的是：", options: ["要用自己的真实姓名","必须到博物馆去预约","欢迎参观者现场预约","参观日期不需要选择"], answer: 0 }
+        ]},{
+        type: "tf_two", instruction: "根据文章内容判断正误，正确的画“√”，错误的画“×”", scoreEach: 3,
+        questions: [
+          { stem: "不按规定的时间预约，任何人都无法参观首博。", answer: "×" },
+          { stem: "预约成功后，不能修改，也不能继续预约。", answer: "×" },
+          { stem: "星期一无法预约，因为博物馆不开放。", answer: "√" }
+        ]
+      }]
+    }
+  ]
+},
+B: {
+  title: "B卷",
+  articles: [
+    {
+      id: 1, title: "愚蠢还是聪明", totalScore: 26,
+      content: `<p>语言是文化的载体，一个民族的语言往往包含这个民族特有的传统文化、思维方式等。说不同语言的人，看问题的角度有时会不尽相同。中国人认为有些既有意思又很有道理的成语故事，也有外国朋友觉得愚蠢、可笑，比如“守株待兔”和“刻舟求剑”。</p>
+<p>从前，有个农民在田地里干活儿，看到一只跑得飞快的兔子撞在树上死了。他捡起兔子，高兴极了。从此他再也不想干活儿，而是每天守在大树旁边，希望再次遇到不小心的兔子。</p>
+<p>有个人坐船过江，船走到江心，一不小心宝剑落入水中。这个人赶快掏出小刀，在船上宝剑落水的地方刻了个记号。等船靠岸后，他马上从刻着记号的地方跳进水里去找宝剑，当然什么也没找到。</p>
+<p>无论是守株待兔还是刻舟求剑，看起来确实都有些愚蠢可笑。如果把偶然的经验当作处理问题的法宝，就会闹笑话；如果看不到事物的发展变化，思想认识始终停留在过去，自然也不会成功。实际上，中国人通过这两个简单易懂、使人过目不忘的故事，讽刺了不能根据变化的情况而做出改变的愚蠢行为，解释了"一切事物都在发展变化"的哲学道理。这种用形象的故事来说明抽象道理的做法，不正是智慧、聪明的表现吗？</p>
+<div class="notes"><p><strong>注：</strong></p><p>①愚蠢（yúchǔn）：stupid 不聪明。&emsp;②载体（zǎitǐ）：carrier&emsp;③宝剑（bǎojiàn）：sword&emsp;④讽刺（fěngcì）：satirize</p></div>`,
+      sections: [{
+        type: "tf_two", instruction: "根据文章内容判断正误，正确的画“√”，错误的画“×”", scoreEach: 2,
+        questions: [
+          { stem: "语言和文化之间有着密切的联系。", answer: "√" },
+          { stem: "中国人觉得有道理的故事，外国人都觉得愚蠢可笑。", answer: "×" },
+          { stem: "“守株待兔”讽刺了把偶然经验当作普遍规律的做法。", answer: "√" },
+          { stem: "一起坐船的人都帮助那个人找宝剑，但谁也没有找到。", answer: "×" },
+          { stem: "作者比较欣赏中国古人用故事来说明哲学道理的做法。", answer: "√" }
+        ]},{
+        type: "fill_choice", instruction: "根据文章内容选择语句填空",
+        scoreEach: 2,
+        bank: [
+          "A．一切事物都在发展变化",
+          "B．看问题的角度有时会不太一样",
+          "C．用具体故事说明抽象道理",
+          "D．有意思也很有道理的成语故事",
+          "E．农民和丢宝剑的人看上去都很可笑"
+        ],
+        template: "说不同语言的人，<b>①</b>。中国人认为有些<b>②</b>，有的外国朋友可能会觉得可笑。比如在守株待兔和刻舟求剑的故事中，<b>③</b>。其实，这两个故事是通过讽刺他们的愚蠢做法，来解释“<b>④</b>”的道理。应该说，中国古人<b>⑤</b>的做法，也是挺有智慧的。",
+        questions: [
+          { blank: 1, answer: 1 },
+          { blank: 2, answer: 3 },
+          { blank: 3, answer: 4 },
+          { blank: 4, answer: 0 },
+          { blank: 5, answer: 2 }
+        ]},{
+        type: "choice", instruction: "为画线部分选择最合适的解释", scoreEach: 2,
+        questions: [
+          { stem: "说不同语言的人，看问题的角度有时会<u>不尽相同</u>。", options: ["一直都相同","不完全一样","有点儿不同","区别非常大"], answer: 1 },
+          { stem: "把偶然的经验当作处理问题的<u>法宝</u>……", options: ["法律的规定","有效的方法","简单的道理","以前的经验"], answer: 1 },
+          { stem: "中国人通过这两个简单易懂、使人<u>过目不忘</u>的故事……", options: ["看过一遍就记住了","故事的内容很有趣","读者的阅读速度快","故事给人很多感受"], answer: 0 }
+        ]
+      }]
+    },
+    {
+      id: 2, title: "快递小哥的奋斗", totalScore: 21,
+      content: `<p>早上不到7点，"快递明星"马小勇就已经在一堆大大小小的包裹里开始了一天的忙碌。</p>
+<p>今年刚满30岁的马小勇，已经在快递行业奋斗了十年。十年前，谁都没有想到，刚从职业技术学校毕业、学习机电维修与管理专业的他，竟选择当一名快递小哥。在他看来，不管做什么工作，只要能展现自己的能力就够了。"机电专业看起来和快递没什么关系，但在我们的日常工作中，常常能接触到电脑、复印机这类设备，我不仅会用，还能维修。这正是我的优势。"</p>
+<p>十年来，马小勇坚持每天比别人早起半小时、晚睡半小时，他说：“工作做得越多，就越熟练。要是不认真，肯定做不好。万一因为马虎出点儿错误，会给客户带来很大麻烦。快递工作虽然不起眼，可是谁也离不了。”在他心里，送快递并不是一份临时性的工作，而是要坚持做下去的事业。凭着这份热爱，他多次在行业的技术比赛中获得冠军，成了快递行业的"明星"。</p>
+<p>一年前，马小勇当上了公司营业部的经理，从一名普通快递员走上了管理岗位。"快递员想要发展，首先要热爱这个职业，愿意做好这份工作。不管干什么，我相信，是金子总会发光的。"马小勇说。</p>
+<p>现在，马小勇最大的愿望就是把自己学到的知识、总结的工作经验告诉更多的快递员，让他们也能把工作做得更好。的确，快递小哥虽然平凡普通，但也能创造出不平凡的人生。</p>
+<div class="notes"><p><strong>注：</strong></p><p>①包裹（bāoguǒ）：package, parcel&emsp;②行业（hángyè）：industry&emsp;③岗位（gǎngwèi）：post, job</p></div>`,
+      sections: [{
+        type: "tf_two", instruction: "根据文章内容判断正误，正确的画“√”，错误的画“×”", scoreEach: 2,
+        questions: [
+          { stem: "机电专业跟快递行业没有关系。", answer: "×" },
+          { stem: "马小勇热爱快递工作，最后成了快递明星。", answer: "√" },
+          { stem: "快递小哥很平凡，其人生也不可能不平凡。", answer: "×" }
+        ]},{
+        type: "choice", instruction: "根据文章内容选择最佳答案", scoreEach: 2,
+        questions: [
+          { stem: "马小勇的优势是：", options: ["会用电脑，会修设备","参加工作特别早","比别人起得早、睡得晚","特别会展现自己"], answer: 0 },
+          { stem: "马小勇获得成功的重要因素是：", options: ["积极参加技术比赛","坚持认真做好工作","很快就当上了经理","从来不找客户麻烦"], answer: 1 },
+          { stem: "马小勇现在最大的愿望是：", options: ["改变看不起快递工作的想法","工作中永远不出现错误","让人们更加离不开快递工作","把自己的经验传授给别人"], answer: 3 },
+          { stem: "从文章可知，马小勇：", options: ["活泼","聪明","认真","善良"], answer: 2 },
+          { stem: "“快递工作虽然不起眼儿，可是谁也离不了”中的“不起眼儿”的意思是：", options: ["不被大家看好","不特别严重","很多人不想干","不引人注意"], answer: 3 }
+        ]},{
+        type: "sort", instruction: "根据文章内容排序（请给每句话标注序号1-6，1表示排第一，以此类推）", scoreEach: 5,
+        items: [
+          "刚参加工作时，他对送快递并不熟悉。",
+          "从职业技术学校毕业以后，马小勇在快递公司找到了一份工作。",
+          "去年，他走上管理岗位，当上了经理。",
+          "于是，他坚持每天比别人早起半小时、晚睡半小时，终于，越做越熟练。",
+          "今后，他希望培养出更多优秀的快递员。",
+          "凭着对工作的热爱，马小勇多次在行业的技术比赛中获得冠军。"
+        ],
+        questions: [{ answer: [2,1,5,3,6,4] }]
+      }]
+    },
+    {
+      id: 3, title: "雷锋——一个普通而伟大的名字", totalScore: 28,
+      content: `<p>在中国，人人都知道雷锋（Léi Fēng，1940—1962），人人都知道雷锋精神。雷锋这个名字在中国人的心里，活了半个多世纪了。</p>
+<p>1940年，雷锋出生在农村，他很小就没了父母。他做过很多种工作，长大后，成了一名汽车兵。</p>
+<p>雷锋一生乐于助人。一次，他坐火车，看到列车员太忙，就赶紧去帮忙：扫地、送水、拿行李、给老人找座位……一直忙到下车。出了站，他看到一位大姐丢了车票，上不了火车，急得不得了。看着大姐着急的样子，雷锋决定帮助她。他到售票处又买了一张车票，对她说："快上车吧，车快开了。"这样的好事，雷锋不知道做了多少。可惜的是，雷锋的生命停在了22岁。但是，他愿意帮助别人的精神，却影响了一代又一代中国人。</p>
+<p>后来，每年的3月5日成了"学雷锋纪念日"。这个纪念日恐怕是世界上唯一一个纪念普通士兵的日子。</p>
+<p>雷锋虽然只是一名普普通通的士兵，但是他的精神是伟大的，雷锋精神永远活在中国人的心里，活在我们的生活中，今天各行各业无数的志愿者就是活着的雷锋。</p>
+<div class="notes"><p><strong>注：</strong></p><p>①伟大（wěidà）：高大的、优秀的。&emsp;②士兵：军人，当兵打仗的人。&emsp;③志愿者：自愿为社会服务、帮助别人的人。</p></div>`,
+      sections: [{
+        type: "choice", instruction: "根据文章内容选择正确答案", scoreEach: 4,
+        questions: [
+          { stem: "雷锋这个名字在中国人心里活了半个多世纪，意思是指：", options: ["他的名字很有名","他50多岁去世的","中国人都喜欢他","他去世后到现在的时间"], answer: 3 },
+          { stem: "当雷锋遇到丢了车票的大姐时：", options: ["他为大姐买车票","他帮大姐找车票","他劝大姐别着急","他把大姐送上车"], answer: 0 },
+          { stem: "雷锋的故事告诉我们：", options: ["坐火车最容易碰到雷锋","当雷锋就不能怕苦怕累","普通人也可以活得很伟大","雷锋没有休息的时间"], answer: 2 }
+        ]},{
+        type: "choice", instruction: "为画线部分选择最合适的解释", scoreEach: 2,
+        questions: [
+          { stem: "雷锋一生<u>乐于助人</u>。", options: ["愿意帮助别人","帮助别人，自己也高兴","多做好事，让大家高兴"], answer: 0 },
+          { stem: "他看到一位大姐丢了车票上不了火车，<u>急得不得了</u>。", options: ["特别着急","快急病了","没有办法了"], answer: 0 },
+          { stem: "这样的好事雷锋<u>不知道做了多少</u>。", options: ["做了很多很多","不想知道做了多少","没有数过做了多少"], answer: 0 }
+        ]},{
+        type: "tf_two", instruction: "根据文章内容判断正误，正确的画“√”，错误的画“×”", scoreEach: 2,
+        questions: [
+          { stem: "失去了父母，雷锋当了汽车兵。", answer: "×" },
+          { stem: "雷锋坐火车，成了一名不要工资的列车员。", answer: "×" },
+          { stem: "雷锋精神就是助人为乐的精神。", answer: "√" },
+          { stem: "雷锋是一个普通士兵。", answer: "√" },
+          { stem: "“活雷锋”是指无数的志愿者。", answer: "√" }
+        ]
+      }]
+    },
+    {
+      id: 4, title: "查阅词典——“差”", totalScore: 12,
+      content: `<p>下面是《现代汉语词典（第7版）》关于<strong>"差"</strong>的解释：</p>
+<div class="dict-entry">
+<p><span class="headword">差</span> <span class="pron">chà</span> <span class="pos">❶形</span> 不相同；不相合：<span class="example">～得远｜～不多</span></p>
+<p style="margin-left:2.5em;"><span class="pos">❷形</span> 错误：<span class="example">说～了</span></p>
+<p style="margin-left:2.5em;"><span class="pos">❸动</span> 缺少；欠缺：<span class="example">还～一道题｜～五分钟</span></p>
+<p style="margin-left:2.5em;"><span class="pos">❹形</span> 不好；不够标准：<span class="example">质量～｜成绩～</span></p>
+<p style="margin-top:8px;"><span class="headword">差</span> <span class="pron">chā</span> <span class="pos">名</span> 差别；差异：<span class="example">时～｜～别</span></p>
+<p style="margin-top:8px;"><span class="headword">差</span> <span class="pron">chāi</span> <span class="pos">❶动</span> 派遣：<span class="example">～遣</span></p>
+<p style="margin-left:2.5em;"><span class="pos">❷名</span> 被派遣做的事；公务：<span class="example">出～｜～事</span></p>
+<p style="margin-top:8px;"><span class="headword">差</span> <span class="pron">cī</span> 见“参差”（cēncī）</p>
+</div>`,
+      sections: [{
+        type: "pinyin", instruction: "根据以上资料，给下列句子中的“差”注音", scoreEach: 2,
+        questions: [
+          { stem: "我们的汉语虽然进步了，但和中国人相比，还<u>差</u>（ ）得远。", answer: "chà" },
+          { stem: "今天的作业我马上就写完了，还<u>差</u>（ ）一道题。", answer: "chà" },
+          { stem: "我下周去长沙出<u>差</u>（ ）。", answer: "chāi" },
+          { stem: "这些树长得参<u>差</u>（ ）不齐。", answer: "cī" },
+          { stem: "请找一找这两幅图的<u>差</u>（ ）异。", answer: "chā" },
+          { stem: "这种电池质量太<u>差</u>（ ）了，用一天就没电了。", answer: "chà" }
+        ]
+      }]
+    },
+    {
+      id: 5, title: "大风蓝色预警", totalScore: 13,
+      content: `<p style="text-align:right;color:#718096;">气象深圳&emsp;今天10:31预警发布</p>
+<p><strong>【发布大风蓝色预警信号】</strong>市气象台3月31日10时30分发布大风蓝色预警信号：预计3月31日16时至4月1日8时，本市大部分地区有4级左右偏北风，阵风最高可达7级，请注意防范。</p>
+<p><strong>防范指南：</strong></p>
+<p>1）各单位做好防范大风准备工作，密切注意森林和城区防火；机场、铁路和交通管理部门应采取有效措施，保证交通安全。</p>
+<p>2）骑自行车要注意安全。</p>
+<p>3）行人不要在高楼、广告牌或大树下停留。</p>
+<p>4）家庭应注意防火，避免火灾事故。</p>`,
+      sections: [{
+        type: "fill_blank", instruction: "根据文章内容填空", scoreEach: 2,
+        questions: [
+          { stem: "预计3月31日下午至（ ）日上午，本市大部分地区将有4级左右偏北风，阵风最高可达（ ）级。", blanks: 2, answers: ["4月1日","7"] },
+          { stem: "行人不要在高楼、（ ）或大树下停留。", blanks: 1, answers: ["广告牌"] },
+          { stem: "（ ）要注意防火，避免火灾。", blanks: 1, answers: ["家庭"] },
+          { stem: "这个“大风蓝色预警”是（ ）发布的。", blanks: 1, answers: ["气象深圳"] }
+        ]},{
+        type: "short_answer", instruction: "“大风蓝色预警”可以说成“蓝色大风预警”吗？为什么？", scoreEach: 5,
+        questions: [ { stem: "答：", answer: "不行。“蓝色”是“预警”的级别，如果放在“大风”前面就可能产生歧义。" } ]
+      }]
+    }
+  ]
+}
+};
+
+// ==================== APP STATE ====================
+const state = {
+  paper: null,          // 'A' or 'B'
+  currentArticle: 0,
+  timerStarted: false,
+  timeLeft: 90 * 60,   // seconds
+  timerInterval: null,
+  submitted: false,
+  // answers[articleIdx][sectionIdx][questionIdx] = user's answer
+  answers: []
+};
+
+// ==================== HELPERS ====================
+function $(sel) { return document.querySelector(sel); }
+function $$(sel) { return document.querySelectorAll(sel); }
+function el(tag, attrs = {}, ...children) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'className') e.className = v;
+    else if (k === 'innerHTML') e.innerHTML = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v);
+  }
+  for (const c of children) {
+    if (typeof c === 'string') e.appendChild(document.createTextNode(c));
+    else if (c) e.appendChild(c);
+  }
+  return e;
+}
+
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+// ==================== INIT ANSWERS ====================
+function initAnswers() {
+  const data = PAPER_DATA[state.paper];
+  state.answers = data.articles.map(article =>
+    article.sections.map(section => {
+      if (section.type === 'sort') return new Array(section.items.length).fill(null);
+      if (section.type === 'fill_blank') return section.questions.map(q => new Array(q.blanks).fill(''));
+      if (section.type === 'fill_choice') return section.questions.map(() => -1);
+      return section.questions.map(() => null);
+    })
+  );
+}
+
+// ==================== RENDER ====================
+function render() {
+  const app = $('#app');
+  if (!state.paper) return renderPaperSelect(app);
+  return renderExam(app);
+}
+
+function renderPaperSelect(app) {
+  app.innerHTML = `
+    <div style="text-align:center;padding-top:40px;">
+      <h1 style="font-size:2rem;color:#1a365d;margin-bottom:12px;">📖 中级阅读练习</h1>
+      <p style="color:#718096;margin-bottom:40px;">请选择一套试卷开始练习</p>
+    </div>
+    <div class="paper-select">
+      <div class="paper-card" onclick="selectPaper('A')">
+        <h2>📝 A卷</h2>
+        <p>5篇阅读 · 100分 · 90分钟</p>
+      </div>
+      <div class="paper-card" onclick="selectPaper('B')">
+        <h2>📝 B卷</h2>
+        <p>5篇阅读 · 100分 · 90分钟</p>
+      </div>
+    </div>`;
+}
+
+function selectPaper(paper) {
+  state.paper = paper;
+  state.currentArticle = 0;
+  state.submitted = false;
+  initAnswers();
+  startTimer();
+  render();
+}
+
+function startTimer() {
+  if (state.timerStarted) return;
+  state.timerStarted = true;
+  state.timeLeft = 90 * 60;
+  updateTimerDisplay();
+  state.timerInterval = setInterval(() => {
+    state.timeLeft--;
+    updateTimerDisplay();
+    if (state.timeLeft <= 0) {
+      clearInterval(state.timerInterval);
+      if (!state.submitted) autoSubmit();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const td = $('.timer-display');
+  if (!td) return;
+  td.textContent = formatTime(state.timeLeft);
+  td.className = 'timer-display';
+  if (state.timeLeft <= 300) td.classList.add('danger');
+  else if (state.timeLeft <= 900) td.classList.add('warning');
+}
+
+function autoSubmit() {
+  clearInterval(state.timerInterval);
+  state.submitted = true;
+  state.timeLeft = 0;
+  render();
+  // Show time's up message
+  setTimeout(() => {
+    alert('⏰ 时间到！你的试卷已自动提交。');
+  }, 200);
+}
+
+function renderExam(app) {
+  const data = PAPER_DATA[state.paper];
+  const article = data.articles[state.currentArticle];
+  const totalArticles = data.articles.length;
+
+  let navHTML = '<div class="article-nav">';
+  for (let i = 0; i < totalArticles; i++) {
+    const hasAnyAnswer = state.answers[i].some(sectionAnswers =>
+      Array.isArray(sectionAnswers) && sectionAnswers.some(a => a !== null && a !== '' && (!Array.isArray(a) || a.some(v => v !== '')))
+    );
+    let cls = 'nav-dot';
+    if (i === state.currentArticle) cls += ' active';
+    if (hasAnyAnswer) cls += ' answered-dot';
+    navHTML += `<div class="${cls}" onclick="goToArticle(${i})">${i + 1}</div>`;
+  }
+  navHTML += '</div>';
+
+  const canGoPrev = state.currentArticle > 0;
+  const canGoNext = state.currentArticle < totalArticles - 1;
+  const isLastArticle = state.currentArticle === totalArticles - 1;
+  const warnClass = state.timeLeft <= 300 ? ' danger' : state.timeLeft <= 900 ? ' warning' : '';
+
+  let html = `
+    <div class="header">
+      <div>
+        <h1>📖 中级阅读练习 · ${data.title}</h1>
+        <div style="font-size:0.85rem;opacity:0.8;margin-top:4px;">第 ${article.id} 篇：${article.title}（共${article.totalScore}分）</div>
+      </div>
+      <div class="timer-box">
+        <div class="timer-label">⏱ 剩余时间</div>
+        <div class="timer-display${warnClass}">${formatTime(state.timeLeft)}</div>
+      </div>
+    </div>
+    ${navHTML}
+    <div class="card">
+      <h2>文章${['一','二','三','四','五'][article.id-1]}：${article.title}</h2>
+      <div class="reading-content">${article.content}</div>
+      ${renderSections(article)}
+    </div>
+    <div class="btn-group" style="justify-content:space-between;">
+      <div>
+        ${canGoPrev ? `<button class="btn btn-outline" onclick="goToArticle(${state.currentArticle - 1})">⬅ 上一篇</button>` : ''}
+      </div>
+      <div>
+        ${canGoNext ? `<button class="btn btn-primary" onclick="goToArticle(${state.currentArticle + 1})">下一篇 ➡</button>` : ''}
+        ${isLastArticle && !state.submitted ? `<button class="btn btn-success" onclick="submitExam()">📩 提交试卷</button>` : ''}
+      </div>
+    </div>
+    ${state.submitted ? renderResults() : ''}
+  `;
+
+  app.innerHTML = html;
+
+  // Restore saved answers
+  restoreAnswers(article);
+}
+
+function renderSections(article) {
+  return article.sections.map((section, si) => {
+    let qHTML = '';
+    switch (section.type) {
+      case 'choice':
+        qHTML = renderChoice(section, si);
+        break;
+      case 'tf_two':
+        qHTML = renderTF(section, si, false);
+        break;
+      case 'tf_three':
+        qHTML = renderTF(section, si, true);
+        break;
+      case 'short_answer':
+        qHTML = renderShortAnswer(section, si);
+        break;
+      case 'sort':
+        qHTML = renderSort(section, si);
+        break;
+      case 'pinyin':
+        qHTML = renderPinyin(section, si);
+        break;
+      case 'fill_blank':
+        qHTML = renderFillBlank(section, si);
+        break;
+      case 'fill_choice':
+        qHTML = renderFillChoice(section, si);
+        break;
+    }
+    return `<div class="section">
+      <h4>（${['一','二','三','四'][si] || si+1}）${section.instruction} <span class="score-badge">${section.scoreEach}分/题</span></h4>
+      ${qHTML}
+    </div>`;
+  }).join('');
+}
+
+function renderChoice(section, si) {
+  return section.questions.map((q, qi) => {
+    const opts = q.options.map((o, oi) => {
+      const label = String.fromCharCode(65 + oi);
+      const checked = state.answers[state.currentArticle][si][qi] === oi ? 'checked' : '';
+      return `<label class="option${checked ? ' selected' : ''}">
+        <input type="radio" name="q_${si}_${qi}" value="${oi}" ${checked} onchange="saveChoice(${si},${qi},${oi})">
+        <span>${label}. ${o}</span>
+      </label>`;
+    }).join('');
+    return `<div class="question" id="q_${si}_${qi}">
+      <div class="q-stem"><span class="q-number">${qi+1}.</span> ${q.stem}</div>
+      <div class="options">${opts}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderTF(section, si, threeWay) {
+  const opts = threeWay
+    ? [{val:'√', label:'√ 正确'},{val:'×', label:'× 错误'},{val:'〇', label:'〇 没提到'}]
+    : [{val:'√', label:'√ 正确'},{val:'×', label:'× 错误'}];
+  return section.questions.map((q, qi) => {
+    const curVal = state.answers[state.currentArticle][si][qi];
+    const tfOpts = opts.map(o => {
+      const checked = curVal === o.val ? 'checked' : '';
+      return `<label class="option${checked ? ' selected' : ''}">
+        <input type="radio" name="q_${si}_${qi}" value="${o.val}" ${checked} onchange="saveTF(${si},${qi},'${o.val}')">
+        <span>${o.label}</span>
+      </label>`;
+    }).join('');
+    return `<div class="question" id="q_${si}_${qi}">
+      <div class="q-stem"><span class="q-number">${qi+1}.</span> ${q.stem}</div>
+      <div class="tf-three">${tfOpts}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderShortAnswer(section, si) {
+  return section.questions.map((q, qi) => {
+    const val = state.answers[state.currentArticle][si][qi] || '';
+    return `<div class="question" id="q_${si}_${qi}">
+      <div class="q-stem"><span class="q-number">${qi+1}.</span> ${q.stem}</div>
+      <textarea class="short-answer" placeholder="请输入你的答案……" onchange="saveShort(${si},${qi},this.value)" oninput="saveShort(${si},${qi},this.value)">${escapeHtml(val)}</textarea>
+    </div>`;
+  }).join('');
+}
+
+function renderSort(section, si) {
+  return section.items.map((item, ii) => {
+    const val = (state.answers[state.currentArticle][si][ii] !== undefined && state.answers[state.currentArticle][si][ii] !== null)
+      ? state.answers[state.currentArticle][si][ii] : '';
+    return `<div class="sort-item">
+      <span style="color:#718096;min-width:24px;">${ii+1}.</span>
+      <span class="sort-text">${item}</span>
+      <input type="number" class="sort-rank" min="1" max="${section.items.length}" placeholder="排序" value="${val}"
+        onchange="saveSort(${si},${ii},parseInt(this.value)||null)" oninput="saveSort(${si},${ii},parseInt(this.value)||null)">
+    </div>`;
+  }).join('');
+}
+
+function renderPinyin(section, si) {
+  return section.questions.map((q, qi) => {
+    const val = state.answers[state.currentArticle][si][qi] || '';
+    return `<div class="question" id="q_${si}_${qi}">
+      <div class="q-stem"><span class="q-number">${qi+1}.</span> ${q.stem}</div>
+      <input type="text" class="fill-input" placeholder="请输入拼音" value="${escapeHtml(val)}"
+        onchange="savePinyin(${si},${qi},this.value.trim())" oninput="savePinyin(${si},${qi},this.value.trim())">
+    </div>`;
+  }).join('');
+}
+
+function renderFillBlank(section, si) {
+  return section.questions.map((q, qi) => {
+    const vals = state.answers[state.currentArticle][si][qi] || new Array(q.blanks).fill('');
+    const inputs = [];
+    for (let b = 0; b < q.blanks; b++) {
+      inputs.push(`<input type="text" class="fill-input" style="max-width:200px;display:inline;margin:0 4px;" placeholder="填空${b+1}" value="${escapeHtml(vals[b]||'')}"
+        onchange="saveFill(${si},${qi},${b},this.value.trim())" oninput="saveFill(${si},${qi},${b},this.value.trim())">`);
+    }
+    // Split stem by （） markers
+    let stemDisplay = q.stem;
+    for (let b = 0; b < q.blanks; b++) {
+      stemDisplay = stemDisplay.replace('（ ）', ` ${inputs[b]} `);
+    }
+    return `<div class="question" id="q_${si}_${qi}">
+      <div class="q-stem"><span class="q-number">${qi+1}.</span> ${stemDisplay}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderFillChoice(section, si) {
+  const currentAnswers = state.answers[state.currentArticle][si];
+  // Display the template with dropdowns for each blank
+  let displayHTML = section.template;
+  section.questions.forEach((q, qi) => {
+    const selected = currentAnswers[qi] !== null && currentAnswers[qi] !== undefined ? currentAnswers[qi] : -1;
+    let selectHTML = `<select style="font-size:1rem;padding:4px 8px;border-radius:6px;border:2px solid #cbd5e0;"
+      onchange="saveFillChoice(${si},${qi},parseInt(this.value))">
+      <option value="-1" ${selected === -1 ? 'selected' : ''}>请选择</option>`;
+    section.bank.forEach((opt, oi) => {
+      const label = String.fromCharCode(65 + oi);
+      selectHTML += `<option value="${oi}" ${selected === oi ? 'selected' : ''}>${label}. ${opt}</option>`;
+    });
+    selectHTML += '</select>';
+    displayHTML = displayHTML.replace(`<b>${['①','②','③','④','⑤'][qi]}</b>`, selectHTML);
+  });
+  return `<div class="question">
+    <div class="q-stem">${displayHTML}</div>
+  </div>`;
+}
+
+// ==================== SAVE ANSWERS ====================
+function saveChoice(si, qi, val) {
+  state.answers[state.currentArticle][si][qi] = val;
+  markAnswered(si, qi);
+}
+
+function saveTF(si, qi, val) {
+  state.answers[state.currentArticle][si][qi] = val;
+  markAnswered(si, qi);
+}
+
+function saveShort(si, qi, val) {
+  state.answers[state.currentArticle][si][qi] = val;
+  markAnswered(si, qi);
+}
+
+function saveSort(si, ii, val) {
+  state.answers[state.currentArticle][si][ii] = val;
+  markAnswered(si, ii);
+}
+
+function savePinyin(si, qi, val) {
+  state.answers[state.currentArticle][si][qi] = val;
+  markAnswered(si, qi);
+}
+
+function saveFill(si, qi, bi, val) {
+  if (!state.answers[state.currentArticle][si][qi]) {
+    state.answers[state.currentArticle][si][qi] = [];
+  }
+  state.answers[state.currentArticle][si][qi][bi] = val;
+  markAnswered(si, qi);
+}
+
+function saveFillChoice(si, qi, val) {
+  state.answers[state.currentArticle][si][qi] = val;
+  markAnswered(si, qi);
+}
+
+function markAnswered(si, qi) {
+  const el = $(`#q_${si}_${qi}`);
+  if (el) el.classList.add('answered');
+}
+
+function restoreAnswers(article) {
+  article.sections.forEach((section, si) => {
+    if (section.type === 'choice' || section.type === 'tf_two' || section.type === 'tf_three') {
+      section.questions.forEach((q, qi) => {
+        const val = state.answers[state.currentArticle][si][qi];
+        if (val !== null && val !== undefined) {
+          const el = $(`#q_${si}_${qi}`);
+          if (el) el.classList.add('answered');
+        }
+      });
+    }
+    if (section.type === 'fill_choice') {
+      section.questions.forEach((q, qi) => {
+        const val = state.answers[state.currentArticle][si][qi];
+        if (val !== null && val !== undefined && val !== -1) {
+          const el = $(`#q_${si}_${qi}`);
+          if (el) el.classList.add('answered');
+        }
+      });
+    }
+  });
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ==================== NAVIGATION ====================
+function goToArticle(idx) {
+  state.currentArticle = idx;
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ==================== SUBMIT & GRADE ====================
+function submitExam() {
+  // Check unanswered questions
+  const data = PAPER_DATA[state.paper];
+  let unanswered = 0;
+  data.articles.forEach((article, ai) => {
+    article.sections.forEach((section, si) => {
+      section.questions.forEach((q, qi) => {
+        const ans = state.answers[ai][si][qi];
+        if (ans === null || ans === undefined || ans === '' || (Array.isArray(ans) && ans.every(v => !v))) unanswered++;
+      });
+    });
+  });
+
+  if (unanswered > 0) {
+    if (!confirm(`还有 ${unanswered} 道题未作答，确定要提交吗？`)) return;
+  } else {
+    if (!confirm('确定要提交试卷吗？提交后将无法修改。')) return;
+  }
+
+  clearInterval(state.timerInterval);
+  state.submitted = true;
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderResults() {
+  const data = PAPER_DATA[state.paper];
+  let totalScore = 0;
+  let totalPossible = 0;
+  let resultHTML = '<div class="card" style="margin-top:24px;"><h2>📊 成绩报告</h2>';
+
+  data.articles.forEach((article, ai) => {
+    resultHTML += `<h3>文章${['一','二','三','四','五'][ai]}：${article.title}</h3>`;
+    article.sections.forEach((section, si) => {
+      section.questions.forEach((q, qi) => {
+        const userAns = state.answers[ai][si][qi];
+        let correct = false;
+        let isSubjective = false;
+
+        if (section.type === 'choice') {
+          correct = userAns === q.answer;
+          totalPossible += section.scoreEach;
+          if (correct) totalScore += section.scoreEach;
+          const userLabel = userAns !== null && userAns !== undefined ? String.fromCharCode(65 + userAns) : '未作答';
+          const corrLabel = String.fromCharCode(65 + q.answer);
+          resultHTML += `<div style="margin:6px 0;padding:6px 10px;border-radius:6px;background:${correct ? '#f0fff4' : '#fff5f5'}">
+            ${qi+1}. ${q.stem}<br>
+            你的答案：<span class="${correct ? 'result-correct' : 'result-incorrect'}">${userLabel}</span>
+            ${!correct ? `<span class="correct-answer">（正确答案：${corrLabel}）</span>` : ''}
+            <span class="result-badge ${correct ? 'correct' : 'incorrect'}">${correct ? '✓' : '✗'} ${section.scoreEach}分</span>
+          </div>`;
+        } else if (section.type === 'tf_two' || section.type === 'tf_three') {
+          correct = userAns === q.answer;
+          totalPossible += section.scoreEach;
+          if (correct) totalScore += section.scoreEach;
+          resultHTML += `<div style="margin:6px 0;padding:6px 10px;border-radius:6px;background:${correct ? '#f0fff4' : '#fff5f5'}">
+            ${qi+1}. ${q.stem}<br>
+            你的答案：<span class="${correct ? 'result-correct' : 'result-incorrect'}">${userAns || '未作答'}</span>
+            ${!correct ? `<span class="correct-answer">（正确答案：${q.answer}）</span>` : ''}
+            <span class="result-badge ${correct ? 'correct' : 'incorrect'}">${correct ? '✓' : '✗'} ${section.scoreEach}分</span>
+          </div>`;
+        } else if (section.type === 'pinyin') {
+          correct = userAns && userAns.toLowerCase().trim() === q.answer.toLowerCase().trim();
+          totalPossible += section.scoreEach;
+          if (correct) totalScore += section.scoreEach;
+          resultHTML += `<div style="margin:6px 0;padding:6px 10px;border-radius:6px;background:${correct ? '#f0fff4' : '#fff5f5'}">
+            ${qi+1}. ${q.stem.replace(/<u>/g,'').replace(/<\/u>/g,'')}<br>
+            你的答案：<span class="${correct ? 'result-correct' : 'result-incorrect'}">${userAns || '未作答'}</span>
+            ${!correct ? `<span class="correct-answer">（正确答案：${q.answer}）</span>` : ''}
+            <span class="result-badge ${correct ? 'correct' : 'incorrect'}">${correct ? '✓' : '✗'} ${section.scoreEach}分</span>
+          </div>`;
+        } else if (section.type === 'fill_blank') {
+          let allCorrect = true;
+          const answers = userAns || [];
+          q.answers.forEach((a, bi) => {
+            if ((answers[bi]||'').trim() !== a.trim()) allCorrect = false;
+          });
+          correct = allCorrect;
+          totalPossible += section.scoreEach;
+          if (correct) totalScore += section.scoreEach;
+          resultHTML += `<div style="margin:6px 0;padding:6px 10px;border-radius:6px;background:${correct ? '#f0fff4' : '#fff5f5'}">
+            ${qi+1}. ${q.stem}<br>
+            你的答案：<span class="${correct ? 'result-correct' : 'result-incorrect'}">${(userAns||[]).join('、') || '未作答'}</span>
+            ${!correct ? `<span class="correct-answer">（正确答案：${q.answers.join('、')}）</span>` : ''}
+            <span class="result-badge ${correct ? 'correct' : 'incorrect'}">${correct ? '✓' : '✗'} ${section.scoreEach}分</span>
+          </div>`;
+        } else if (section.type === 'sort') {
+          const fullAnswer = state.answers[ai][si];  // array of ranks for each item
+          correct = JSON.stringify(fullAnswer) === JSON.stringify(q.answer);
+          totalPossible += section.scoreEach;
+          if (correct) totalScore += section.scoreEach;
+          const userSeq = (fullAnswer||[]).join(', ') || '未作答';
+          const corrSeq = (q.answer||[]).join(', ');
+          resultHTML += `<div style="margin:6px 0;padding:6px 10px;border-radius:6px;background:${correct ? '#f0fff4' : '#fff5f5'}">
+            排序题<br>
+            你的排序：<span class="${correct ? 'result-correct' : 'result-incorrect'}">${userSeq}</span>
+            ${!correct ? `<span class="correct-answer">（正确答案：${corrSeq}）</span>` : ''}
+            <span class="result-badge ${correct ? 'correct' : 'incorrect'}">${correct ? '✓' : '✗'} ${section.scoreEach}分</span>
+          </div>`;
+        } else if (section.type === 'fill_choice') {
+          correct = userAns === q.answer;
+          totalPossible += section.scoreEach;
+          if (correct) totalScore += section.scoreEach;
+          const userLabel = userAns !== null && userAns !== undefined && userAns !== -1 ? String.fromCharCode(65 + userAns) : '未作答';
+          const corrLabel = String.fromCharCode(65 + q.answer);
+          resultHTML += `<div style="margin:6px 0;padding:6px 10px;border-radius:6px;background:${correct ? '#f0fff4' : '#fff5f5'}">
+            填空${qi+1}<br>
+            你的答案：<span class="${correct ? 'result-correct' : 'result-incorrect'}">${userLabel}</span>
+            ${!correct ? `<span class="correct-answer">（正确答案：${corrLabel}）</span>` : ''}
+            <span class="result-badge ${correct ? 'correct' : 'incorrect'}">${correct ? '✓' : '✗'} ${section.scoreEach}分</span>
+          </div>`;
+        } else if (section.type === 'short_answer') {
+          isSubjective = true;
+          resultHTML += `<div style="margin:6px 0;padding:6px 10px;border-radius:6px;background:#fffff0;">
+            ${qi+1}. ${q.stem}<br>
+            你的答案：${userAns || '未作答'}<br>
+            <div class="ref-answer">💡 <strong>参考答案：</strong>${q.answer}</div>
+          </div>`;
+        }
+      });
+    });
+  });
+
+  const pct = totalPossible > 0 ? Math.round(totalScore / totalPossible * 100) : 0;
+  resultHTML += `
+    <div class="score-summary" style="margin-top:20px;">
+      <div style="font-size:0.9rem;color:#718096;">客观题得分</div>
+      <div class="total">${totalScore} / ${totalPossible}</div>
+      <div class="detail">得分率 ${pct}%</div>
+      <div style="font-size:0.85rem;color:#718096;margin-top:4px;">（主观题仅提供参考答案，不计分）</div>
+    </div>`;
+
+  resultHTML += '</div>';
+  return resultHTML;
+}
+
+// ==================== INIT ====================
+render();
+</script>
+</body>
+</html>
